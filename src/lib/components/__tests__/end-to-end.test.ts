@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from 'svelte/server';
-import TestEmail from '$lib/emails/test-email.svelte';
+import TestEmail from '../../emails/test-email.svelte';
 
 describe('End-to-End Component Rendering with Tailwind', () => {
 	it('should render component with Tailwind classes converted to inline styles', () => {

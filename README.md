@@ -1,13 +1,13 @@
 # better-svelte-email
 
-[![CI](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/ci.yml)
-[![Tests](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/release.yml/badge.svg)](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/release.yml)
+[![CI](https://github.com/Konixy/better-svelte-email/actions/workflows/ci.yml/badge.svg)](https://github.com/Konixy/better-svelte-email/actions/workflows/ci.yml)
+[![Tests](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml/badge.svg)](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml)
 
-A Svelte 5 preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support.
+A Svelte preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support.
 
 ## Features
 
-✨ **Stable & Future-Proof** - Uses Svelte 5's public preprocessor API  
+✨ **Stable & Future-Proof** - Uses Svelte's public preprocessor API  
 🎨 **Tailwind CSS Support** - Transforms Tailwind classes to inline styles for email clients  
 📱 **Responsive Emails** - Preserves responsive classes (`sm:`, `md:`, `lg:`) as media queries  
 ⚡ **Build-Time Transformation** - Zero runtime overhead  
@@ -95,7 +95,6 @@ export async function POST({ request }) {
 	const { name, email } = await request.json();
 
 	// Render email (preprocessor already ran at build time!)
-	// In Svelte 5, pass props directly to render
 	const result = render(WelcomeEmail, { props: { name } });
 
 	// Send email using your preferred service (Resend, SendGrid, etc.)
@@ -321,10 +320,10 @@ npm run test:coverage
 
 ### Type errors
 
-Make sure you have the latest version of Svelte 5:
+Make sure you have the latest version of Svelte (requires 5.14.3 or higher):
 
 ```bash
-npm install svelte@^5.0.0
+npm install svelte@latest
 ```
 
 ## Contributing
@@ -337,37 +336,7 @@ MIT
 
 ## Author
 
-Anatole
-
-## Svelte 5 Syntax
-
-This library requires **Svelte 5** and uses modern Svelte 5 syntax. Key differences from Svelte 4:
-
-### Props Declaration
-
-```svelte
-<!-- Svelte 5 (Correct) -->
-<script>
-  let { name = 'User', email } = $props();
-</script>
-
-<!-- Svelte 4 (Old - Don't use) -->
-<script>
-  export let name = 'User';
-  export let email;
-</script>
-```
-
-### Server Rendering
-
-```typescript
-// Svelte 5
-import { render } from 'svelte/server';
-const result = render(Component, { props: { name } });
-const html = result.body;
-```
-
-For a complete guide on Svelte 5 syntax, see [SVELTE5_MIGRATION.md](./SVELTE5_MIGRATION.md).
+Konixy
 
 ## Development
 

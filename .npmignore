@@ -1,0 +1,34 @@
+# Source files
+src/
+*.test.ts
+*.spec.ts
+__tests__/
+
+# Documentation
+IMPLEMENTATION_GUIDE.md
+.prettierrc
+
+# Config files
+.eslintrc.js
+eslint.config.js
+tsconfig.json
+vite.config.ts
+vitest-setup-client.ts
+svelte.config.js
+
+# Development files
+.git/
+.github/
+node_modules/
+.svelte-kit/
+.vscode/
+.idea/
+
+# Build artifacts
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+

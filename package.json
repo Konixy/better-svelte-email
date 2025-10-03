@@ -46,13 +46,19 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js",
-			"default": "./dist/index.js"
+			"import": "./dist/preprocessor/index.js",
+			"default": "./dist/preprocessor/index.js"
 		},
 		"./preprocessor": {
 			"types": "./dist/preprocessor/index.d.ts",
 			"import": "./dist/preprocessor/index.js",
 			"default": "./dist/preprocessor/index.js"
-		}
+		},
+		"./components/*": {
+			"types": "./dist/components/*.svelte.d.ts",
+			"svelte": "./dist/components/*.svelte"
+		},
+		"./package.json": "./package.json"
 	},
 	"description": "A Svelte 5 preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support",
 	"files": [

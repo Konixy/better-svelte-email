@@ -5,7 +5,6 @@
       "name": "better-svelte-email",
       "dependencies": {
         "magic-string": "^0.30.19",
-        "resend": "^6.1.2",
         "tw-to-css": "^0.0.12",
       },
       "devDependencies": {
@@ -27,6 +26,7 @@
         "prettier-plugin-svelte": "^3.4.0",
         "prettier-plugin-tailwindcss": "^0.6.14",
         "publint": "^0.3.13",
+        "resend": "^6.1.2",
         "svelte": "^5.39.8",
         "svelte-check": "^4.3.2",
         "tailwindcss": "^4.1.14",
@@ -35,9 +35,6 @@
         "vite": "^7.1.9",
         "vitest": "^3.2.4",
         "vitest-browser-svelte": "^1.1.0",
-      },
-      "peerDependencies": {
-        "svelte": "^5.0.0",
       },
     },
   },

@@ -1,3 +1,6 @@
+// Export email components
+export { Html, Head, Body, Container, Section, Text, Button } from './components/index.js';
+
 // Export the preprocessor
 export { betterSvelteEmailPreprocessor } from './preprocessor/index.js';
 export type { PreprocessorOptions, ComponentTransform } from './preprocessor/index.js';
@@ -14,3 +17,6 @@ export {
 	sanitizeClassName
 } from './preprocessor/transformer.js';
 export { injectMediaQueries } from './preprocessor/head-injector.js';
+
+// Export utilities
+export { styleToString, pxToPt } from './utils/index.js';

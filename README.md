@@ -1,5 +1,8 @@
 # better-svelte-email
 
+[![CI](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/ci.yml)
+[![Tests](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/release.yml/badge.svg)](https://github.com/YOUR_USERNAME/better-svelte-email/actions/workflows/release.yml)
+
 A Svelte 5 preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support.
 
 ## Features
@@ -365,6 +368,43 @@ const html = result.body;
 ```
 
 For a complete guide on Svelte 5 syntax, see [SVELTE5_MIGRATION.md](./SVELTE5_MIGRATION.md).
+
+## Development
+
+### Running Tests
+
+```bash
+bun test
+```
+
+All tests must pass before pushing to main. The CI/CD pipeline will automatically run tests on every push and pull request.
+
+### Building
+
+```bash
+bun run build
+```
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`bun test`)
+5. Commit your changes using [conventional commits](https://www.conventionalcommits.org/):
+   - `feat:` - New features
+   - `fix:` - Bug fixes
+   - `docs:` - Documentation changes
+   - `test:` - Test additions/changes
+   - `chore:` - Maintenance tasks
+6. Push to your branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+### Releases
+
+Releases are automated via GitHub Actions. When you bump the version in `package.json` and push to `main`, a new release will be automatically created with a generated changelog.
+
+See [RELEASE.md](./RELEASE.md) for detailed release process documentation.
 
 ## Acknowledgments
 

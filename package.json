@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Konixy/better-svelte-email"
+		"url": "git+https://github.com/Konixy/better-svelte-email.git"
 	},
 	"scripts": {
 		"dev": "vite dev",
@@ -51,6 +51,7 @@
 	},
 	"dependencies": {
 		"magic-string": "^0.30.19",
+		"resend": "^6.1.2",
 		"tw-to-css": "^0.0.12"
 	},
 	"devDependencies": {

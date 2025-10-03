@@ -88,7 +88,7 @@ function extractStylesFromCSS(
 		const rules = match[2].trim();
 
 		// Normalize class name (tw-to-css might transform special chars)
-		const normalizedClass = className.replace(/[:#\-\[\]\/\.%!_]+/g, '_');
+		const normalizedClass = className.replace(/[:#\-[\]/.%!_]+/g, '_');
 
 		classMap.set(normalizedClass, rules);
 	}
@@ -96,19 +96,20 @@ function extractStylesFromCSS(
 	// For each original class, try to find its CSS
 	for (const originalClass of originalClasses) {
 		// Normalize the original class name to match what tw-to-css produces
-		const normalized = originalClass.replace(/[:#\-\[\]\/\.%!]+/g, '_');
+		const normalized = originalClass.replace(/[:#\-[\]/.%!]+/g, '_');
 
 		if (classMap.has(normalized)) {
 			const rules = classMap.get(normalized)!;
-			// Add the rules (already in format "prop: value;")
-			styleProperties.push(rules);
+			// Ensure rules end with semicolon for proper concatenation
+			const rulesWithSemicolon = rules.trim().endsWith(';') ? rules.trim() : rules.trim() + ';';
+			styleProperties.push(rulesWithSemicolon);
 		} else {
 			// Class not found - might be invalid Tailwind
 			invalidClasses.push(originalClass);
 		}
 	}
 
-	// Combine all style properties
+	// Combine all style properties with space separator
 	const validStyles = styleProperties.join(' ').trim();
 
 	return { validStyles, invalidClasses };
@@ -144,7 +145,7 @@ export function generateMediaQueries(
 	for (const cls of responsiveClasses) {
 		const match = cls.match(/^(sm|md|lg|xl|2xl):(.+)/);
 		if (match) {
-			const [, breakpoint, baseClass] = match;
+			const [, breakpoint] = match;
 
 			if (!classesByBreakpoint.has(breakpoint)) {
 				classesByBreakpoint.set(breakpoint, []);
@@ -200,5 +201,5 @@ export function generateMediaQueries(
  * Sanitize class names for use in CSS (replace special characters)
  */
 export function sanitizeClassName(className: string): string {
-	return className.replace(/[:#\-\[\]\/\.%!]+/g, '_');
+	return className.replace(/[:#\-[\]/.%!]+/g, '_');
 }

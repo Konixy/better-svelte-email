@@ -40,7 +40,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 			<Html>
 				<Head />
-				<Button class="bg-blue-500 sm:bg-red-500">Click</Button>
+				<Button class="bg-blue-500 sm:bg-red-500 mx-5">Click</Button>
 			</Html>
 		`;
 
@@ -50,6 +50,8 @@ describe('betterSvelteEmailPreprocessor', () => {
 		});
 
 		if (result && 'code' in result) {
+			expect(result.code).toContain('<Head>');
+			expect(result.code).toContain('</Head>');
 			expect(result.code).toContain('@media');
 			expect(result.code).toContain('<style>');
 			expect(result.code).toContain('!important');

@@ -41,7 +41,7 @@
 		</a>
 
 		<a
-			href="https://github.com/yourusername/better-svelte-email"
+			href="https://github.com/Konixy/better-svelte-email"
 			class="block rounded-lg border border-gray-200 bg-gray-50 p-6 transition hover:bg-gray-100"
 		>
 			<h3 class="mb-2 text-lg font-semibold text-gray-900">🔗 GitHub</h3>

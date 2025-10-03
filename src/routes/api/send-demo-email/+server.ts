@@ -1,10 +1,10 @@
 import { json } from '@sveltejs/kit';
 import { render } from 'svelte/server';
 import { Resend } from 'resend';
-import { RESEND_API_KEY, FROM_EMAIL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import DemoEmail from '$lib/emails/demo-email.svelte';
 
-const resend = new Resend(RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export async function POST({ request }) {
 	try {
@@ -26,7 +26,7 @@ export async function POST({ request }) {
 
 		// Send email using Resend
 		const { data, error } = await resend.emails.send({
-			from: FROM_EMAIL || 'onboarding@resend.dev',
+			from: env.FROM_EMAIL || 'onboarding@resend.dev',
 			to: email,
 			subject: '✨ better-svelte-email Demo - It Works!',
 			html: result.body

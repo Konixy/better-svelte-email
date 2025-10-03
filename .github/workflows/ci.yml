@@ -30,7 +30,7 @@ jobs:
         run: bun run lint || echo "Linter not configured, skipping..."
 
       - name: Run tests
-        run: bun test
+        run: bun run test
 
       - name: Build project
         run: bun run build

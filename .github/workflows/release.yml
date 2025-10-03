@@ -32,7 +32,7 @@ jobs:
         run: bun install
 
       - name: Run tests
-        run: bun test
+        run: bun run test
 
       - name: Build project
         run: bun run build

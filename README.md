@@ -1,7 +1,8 @@
 # better-svelte-email
 
-[![CI](https://github.com/Konixy/better-svelte-email/actions/workflows/ci.yml/badge.svg)](https://github.com/Konixy/better-svelte-email/actions/workflows/ci.yml)
 [![Tests](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml/badge.svg)](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/better-svelte-email.svg?logo=npm)](https://www.npmjs.com/package/better-svelte-email)
+[![GitHub stars](https://img.shields.io/github/stars/Konixy/better-svelte-email?style=default&logo=github)](https://github.com/Konixy/better-svelte-email/stargazers)
 
 A Svelte preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support.
 

@@ -33,7 +33,7 @@
 
 	<div class="grid gap-4 md:grid-cols-2">
 		<a
-			href="/demo"
+			href="/preview"
 			class="block rounded-lg border border-blue-200 bg-blue-50 p-6 transition hover:bg-blue-100"
 		>
 			<h3 class="mb-2 text-lg font-semibold text-blue-900">📝 View Demo</h3>

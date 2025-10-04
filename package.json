@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"magic-string": "^0.30.19",
+		"svelte-highlight": "^7.8.4",
 		"tw-to-css": "^0.0.12"
 	},
 	"devDependencies": {
@@ -83,6 +84,7 @@
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
 		"preview": "vite preview",
+		"package": "svelte-package",
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

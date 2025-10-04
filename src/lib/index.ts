@@ -1,5 +1,5 @@
 // Export email components
-export { Body, Button, Container, Head, Hr, Html, Section, Text } from './components/index.js';
+export * from './components/index.js';
 
 // Export the preprocessor
 export { betterSvelteEmailPreprocessor } from './preprocessor/index.js';

@@ -14,6 +14,6 @@
 </script>
 
 {@html doctype}
-<html {...restProps} id="__svelte-email" {lang} {dir}>
+<html {...restProps} id="__better-svelte-email" {lang} {dir}>
 	{@render children?.()}
 </html>

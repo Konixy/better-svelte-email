@@ -15,6 +15,7 @@ import {
 	sanitizeClassName
 } from './transformer.js';
 import { injectMediaQueries } from './head-injector.js';
+import path from 'path';
 
 /**
  * Svelte 5 preprocessor for transforming Tailwind classes in email components
@@ -40,7 +41,7 @@ import { injectMediaQueries } from './head-injector.js';
 export function betterSvelteEmailPreprocessor(
 	options: PreprocessorOptions = {}
 ): PreprocessorGroup {
-	const { tailwindConfig, pathToEmailFolder = '/src/lib/emails', debug = false } = options;
+	const { tailwindConfig, pathToEmailFolder = '/src/lib/emails', debug = true } = options;
 
 	// Initialize Tailwind converter once (performance optimization)
 	const tailwindConverter = createTailwindConverter(tailwindConfig);
@@ -71,7 +72,10 @@ export function betterSvelteEmailPreprocessor(
 				// Log warnings if debug mode is enabled
 				if (result.warnings.length > 0) {
 					if (debug) {
-						console.warn(`[better-svelte-email] Warnings for ${filename}:`, result.warnings);
+						console.warn(
+							`[better-svelte-email] Warnings for ${path.relative(process.cwd(), filename)}:\n`,
+							result.warnings.join('\n')
+						);
 					}
 				}
 

@@ -85,10 +85,10 @@ function extractStylesFromCSS(
 
 	while ((match = classRegex.exec(cssWithoutMedia)) !== null) {
 		const className = match[1];
-		const rules = match[2].trim();
+		const rules = match[2].replace(/\\/g, '').trim();
 
 		// Normalize class name (tw-to-css might transform special chars)
-		const normalizedClass = className.replace(/[:#\-[\]/.%!_]+/g, '_');
+		const normalizedClass = className.replace(/\\/g, '').replace(/[:#\-[\]/.%!_]+/g, '_');
 
 		classMap.set(normalizedClass, rules);
 	}
@@ -96,7 +96,7 @@ function extractStylesFromCSS(
 	// For each original class, try to find its CSS
 	for (const originalClass of originalClasses) {
 		// Normalize the original class name to match what tw-to-css produces
-		const normalized = originalClass.replace(/[:#\-[\]/.%!]+/g, '_');
+		const normalized = originalClass.replace(/[:#\-[\]/.%!_]+/g, '_');
 
 		if (classMap.has(normalized)) {
 			const rules = classMap.get(normalized)!;

@@ -1,15 +1,22 @@
-<script>
+<script lang="ts">
 	import { styleToString, pxToPt } from '$lib/utils/index.js';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
 		href = '#',
 		target = '_blank',
-		styleString = '',
+		style = '',
 		pX = 0,
 		pY = 0,
 		children,
 		...restProps
-	} = $props();
+	}: {
+		href?: string;
+		target?: string;
+		pX?: number;
+		pY?: number;
+		children: any;
+	} & HTMLAttributes<HTMLAnchorElement> = $props();
 
 	const y = pY * 2;
 	const textRaise = pxToPt(y.toString());
@@ -34,7 +41,7 @@
 		msoTextRaise: pY ? pxToPt(pY.toString()) : undefined
 	});
 
-	const finalStyle = buttonStyle + (styleString ? ';' + styleString : '');
+	const finalStyle = buttonStyle + (style ? ';' + style : '');
 </script>
 
 <a {...restProps} {href} {target} style={finalStyle}>

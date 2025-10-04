@@ -1,23 +1,23 @@
 import { describe, it, expect } from 'vitest';
-import { parseClassAttributes, findHeadComponent } from '../parser.js';
+import { parseAttributes, findHeadComponent } from '../parser.js';
 
 describe('parseClassAttributes', () => {
 	it('should extract static class attributes', () => {
 		const source = `<Button class="text-red-500">Click</Button>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].raw).toBe('text-red-500');
-		expect(result[0].isStatic).toBe(true);
-		expect(result[0].elementName).toBe('Button');
+		expect(result[0].class.raw).toBe('text-red-500');
+		expect(result[0].class.isStatic).toBe(true);
+		expect(result[0].class.elementName).toBe('Button');
 	});
 
 	it('should handle multiple classes', () => {
 		const source = `<Button class="text-red-500 bg-blue-500 p-4">Click</Button>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].raw).toBe('text-red-500 bg-blue-500 p-4');
+		expect(result[0].class.raw).toBe('text-red-500 bg-blue-500 p-4');
 	});
 
 	it('should find multiple elements', () => {
@@ -25,28 +25,37 @@ describe('parseClassAttributes', () => {
 			<Button class="btn-class">Click</Button>
 			<Text class="text-class">Hello</Text>
 		`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(2);
-		expect(result[0].elementName).toBe('Button');
-		expect(result[1].elementName).toBe('Text');
+		expect(result[0].class.elementName).toBe('Button');
+		expect(result[1].class.elementName).toBe('Text');
 	});
 
 	it('should handle dynamic classes', () => {
 		const source = `<Button class={dynamicClass}>Click</Button>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].isStatic).toBe(false);
+		expect(result[0].class.isStatic).toBe(false);
 	});
 
 	it('should handle mixed static and dynamic classes', () => {
 		const source = `<Button class="static-class {dynamicClass}">Click</Button>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].isStatic).toBe(false);
-		expect(result[0].raw).toContain('static-class');
+		expect(result[0].class.isStatic).toBe(false);
+		expect(result[0].class.raw).toContain('static-class');
+	});
+
+	it('should handle merging class and style attributes', () => {
+		const source = `<Button class="bg-red-500" style="width: 100px;">Click</Button>`;
+		const result = parseAttributes(source);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].class.raw).toContain('bg-red-500');
+		expect(result[0].style?.raw).toContain('width: 100px;');
 	});
 
 	it('should handle nested components', () => {
@@ -55,19 +64,19 @@ describe('parseClassAttributes', () => {
 				<Button class="button-class">Click</Button>
 			</Container>
 		`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(2);
-		expect(result[0].elementName).toBe('Container');
-		expect(result[1].elementName).toBe('Button');
+		expect(result[0].class.elementName).toBe('Container');
+		expect(result[1].class.elementName).toBe('Button');
 	});
 
 	it('should handle HTML elements', () => {
 		const source = `<div class="bg-blue-500">Content</div>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].elementName).toBe('div');
+		expect(result[0].class.elementName).toBe('div');
 	});
 
 	it('should handle conditional blocks', () => {
@@ -76,10 +85,10 @@ describe('parseClassAttributes', () => {
 				<Button class="conditional-class">Click</Button>
 			{/if}
 		`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].raw).toBe('conditional-class');
+		expect(result[0].class.raw).toBe('conditional-class');
 	});
 
 	it('should handle each blocks', () => {
@@ -88,15 +97,15 @@ describe('parseClassAttributes', () => {
 				<Button class="item-class">{item}</Button>
 			{/each}
 		`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(1);
-		expect(result[0].raw).toBe('item-class');
+		expect(result[0].class.raw).toBe('item-class');
 	});
 
 	it('should return empty array for no classes', () => {
 		const source = `<Button>No classes</Button>`;
-		const result = parseClassAttributes(source);
+		const result = parseAttributes(source);
 
 		expect(result).toHaveLength(0);
 	});

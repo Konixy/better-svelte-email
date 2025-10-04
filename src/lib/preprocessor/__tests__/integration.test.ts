@@ -23,7 +23,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		expect(result).toBeDefined();
 		if (result && 'code' in result) {
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 			expect(result.code).toContain('background-color');
 			expect(result.code).toContain('color');
 			expect(result.code).toContain('padding');
@@ -92,7 +92,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		expect(result).toBeDefined();
 		if (result && 'code' in result) {
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 		}
 	});
 
@@ -138,8 +138,8 @@ describe('betterSvelteEmailPreprocessor', () => {
 		expect(result).toBeDefined();
 		// Should transform both Container and Button
 		if (result && 'code' in result) {
-			const styleStringCount = (result.code.match(/styleString=/g) || []).length;
-			expect(styleStringCount).toBe(2);
+			const styleCount = (result.code.match(/style=/g) || []).length;
+			expect(styleCount).toBe(2);
 		}
 	});
 
@@ -160,7 +160,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		if (result && 'code' in result) {
 			expect(result.code).toContain('href="https://example.com"');
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 		}
 	});
 
@@ -181,7 +181,28 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		if (result && 'code' in result) {
 			expect(result.code).toContain('@media');
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
+		}
+	});
+
+	it('should handle merging class and style attributes', async () => {
+		const preprocessor = betterSvelteEmailPreprocessor();
+
+		const input = `
+			<Button class="bg-blue-500" style="width: 100px;">Click</Button>
+		`;
+
+		const result = await preprocessor.markup?.({
+			content: input,
+			filename: '/src/lib/emails/test.svelte'
+		});
+
+		expect(result).toBeDefined();
+		if (result && 'code' in result) {
+			const styleCount = (result.code.match(/style=/g) || []).length;
+			expect(styleCount).toBe(1);
+			expect(result.code).toContain('background-color');
+			expect(result.code).toContain('width: 100px;');
 		}
 	});
 
@@ -204,7 +225,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		expect(result).toBeDefined();
 		if (result && 'code' in result) {
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 		}
 	});
 
@@ -227,7 +248,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		expect(result).toBeDefined();
 		if (result && 'code' in result) {
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 		}
 	});
 
@@ -245,7 +266,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 		if (result && 'code' in result) {
 			expect(result.code).not.toContain('class="bg-blue-500"');
 			// New styleString attribute should be present
-			expect(result.code).toContain('styleString=');
+			expect(result.code).toContain('style=');
 		}
 	});
 
@@ -286,7 +307,7 @@ describe('betterSvelteEmailPreprocessor', () => {
 
 		expect(result).toBeDefined();
 		if (result && 'code' in result) {
-			const styleStringCount = (result.code.match(/styleString=/g) || []).length;
+			const styleStringCount = (result.code.match(/style=/g) || []).length;
 			expect(styleStringCount).toBe(2);
 		}
 	});

@@ -1,11 +1,18 @@
-<script>
+<script lang="ts">
 	import { styleToString } from '$lib/utils/index.js';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	let { styleString = '', children, ...restProps } = $props();
+	let {
+		children,
+		style,
+		...restProps
+	}: {
+		children: any;
+	} & HTMLAttributes<HTMLTableElement> = $props();
 
 	// Default max-width for email containers (600px = 37.5em)
 	const baseStyle = styleToString({ maxWidth: '37.5em' });
-	const finalStyle = baseStyle + (styleString ? ';' + styleString : '');
+	const finalStyle = baseStyle + (style ? ';' + style : '');
 </script>
 
 <table

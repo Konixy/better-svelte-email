@@ -1,12 +1,15 @@
 import { parse } from 'svelte/compiler';
-import type { ClassAttribute } from './types.js';
+import type { ClassAttribute, StyleAttribute } from './types.js';
 
 /**
  * Parse Svelte 5 source code and extract all class attributes
  * Reference: https://svelte.dev/docs/svelte/svelte-compiler#parse
  */
-export function parseClassAttributes(source: string): ClassAttribute[] {
-	const classAttributes: ClassAttribute[] = [];
+export function parseAttributes(source: string): {
+	class: ClassAttribute;
+	style?: StyleAttribute;
+}[] {
+	const attributes: { class: ClassAttribute; style: StyleAttribute }[] = [];
 
 	try {
 		// Parse the Svelte file into an AST
@@ -16,7 +19,7 @@ export function parseClassAttributes(source: string): ClassAttribute[] {
 		// Walk the html fragment (template portion) of the AST
 		if (ast.html && ast.html.children) {
 			for (const child of ast.html.children) {
-				walkNode(child, classAttributes, source);
+				walkNode(child, attributes, source);
 			}
 		}
 	} catch (error) {
@@ -24,13 +27,17 @@ export function parseClassAttributes(source: string): ClassAttribute[] {
 		throw error;
 	}
 
-	return classAttributes;
+	return attributes;
 }
 
 /**
  * Recursively walk Svelte 5 AST nodes to find class attributes
  */
-function walkNode(node: any, classAttributes: ClassAttribute[], source: string): void {
+function walkNode(
+	node: any,
+	attributes: { class: ClassAttribute; style?: StyleAttribute }[],
+	source: string
+): void {
 	if (!node) return;
 
 	// Svelte 5 AST structure:
@@ -46,22 +53,45 @@ function walkNode(node: any, classAttributes: ClassAttribute[], source: string):
 	) {
 		const elementName = node.name || 'unknown';
 
-		// Look for class attribute in Svelte 5 AST
+		// Look for class and style attribute in Svelte 5 AST
 		const classAttr = node.attributes?.find(
 			(attr: any) => attr.type === 'Attribute' && attr.name === 'class'
 		);
 
+		const styleAttr = node.attributes?.find(
+			(attr: any) => attr.type === 'Attribute' && attr.name === 'style'
+		);
+
 		if (classAttr && classAttr.value) {
 			// Extract class value
-			const extracted = extractClassValue(classAttr, source);
+			const extractedClass = extractClassValue(classAttr, source);
+			let extractedStyle: {
+				value: string;
+				start: number;
+				end: number;
+			} | null = null;
 
-			if (extracted) {
-				classAttributes.push({
-					raw: extracted.value,
-					start: extracted.start,
-					end: extracted.end,
-					elementName,
-					isStatic: extracted.isStatic
+			if (styleAttr && styleAttr.value) {
+				extractedStyle = extractStyleValue(styleAttr, source);
+			}
+
+			if (extractedClass) {
+				attributes.push({
+					class: {
+						raw: extractedClass.value,
+						start: extractedClass.start,
+						end: extractedClass.end,
+						elementName,
+						isStatic: extractedClass.isStatic
+					},
+					style: extractedStyle
+						? {
+								raw: extractedStyle.value,
+								start: extractedStyle.start,
+								end: extractedStyle.end,
+								elementName
+							}
+						: undefined
 				});
 			}
 		}
@@ -70,7 +100,7 @@ function walkNode(node: any, classAttributes: ClassAttribute[], source: string):
 	// Recursively process children
 	if (node.children) {
 		for (const child of node.children) {
-			walkNode(child, classAttributes, source);
+			walkNode(child, attributes, source);
 		}
 	}
 
@@ -78,7 +108,7 @@ function walkNode(node: any, classAttributes: ClassAttribute[], source: string):
 	if (node.consequent) {
 		if (node.consequent.children) {
 			for (const child of node.consequent.children) {
-				walkNode(child, classAttributes, source);
+				walkNode(child, attributes, source);
 			}
 		}
 	}
@@ -86,7 +116,7 @@ function walkNode(node: any, classAttributes: ClassAttribute[], source: string):
 	if (node.alternate) {
 		if (node.alternate.children) {
 			for (const child of node.alternate.children) {
-				walkNode(child, classAttributes, source);
+				walkNode(child, attributes, source);
 			}
 		}
 	}
@@ -95,7 +125,7 @@ function walkNode(node: any, classAttributes: ClassAttribute[], source: string):
 	if (node.body) {
 		if (node.body.children) {
 			for (const child of node.body.children) {
-				walkNode(child, classAttributes, source);
+				walkNode(child, attributes, source);
 			}
 		}
 	}
@@ -160,8 +190,8 @@ function extractClassValue(
 	// Mixed content (both Text and ExpressionTag)
 	// Extract only the static Text portions for partial transformation
 	let combinedValue = '';
-	let start = classAttr.value[0].start;
-	let end = classAttr.value[classAttr.value.length - 1].end;
+	const start = classAttr.value[0].start;
+	const end = classAttr.value[classAttr.value.length - 1].end;
 	let hasStaticContent = false;
 
 	for (const part of classAttr.value) {
@@ -185,6 +215,71 @@ function extractClassValue(
 }
 
 /**
+ * Extract the actual style value from a Svelte 5 attribute node
+ */
+function extractStyleValue(
+	styleAttr: any,
+	source: string
+): { value: string; start: number; end: number } | null {
+	// Svelte 5 attribute value formats:
+	// 1. Static string: style="color: red;"
+	//    → value: [{ type: 'Text', data: 'color: red;' }]
+	//
+	// 2. Expression: style={someVar}
+	//    → value: [{ type: 'ExpressionTag', expression: {...} }]
+	//
+	// 3. Mixed: style="color: red; {dynamicStyle}"
+	//    → value: [{ type: 'Text' }, { type: 'ExpressionTag' }]
+
+	if (!styleAttr.value || styleAttr.value.length === 0) {
+		return null;
+	}
+
+	// Check if entirely static (only Text nodes)
+	const hasOnlyText = styleAttr.value.every((v: any) => v.type === 'Text');
+
+	if (hasOnlyText) {
+		// Fully static - we can extract this
+		const textContent = styleAttr.value.map((v: any) => v.data || '').join('');
+
+		return {
+			value: textContent,
+			start: styleAttr.start,
+			end: styleAttr.end
+		};
+	}
+
+	// Check if entirely dynamic (only ExpressionTag or MustacheTag)
+	const hasOnlyExpression =
+		styleAttr.value.length === 1 &&
+		(styleAttr.value[0].type === 'ExpressionTag' || styleAttr.value[0].type === 'MustacheTag');
+
+	if (hasOnlyExpression) {
+		// Fully dynamic - extract the expression code
+		const exprNode = styleAttr.value[0];
+		const expressionCode = source.substring(exprNode.start, exprNode.end);
+
+		return {
+			value: expressionCode,
+			start: exprNode.start,
+			end: exprNode.end
+		};
+	}
+
+	// Mixed content (both Text and ExpressionTag)
+	// Extract the full content including dynamic parts
+	const start = styleAttr.value[0].start;
+	const end = styleAttr.value[styleAttr.value.length - 1].end;
+	const fullContent = source.substring(start, end);
+
+	return {
+		value: fullContent,
+		start: styleAttr.start,
+		end: styleAttr.end
+	};
+}
+
+/**
  * Find the <Head> component in Svelte 5 AST
  * Returns the position where we should inject styles
  */
@@ -204,7 +299,7 @@ export function findHeadComponent(source: string): {
 		}
 
 		return { found: false, insertPosition: null };
-	} catch (error) {
+	} catch {
 		return { found: false, insertPosition: null };
 	}
 }

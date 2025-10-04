@@ -1,9 +1,9 @@
-<script>
-	import { styleToString } from '$lib/utils/index.js';
+<script lang="ts">
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	let { styleString = '', children, ...restProps } = $props();
+	let { children, ...restProps }: { children?: any } & HTMLAttributes<HTMLBodyElement> = $props();
 </script>
 
-<body {...restProps} style={styleString}>
+<body {...restProps}>
 	{@render children?.()}
 </body>

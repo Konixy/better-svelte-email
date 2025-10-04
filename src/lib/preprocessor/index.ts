@@ -4,9 +4,10 @@ import type {
 	PreprocessorOptions,
 	ComponentTransform,
 	MediaQueryStyle,
-	ClassAttribute
+	ClassAttribute,
+	StyleAttribute
 } from './types.js';
-import { parseClassAttributes } from './parser.js';
+import { parseAttributes } from './parser.js';
 import {
 	createTailwindConverter,
 	transformTailwindClasses,
@@ -105,9 +106,9 @@ function processEmailComponent(
 	const allMediaQueries: MediaQueryStyle[] = [];
 
 	// Step 1: Parse and find all class attributes
-	const classAttributes = parseClassAttributes(source);
+	const attributes = parseAttributes(source);
 
-	if (classAttributes.length === 0) {
+	if (attributes.length === 0) {
 		// No classes to transform
 		return {
 			originalCode: source,
@@ -122,25 +123,25 @@ function processEmailComponent(
 	const s = new MagicString(transformedCode);
 
 	// Process in reverse order to maintain correct positions
-	const sortedAttributes = [...classAttributes].sort((a, b) => b.start - a.start);
+	const sortedAttributes = [...attributes].sort((a, b) => b.class.start - a.class.start);
 
-	for (const classAttr of sortedAttributes) {
-		if (!classAttr.isStatic) {
+	for (const attr of sortedAttributes) {
+		if (!attr.class.isStatic) {
 			// Skip dynamic classes for now
 			warnings.push(
-				`Dynamic class expression detected in ${classAttr.elementName}. ` +
+				`Dynamic class expression detected in ${attr.class.elementName}. ` +
 					`Only static classes can be transformed at build time.`
 			);
 			continue;
 		}
 
 		// Transform the classes
-		const transformed = transformTailwindClasses(classAttr.raw, tailwindConverter);
+		const transformed = transformTailwindClasses(attr.class.raw, tailwindConverter);
 
 		// Collect warnings about invalid classes
 		if (transformed.invalidClasses.length > 0) {
 			warnings.push(
-				`Invalid Tailwind classes in ${classAttr.elementName}: ${transformed.invalidClasses.join(', ')}`
+				`Invalid Tailwind classes in ${attr.class.elementName}: ${transformed.invalidClasses.join(', ')}`
 			);
 		}
 
@@ -158,11 +159,17 @@ function processEmailComponent(
 		// Build the new attribute value
 		const newAttributes = buildNewAttributes(
 			transformed.inlineStyles,
-			transformed.responsiveClasses
+			transformed.responsiveClasses,
+			attr.style?.raw
 		);
 
+		// Remove the already existing style attribute if it exists
+		if (attr.style) {
+			removeStyleAttribute(s, attr.style);
+		}
+
 		// Replace the class attribute with new attributes
-		replaceClassAttribute(s, classAttr, newAttributes);
+		replaceClassAttribute(s, attr.class, newAttributes);
 	}
 
 	transformedCode = s.toString();
@@ -190,7 +197,11 @@ function processEmailComponent(
 /**
  * Build new attribute string from transformation result
  */
-function buildNewAttributes(inlineStyles: string, responsiveClasses: string[]): string {
+function buildNewAttributes(
+	inlineStyles: string,
+	responsiveClasses: string[],
+	existingStyles?: string
+): string {
 	const parts: string[] = [];
 
 	// Add responsive classes if any
@@ -203,7 +214,8 @@ function buildNewAttributes(inlineStyles: string, responsiveClasses: string[]): 
 	if (inlineStyles) {
 		// Escape quotes in styles
 		const escapedStyles = inlineStyles.replace(/"/g, '&quot;');
-		parts.push(`styleString="${escapedStyles}"`);
+		const withExisting = escapedStyles + (existingStyles ? existingStyles : '');
+		parts.push(`style="${withExisting}"`);
 	}
 
 	return parts.join(' ');
@@ -263,6 +275,13 @@ function replaceClassAttribute(
 
 		s.remove(removeStart, removeEnd);
 	}
+}
+
+/**
+ * Remove style attribute with MagicString
+ */
+function removeStyleAttribute(s: MagicString, styleAttr: StyleAttribute): void {
+	s.remove(styleAttr.start, styleAttr.end);
 }
 
 // Re-export types for convenience

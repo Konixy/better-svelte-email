@@ -10,7 +10,7 @@ describe('End-to-End Component Rendering with Tailwind', () => {
 
 		// Container should have bg-gray-100 and p-8 converted to inline styles
 		expect(result.body).toContain('background-color:rgb(243,244,246)');
-		expect(result.body).toContain('padding:2rem'); // p-8 = 2rem
+		expect(result.body.replace(/\s/g, '')).toContain('padding:2rem'); // p-8 = 2rem
 
 		// Text should have text-lg, font-bold, text-blue-600 converted
 		expect(result.body).toContain('font-size:1.125rem'); // text-lg

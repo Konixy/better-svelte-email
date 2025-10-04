@@ -6,16 +6,20 @@ import Head from '../Head.svelte';
 import Html from '../Html.svelte';
 import Section from '../Section.svelte';
 import Text from '../Text.svelte';
+import Hr from '../Hr.svelte';
 
-describe('Component Rendering with styleString', () => {
+const testChildren = () => 'test';
+
+describe('Component Rendering with style', () => {
 	describe('Button', () => {
-		it('should apply styleString to the anchor element', () => {
+		it('should apply style to the anchor element', () => {
 			const testStyles = 'background-color:rgb(59,130,246); color:rgb(255,255,255); padding:16px;';
 
 			const result = render(Button, {
 				props: {
-					styleString: testStyles,
-					href: 'https://example.com'
+					style: testStyles,
+					href: 'https://example.com',
+					children: testChildren
 				}
 			});
 
@@ -30,10 +34,11 @@ describe('Component Rendering with styleString', () => {
 			expect(result.body).toContain('style=');
 		});
 
-		it('should merge styleString with base button styles', () => {
+		it('should merge style with base button styles', () => {
 			const result = render(Button, {
 				props: {
-					styleString: 'background-color:blue;'
+					style: 'background-color:blue;',
+					children: testChildren
 				}
 			});
 
@@ -44,10 +49,11 @@ describe('Component Rendering with styleString', () => {
 			expect(result.body).toContain('background-color:blue');
 		});
 
-		it('should handle empty styleString', () => {
+		it('should handle empty style', () => {
 			const result = render(Button, {
 				props: {
-					styleString: ''
+					style: '',
+					children: testChildren
 				}
 			});
 
@@ -62,7 +68,8 @@ describe('Component Rendering with styleString', () => {
 
 			const result = render(Button, {
 				props: {
-					styleString: styles
+					style: styles,
+					children: testChildren
 				}
 			});
 
@@ -81,12 +88,13 @@ describe('Component Rendering with styleString', () => {
 	});
 
 	describe('Container', () => {
-		it('should apply styleString to the table element', () => {
+		it('should apply style to the table element', () => {
 			const testStyles = 'background-color:rgb(243,244,246); padding:32px;';
 
 			const result = render(Container, {
 				props: {
-					styleString: testStyles
+					style: testStyles,
+					children: testChildren
 				}
 			});
 
@@ -95,10 +103,11 @@ describe('Component Rendering with styleString', () => {
 			expect(result.body).toContain('<table');
 		});
 
-		it('should merge styleString with base container styles', () => {
+		it('should merge style with base container styles', () => {
 			const result = render(Container, {
 				props: {
-					styleString: 'padding:20px;'
+					style: 'padding:20px;',
+					children: testChildren
 				}
 			});
 
@@ -110,7 +119,9 @@ describe('Component Rendering with styleString', () => {
 
 		it('should have default max-width', () => {
 			const result = render(Container, {
-				props: {}
+				props: {
+					children: testChildren
+				}
 			});
 
 			expect(result.body).toContain('max-width:37.5em');
@@ -118,12 +129,13 @@ describe('Component Rendering with styleString', () => {
 	});
 
 	describe('Text', () => {
-		it('should apply styleString to the paragraph element', () => {
+		it('should apply style to the paragraph element', () => {
 			const testStyles = 'color:rgb(55,65,81); font-size:18px; font-weight:600;';
 
 			const result = render(Text, {
 				props: {
-					styleString: testStyles
+					style: testStyles,
+					children: testChildren
 				}
 			});
 
@@ -133,10 +145,11 @@ describe('Component Rendering with styleString', () => {
 			expect(result.body).toContain('<p');
 		});
 
-		it('should merge styleString with base text styles', () => {
+		it('should merge style with base text styles', () => {
 			const result = render(Text, {
 				props: {
-					styleString: 'color:red;'
+					style: 'color:red;',
+					children: testChildren
 				}
 			});
 
@@ -151,7 +164,8 @@ describe('Component Rendering with styleString', () => {
 			const result = render(Text, {
 				props: {
 					as: 'h1',
-					styleString: 'font-size:32px;'
+					style: 'font-size:32px;',
+					children: testChildren
 				}
 			});
 
@@ -161,7 +175,9 @@ describe('Component Rendering with styleString', () => {
 
 		it('should have default text styles', () => {
 			const result = render(Text, {
-				props: {}
+				props: {
+					children: testChildren
+				}
 			});
 
 			expect(result.body).toContain('font-size:14px');
@@ -171,12 +187,13 @@ describe('Component Rendering with styleString', () => {
 	});
 
 	describe('Section', () => {
-		it('should apply styleString to the table element', () => {
+		it('should apply style to the table element', () => {
 			const testStyles = 'padding:20px; background-color:rgb(255,255,255);';
 
 			const result = render(Section, {
 				props: {
-					styleString: testStyles
+					style: testStyles,
+					children: testChildren
 				}
 			});
 
@@ -188,12 +205,12 @@ describe('Component Rendering with styleString', () => {
 	});
 
 	describe('Html', () => {
-		it('should apply styleString to the html element', () => {
+		it('should apply style to the html element', () => {
 			const testStyles = 'background-color:rgb(255,255,255);';
 
 			const result = render(Html, {
 				props: {
-					styleString: testStyles,
+					style: testStyles,
 					lang: 'en'
 				}
 			});
@@ -239,17 +256,34 @@ describe('Component Rendering with styleString', () => {
 		});
 	});
 
+	describe('Hr', () => {
+		it('should have default styles along with custom styles', () => {
+			const result = render(Hr, {
+				props: {
+					style: 'border-color:red;'
+				}
+			});
+
+			expect(result.body).toContain('<hr');
+			expect(result.body).toContain('width:100%;');
+			expect(result.body).toContain('border:none;');
+			expect(result.body).toContain('border-top:1px solid #eaeaea;');
+			expect(result.body).toContain('border-color:red');
+		});
+	});
+
 	describe('Preprocessor Output Simulation', () => {
 		it('should render Button with preprocessor-transformed styles', () => {
 			// This simulates what the preprocessor outputs:
-			// class="bg-blue-500 text-white p-4" becomes styleString="..."
+			// class="bg-blue-500 text-white p-4" becomes style="..."
 			const preprocessedStyles =
 				'background-color:rgb(59,130,246); color:rgb(255,255,255); padding:16px;';
 
 			const result = render(Button, {
 				props: {
-					styleString: preprocessedStyles,
-					href: 'https://example.com'
+					style: preprocessedStyles,
+					href: 'https://example.com',
+					children: testChildren
 				}
 			});
 
@@ -273,7 +307,8 @@ describe('Component Rendering with styleString', () => {
 
 			const result = render(Container, {
 				props: {
-					styleString: preprocessedStyles
+					style: preprocessedStyles,
+					children: testChildren
 				}
 			});
 
@@ -289,7 +324,8 @@ describe('Component Rendering with styleString', () => {
 
 			const result = render(Text, {
 				props: {
-					styleString: preprocessedStyles
+					style: preprocessedStyles,
+					children: testChildren
 				}
 			});
 
@@ -304,8 +340,9 @@ describe('Component Rendering with styleString', () => {
 			const result = render(Button, {
 				props: {
 					class: 'sm_bg_red_500 md_p_6',
-					styleString: 'background-color:rgb(59,130,246);',
-					href: '#'
+					style: 'background-color:rgb(59,130,246);',
+					href: '#',
+					children: testChildren
 				}
 			});
 
@@ -318,10 +355,11 @@ describe('Component Rendering with styleString', () => {
 	});
 
 	describe('Edge Cases', () => {
-		it('should handle styleString with trailing semicolon', () => {
+		it('should handle style with trailing semicolon', () => {
 			const result = render(Text, {
 				props: {
-					styleString: 'color:red;'
+					style: 'color:red;',
+					children: testChildren
 				}
 			});
 
@@ -330,10 +368,11 @@ describe('Component Rendering with styleString', () => {
 			expect(result.body).not.toMatch(/;;/);
 		});
 
-		it('should handle styleString without trailing semicolon', () => {
+		it('should handle style without trailing semicolon', () => {
 			const result = render(Text, {
 				props: {
-					styleString: 'color:blue'
+					style: 'color:blue',
+					children: testChildren
 				}
 			});
 
@@ -346,7 +385,8 @@ describe('Component Rendering with styleString', () => {
 
 			const result = render(Container, {
 				props: {
-					styleString: complexStyles
+					style: complexStyles,
+					children: testChildren
 				}
 			});
 

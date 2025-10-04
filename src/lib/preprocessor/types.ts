@@ -53,6 +53,36 @@ export interface ClassAttribute {
 }
 
 /**
+ * Represents a style attribute found in the AST
+ */
+export interface StyleAttribute {
+	/**
+	 * Raw style string (e.g., "background-color: red;")
+	 */
+	raw: string;
+
+	/**
+	 * Start position in source code
+	 */
+	start: number;
+
+	/**
+	 * End position in source code
+	 */
+	end: number;
+
+	/**
+	 * Parent element/component name
+	 */
+	elementName: string;
+
+	/**
+	 * Whether this is a static string or dynamic expression (not supported yet)
+	 */
+	// isStatic: boolean;
+}
+
+/**
  * Result of transforming Tailwind classes
  */
 export interface TransformResult {

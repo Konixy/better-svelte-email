@@ -1,5 +1,5 @@
 // Export email components
-export { Html, Head, Body, Container, Section, Text, Button } from './components/index.js';
+export { Body, Button, Container, Head, Hr, Html, Section, Text } from './components/index.js';
 
 // Export the preprocessor
 export { betterSvelteEmailPreprocessor } from './preprocessor/index.js';
@@ -7,9 +7,13 @@ export type { PreprocessorOptions, ComponentTransform } from './preprocessor/ind
 
 // Export types for convenience
 export type { ClassAttribute, TransformResult, MediaQueryStyle } from './preprocessor/types.js';
+export type { TailwindConfig } from 'tw-to-css';
 
 // Export individual functions for advanced usage
-export { parseClassAttributes, findHeadComponent } from './preprocessor/parser.js';
+export {
+	parseAttributes as parseClassAttributes,
+	findHeadComponent
+} from './preprocessor/parser.js';
 export {
 	createTailwindConverter,
 	transformTailwindClasses,

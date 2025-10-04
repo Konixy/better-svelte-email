@@ -1,7 +1,17 @@
-<script>
+<script lang="ts">
 	import { styleToString } from '$lib/utils/index.js';
+	import type { HTMLAttributes } from 'svelte/elements';
 
-	let { as = 'p', styleString = '', children, ...restProps } = $props();
+	let {
+		as = 'p',
+		style = '',
+		children,
+		...restProps
+	}: {
+		as?: string;
+		style?: string;
+		children: any;
+	} & HTMLAttributes<HTMLParagraphElement> = $props();
 
 	// Default email-safe text styles
 	const baseStyle = styleToString({
@@ -9,7 +19,7 @@
 		lineHeight: '24px',
 		margin: '16px 0'
 	});
-	const finalStyle = baseStyle + (styleString ? ';' + styleString : '');
+	const finalStyle = baseStyle + (style ? ';' + style : '');
 </script>
 
 <svelte:element this={as} {...restProps} style={finalStyle}>

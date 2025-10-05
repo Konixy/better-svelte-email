@@ -1,7 +1,7 @@
 {
 	"name": "better-svelte-email",
 	"version": "0.2.0",
-	"author": "Anatole",
+	"author": "Konixy",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git"
@@ -61,7 +61,7 @@
 		},
 		"./package.json": "./package.json"
 	},
-	"description": "A Svelte 5 preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support",
+	"description": "Svelte email renderer with Tailwind CSS classes support",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",

@@ -1,25 +1,46 @@
-# better-svelte-email
-
-[![Tests](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml/badge.svg)](https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml)
-[![npm version](https://img.shields.io/npm/v/better-svelte-email.svg?logo=npm)](https://www.npmjs.com/package/better-svelte-email)
-[![GitHub stars](https://img.shields.io/github/stars/Konixy/better-svelte-email?style=default&logo=github)](https://github.com/Konixy/better-svelte-email/stargazers)
-
-A Svelte preprocessor that transforms Tailwind CSS classes in email components to inline styles with responsive media query support.
+<p align="center">
+  <h3 align="center">Better Svelte Email</h3>
+	<p align="center">
+		Easily create and send emails with Svelte and Tailwind CSS
+	</p>
+	<p align="center">
+		<a href="https://better-svelte-email.vercel.app">Website</a>
+		 · 
+		<a href="https://github.com/Konixy/better-svelte-email">GitHub</a>
+	</p>
+  <p align="center">
+    <a href="https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml">
+      <img src="https://github.com/Konixy/better-svelte-email/actions/workflows/release.yml/badge.svg" alt="Tests">
+    </a>
+    <a href="https://www.npmjs.com/package/better-svelte-email">
+      <img src="https://img.shields.io/npm/v/better-svelte-email.svg?logo=npm" alt="npm version">
+    </a>
+    <a href="https://github.com/Konixy/better-svelte-email/stargazers">
+      <img src="https://img.shields.io/github/stars/Konixy/better-svelte-email?style=default&logo=github" alt="GitHub stars">
+    </a>
+  </p>
+</p>
 
 ## Features
 
-✨ **Stable & Future-Proof** - Uses Svelte's public preprocessor API  
-🎨 **Tailwind CSS Support** - Transforms Tailwind classes to inline styles for email clients  
-📱 **Responsive Emails** - Preserves responsive classes (`sm:`, `md:`, `lg:`) as media queries  
-⚡ **Build-Time Transformation** - Zero runtime overhead  
-🔍 **TypeScript First** - Fully typed with comprehensive type definitions  
-✅ **Well Tested** - Extensive test coverage with unit and integration tests
+- **Stable & Future-Proof** - Uses Svelte's public preprocessor API
+- **Tailwind CSS Support** - Transforms Tailwind classes to inline styles for email clients
+- **Built-in Email Preview** - Visual email preview and test sending
+- **TypeScript First** - Fully typed with comprehensive type definitions
+- **Well Tested** - Extensive test coverage with unit and integration tests
 
 ## Why?
 
-Email clients don't support modern CSS in `<style>` tags, requiring inline styles. But writing inline styles is tedious and hard to maintain. This preprocessor lets you write Tailwind CSS classes and automatically transforms them to inline styles at build time.
+Existing Svelte email solutions have significant limitations:
 
-## Installation
+- **svelte-email** hasn't been updated in over 2 years
+- **svelte-email-tailwind** suffers from stability issues and maintaining it is not sustainable anymore
+
+Better Svelte Email is a complete rewrite built on Svelte's official preprocessor API, providing the rock-solid foundation your email infrastructure needs. It brings the simplicity, reliability, and feature richness of [React Email](https://react.email/) to the Svelte ecosystem.
+
+## Quick Start
+
+### 1. Install the package
 
 ```bash
 npm install better-svelte-email
@@ -29,9 +50,7 @@ bun add better-svelte-email
 pnpm add better-svelte-email
 ```
 
-## Quick Start
-
-### 1. Configure the Preprocessor
+### 2. Configure the Preprocessor
 
 Add the preprocessor to your `svelte.config.js`:
 
@@ -41,13 +60,7 @@ import { betterSvelteEmailPreprocessor } from 'better-svelte-email';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: [
-		vitePreprocess(),
-		betterSvelteEmailPreprocessor({
-			pathToEmailFolder: '/src/lib/emails',
-			debug: false
-		})
-	],
+	preprocess: [vitePreprocess(), betterSvelteEmailPreprocessor()],
 	kit: {
 		adapter: adapter()
 	}
@@ -56,13 +69,15 @@ const config = {
 export default config;
 ```
 
-### 2. Create Email Components
+### 3. Create Email Components
 
 Create your email templates in `src/lib/emails/`:
 
 ```svelte
 <!-- src/lib/emails/welcome.svelte -->
 <script>
+	import { Html, Head, Body, Container, Text, Button } from 'better-svelte-email';
+
 	let { name = 'User' } = $props();
 </script>
 
@@ -85,7 +100,7 @@ Create your email templates in `src/lib/emails/`:
 </Html>
 ```
 
-### 3. Render and Send
+### 4. Render and Send
 
 ```typescript
 // src/routes/api/send-email/+server.ts
@@ -110,89 +125,90 @@ export async function POST({ request }) {
 }
 ```
 
-## How It Works
+## Email Preview Component
 
-The preprocessor transforms your Tailwind classes in three steps:
+Better Svelte Email includes a built-in preview component for visually developing and testing your email templates during development.
 
-### 1. Non-Responsive Classes → Inline Styles
+### Setup
+
+Create a preview route in your SvelteKit app:
 
 ```svelte
-<!-- Input -->
-<Button class="bg-blue-500 p-4 text-white">Click</Button>
+<!-- src/routes/preview/+page.svelte -->
+<script lang="ts">
+	import { EmailPreview } from 'better-svelte-email/preview';
 
-<!-- Output -->
-<Button
-	styleString="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); padding: 16px;"
->
-	Click
-</Button>
+	let { data } = $props();
+</script>
+
+<EmailPreview emailList={data.emails} />
 ```
 
-### 2. Responsive Classes → Media Queries
+```typescript
+// src/routes/preview/+page.server.ts
+import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
+import { env } from '$env/dynamic/private';
 
-```svelte
-<!-- Input -->
-<Button class="bg-blue-500 sm:bg-red-500">Click</Button>
+export function load() {
+	const emails = emailList({
+		path: '/src/lib/emails' // optional, defaults to '/src/lib/emails'
+	});
 
-<!-- Output -->
-<Button class="sm_bg-red-500" styleString="background-color: rgb(59, 130, 246);">Click</Button>
+	return { emails };
+}
 
-<!-- Injected into <Head> -->
-<style>
-	@media (max-width: 475px) {
-		.sm_bg-red-500 {
-			background-color: rgb(239, 68, 68) !important;
+export const actions = {
+	...createEmail,
+	...sendEmail({ resendApiKey: env.RESEND_API_KEY })
+};
+```
+
+### Features
+
+- **HTML Source View** - Inspect the generated HTML with syntax highlighting
+- **Copy to Clipboard** - Quickly copy the rendered HTML
+- **Test Email Sending** - Send test emails directly from the preview UI using Resend
+- **Template List** - Browse all your email templates in one place
+
+### Environment Variables
+
+To enable test email sending, add your Resend API key to your `.env` file:
+
+```env
+RESEND_API_KEY=re_your_api_key_here
+```
+
+Get your API key from [Resend](https://resend.com/).
+
+### Custom Email Provider
+
+If you prefer to use a different email provider, you can pass a custom send function:
+
+```typescript
+export const actions = {
+	...createEmail,
+	...sendEmail({
+		customSendEmailFunction: async ({ from, to, subject, html }) => {
+			// Use your preferred email service (SendGrid, Mailgun, etc.)
+			try {
+				await yourEmailService.send({ from, to, subject, html });
+				return { success: true };
+			} catch (error) {
+				return { success: false, error };
+			}
 		}
-	}
-</style>
-```
-
-### 3. Mixed Classes → Both
-
-```svelte
-<!-- Input -->
-<Button class="rounded bg-blue-500 p-4 sm:bg-red-500 md:p-6">Click</Button>
-
-<!-- Output -->
-<Button
-	class="sm_bg-red-500 md_p-6"
-	styleString="border-radius: 4px; background-color: rgb(59, 130, 246); padding: 16px;"
->
-	Click
-</Button>
+	})
+};
 ```
 
 ## Configuration
 
-### Options
-
-```typescript
-interface PreprocessorOptions {
-	/**
-	 * Path to folder containing email components
-	 * @default '/src/lib/emails'
-	 */
-	pathToEmailFolder?: string;
-
-	/**
-	 * Custom Tailwind configuration
-	 * @default undefined
-	 */
-	tailwindConfig?: TailwindConfig;
-
-	/**
-	 * Enable debug logging
-	 * @default false
-	 */
-	debug?: boolean;
-}
-```
-
-### Custom Tailwind Config
+Here are the available options:
 
 ```javascript
 betterSvelteEmailPreprocessor({
 	pathToEmailFolder: '/src/lib/emails',
+	debug: false,
 	tailwindConfig: {
 		theme: {
 			extend: {
@@ -210,6 +226,7 @@ betterSvelteEmailPreprocessor({
 ### ✅ Supported
 
 - ✅ Static Tailwind classes
+- ✅ Custom Tailwind classes (`bg-[#fff]`, `my:[40px]`, ...)
 - ✅ All standard Tailwind utilities (colors, spacing, typography, etc.)
 - ✅ Responsive breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
 - ✅ HTML elements and Svelte components
@@ -224,127 +241,16 @@ betterSvelteEmailPreprocessor({
 - ❌ Arbitrary values in responsive classes (`sm:[color:red]`)
 - ❌ Container queries
 
-## API Reference
-
-### Main Export
-
-```typescript
-import { betterSvelteEmailPreprocessor } from 'better-svelte-email';
-```
-
-### Advanced Exports
-
-For advanced use cases, you can use individual functions:
-
-```typescript
-import {
-	parseClassAttributes,
-	transformTailwindClasses,
-	generateMediaQueries,
-	injectMediaQueries
-} from 'better-svelte-email';
-```
-
-## Testing
-
-The library includes comprehensive tests:
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with UI
-npm run test:ui
-
-# Run tests with coverage
-npm run test:coverage
-```
-
-## Examples
-
-### Simple Button
-
-```svelte
-<Button class="rounded bg-blue-500 px-4 py-2 text-white">Click Me</Button>
-```
-
-### Responsive Layout
-
-```svelte
-<Container class="mx-auto w-full max-w-2xl p-4 sm:p-6 md:p-8">
-	<Text class="text-lg sm:text-xl md:text-2xl">Responsive Text</Text>
-</Container>
-```
-
-### Complex Email
-
-```svelte
-<Html>
-	<Head />
-	<Body class="bg-gray-100 font-sans">
-		<Container class="mx-auto my-8 max-w-2xl rounded-lg bg-white shadow-lg">
-			<Section class="p-8">
-				<Text class="mb-4 text-3xl font-bold text-gray-900">Welcome to Our Service</Text>
-
-				<Text class="mb-6 text-gray-600">
-					Thank you for signing up. We're excited to have you on board!
-				</Text>
-
-				<Button
-					href="https://example.com/verify"
-					class="rounded-lg bg-blue-600 px-8 py-4 font-semibold text-white sm:bg-green-600"
-				>
-					Verify Your Email
-				</Button>
-			</Section>
-		</Container>
-	</Body>
-</Html>
-```
-
-## Troubleshooting
-
-### Classes not being transformed
-
-1. Make sure your file is in the configured `pathToEmailFolder`
-2. Check that your classes are static strings, not dynamic expressions
-3. Enable debug mode to see warnings: `{ debug: true }`
-
-### Media queries not working
-
-1. Ensure you have a `<Head />` component in your email
-2. Check that you're using standard breakpoints (`sm:`, `md:`, etc.)
-3. Verify the media queries are being injected (view the rendered HTML)
-
-### Type errors
-
-Make sure you have the latest version of Svelte (requires 5.14.3 or higher):
-
-```bash
-npm install svelte@latest
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-MIT
-
 ## Author
 
-Konixy
+Anatole Dufour ([@Konixy](https://github.com/Konixy))
 
 ## Development
 
 ### Running Tests
 
 ```bash
-bun test
+bun run test
 ```
 
 All tests must pass before pushing to main. The CI/CD pipeline will automatically run tests on every push and pull request.
@@ -357,36 +263,23 @@ bun run build
 
 ### Contributing
 
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+To do so, you'll need to:
+
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feat/amazing-feature`)
 3. Make your changes
-4. Run tests (`bun test`)
+4. Run tests (`bun run test`)
 5. Commit your changes using [conventional commits](https://www.conventionalcommits.org/):
    - `feat:` - New features
    - `fix:` - Bug fixes
    - `docs:` - Documentation changes
    - `test:` - Test additions/changes
    - `chore:` - Maintenance tasks
-6. Push to your branch (`git push origin feature/amazing-feature`)
+6. Push to your branch (`git push origin feat/amazing-feature`)
 7. Open a Pull Request
 
-### Releases
+## Acknowledgements
 
-Releases are automated via GitHub Actions. When you bump the version in `package.json` and push to `main`, a new release will be automatically created with a generated changelog.
-
-See [RELEASE.md](./RELEASE.md) for detailed release process documentation.
-
-## Acknowledgments
-
-- Built on top of [Svelte 5](https://svelte.dev/)
-- Uses [tw-to-css](https://github.com/dvkndn/tw-to-css) for Tailwind to CSS conversion
-- Uses [magic-string](https://github.com/rich-harris/magic-string) for efficient source transformations
-
-## Related Projects
-
-- [react-email](https://react.email/) - React version for email templates
-- [svelte-email](https://github.com/carstenlebek/svelte-email) - Original Svelte email library
-
-## Support
-
-If you find this project useful, please consider giving it a ⭐️ on GitHub!
+Many components and logic were inspired by or adapted from [svelte-email-tailwind](https://github.com/steveninety/svelte-email-tailwind) and [react-email](https://react.email/). Huge thanks to the authors and contributors of these projects for their excellent work.

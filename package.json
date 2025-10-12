@@ -62,7 +62,7 @@
 		},
 		"./package.json": "./package.json"
 	},
-	"description": "Svelte email renderer with Tailwind CSS classes support",
+	"description": "Svelte email renderer with Tailwind support",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",

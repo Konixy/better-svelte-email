@@ -23,4 +23,10 @@ export {
 export { injectMediaQueries } from './preprocessor/head-injector.js';
 
 // Export utilities
-export { styleToString, pxToPt } from './utils/index.js';
+export {
+	styleToString,
+	pxToPt,
+	combineStyles,
+	withMargin,
+	renderAsPlainText
+} from './utils/index.js';

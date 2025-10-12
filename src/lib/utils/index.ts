@@ -1,3 +1,5 @@
+import { convert } from 'html-to-text';
+
 /**
  * Convert a style object to a CSS string
  * @param style - Object containing CSS properties
@@ -70,3 +72,17 @@ function withSpace(value: string | undefined, properties: string[]) {
 export function combineStyles(...styles: (string | undefined | null)[]) {
 	return styles.filter((style) => style !== '' && style !== undefined && style !== null).join(';');
 }
+
+/**
+ * Render HTML as plain text
+ * @param markup - HTML string
+ * @returns Plain text string
+ */
+export const renderAsPlainText = (markup: string) => {
+	return convert(markup, {
+		selectors: [
+			{ selector: 'img', format: 'skip' },
+			{ selector: '#__better-svelte-email-preview', format: 'skip' }
+		]
+	});
+};

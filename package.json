@@ -7,12 +7,23 @@
 		"url": "git+https://github.com/Konixy/better-svelte-email.git"
 	},
 	"peerDependencies": {
-		"svelte": "^5.14.3"
+		"svelte": "^5.14.3",
+		"@sveltejs/kit": "^2.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@sveltejs/kit": {
+			"optional": true
+		}
 	},
 	"dependencies": {
+		"html-to-text": "^9.0.5",
 		"magic-string": "^0.30.19",
 		"svelte-highlight": "^7.8.4",
 		"tw-to-css": "^0.0.12"
+	},
+	"optionalDependencies": {
+		"prettier": "^3.6.2",
+		"resend": "^6.1.2"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
@@ -23,6 +34,7 @@
 		"@sveltejs/package": "^2.5.4",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.14",
+		"@types/html-to-text": "^9.0.4",
 		"@types/node": "^24",
 		"@vitest/browser": "^3.2.4",
 		"eslint": "^9.37.0",
@@ -30,11 +42,9 @@
 		"eslint-plugin-svelte": "^3.12.4",
 		"globals": "^16.4.0",
 		"playwright": "^1.55.1",
-		"prettier": "^3.6.2",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.6.14",
 		"publint": "^0.3.13",
-		"resend": "^6.1.2",
 		"svelte": "^5.39.8",
 		"svelte-check": "^4.3.2",
 		"tailwindcss": "^4.1.14",
@@ -59,6 +69,20 @@
 		"./components/*": {
 			"types": "./dist/components/*.svelte.d.ts",
 			"svelte": "./dist/components/*.svelte"
+		},
+		"./preview": {
+			"types": "./dist/preview/index.d.ts",
+			"import": "./dist/preview/index.js",
+			"default": "./dist/preview/index.js"
+		},
+		"./preview/EmailPreview.svelte": {
+			"types": "./dist/preview/EmailPreview.svelte.d.ts",
+			"svelte": "./dist/preview/EmailPreview.svelte"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js",
+			"default": "./dist/utils/index.js"
 		},
 		"./package.json": "./package.json"
 	},

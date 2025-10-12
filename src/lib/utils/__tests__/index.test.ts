@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { combineStyles, styleToString, pxToPt, withMargin } from '../index.js';
+import { combineStyles, styleToString, pxToPt, withMargin, renderAsPlainText } from '../index.js';
 
 describe('Utils', () => {
 	describe('combineStyles', () => {
@@ -313,6 +313,145 @@ describe('Utils', () => {
 			expect(result).toEqual({
 				marginRight: '10px'
 			});
+		});
+	});
+
+	describe('renderAsPlainText', () => {
+		it('should convert basic HTML to plain text', () => {
+			const html = '<p>Hello World</p>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toBe('Hello World');
+		});
+
+		it('should handle multiple paragraphs', () => {
+			const html = '<p>First paragraph</p><p>Second paragraph</p>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('First paragraph');
+			expect(result).toContain('Second paragraph');
+		});
+
+		it('should skip image tags', () => {
+			const html = '<p>Before image</p><img src="test.jpg" alt="Test Image" /><p>After image</p>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('Before image');
+			expect(result).toContain('After image');
+			expect(result).not.toContain('Test Image');
+			expect(result).not.toContain('test.jpg');
+		});
+
+		it('should skip preview element', () => {
+			const html =
+				'<div id="__better-svelte-email-preview">This is preview text</div><p>Main content</p>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).not.toContain('This is preview text');
+			expect(result).toContain('Main content');
+		});
+
+		it('should convert links to text with URL', () => {
+			const html = '<a href="https://example.com">Click here</a>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('Click here');
+			expect(result).toContain('https://example.com');
+		});
+
+		it('should handle headings', () => {
+			const html = '<h1>Main Title</h1><h2>Subtitle</h2><p>Content</p>';
+
+			const result = renderAsPlainText(html);
+
+			// html-to-text converts headings to uppercase
+			expect(result).toContain('MAIN TITLE');
+			expect(result).toContain('SUBTITLE');
+			expect(result).toContain('Content');
+		});
+
+		it('should handle empty string', () => {
+			const result = renderAsPlainText('');
+
+			expect(result).toBe('');
+		});
+
+		it('should handle plain text without HTML tags', () => {
+			const text = 'Just plain text';
+
+			const result = renderAsPlainText(text);
+
+			expect(result).toBe('Just plain text');
+		});
+
+		it('should handle nested HTML elements', () => {
+			const html = '<div><p>Outer <strong>bold</strong> text</p></div>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('Outer');
+			expect(result).toContain('bold');
+			expect(result).toContain('text');
+		});
+
+		it('should handle lists', () => {
+			const html = '<ul><li>First item</li><li>Second item</li><li>Third item</li></ul>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('First item');
+			expect(result).toContain('Second item');
+			expect(result).toContain('Third item');
+		});
+
+		it('should handle complex email structure', () => {
+			const html = `
+				<html>
+					<body>
+						<div id="__better-svelte-email-preview">Preview text</div>
+						<h1>Welcome!</h1>
+						<p>Thank you for signing up.</p>
+						<img src="logo.png" alt="Company Logo" />
+						<a href="https://example.com/verify">Verify your email</a>
+					</body>
+				</html>
+			`;
+
+			const result = renderAsPlainText(html);
+
+			expect(result).not.toContain('Preview text');
+			// html-to-text converts headings to uppercase
+			expect(result).toContain('WELCOME!');
+			expect(result).toContain('Thank you for signing up.');
+			expect(result).not.toContain('Company Logo');
+			expect(result).toContain('Verify your email');
+			expect(result).toContain('https://example.com/verify');
+		});
+
+		it('should handle HTML entities', () => {
+			const html = '<p>Hello &amp; welcome &lt;user&gt;</p>';
+
+			const result = renderAsPlainText(html);
+
+			expect(result).toContain('&');
+			expect(result).toContain('<');
+			expect(result).toContain('>');
+		});
+
+		it('should preserve line breaks appropriately', () => {
+			const html = '<p>Line 1</p><p>Line 2</p>';
+
+			const result = renderAsPlainText(html);
+
+			// Should have some separation between paragraphs
+			expect(result).toContain('Line 1');
+			expect(result).toContain('Line 2');
+			expect(result.indexOf('Line 1')).toBeLessThan(result.indexOf('Line 2'));
 		});
 	});
 });

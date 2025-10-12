@@ -1,8 +1,6 @@
-import { emailList, createEmail } from '$lib/preview/index.js';
+import { emailList, createEmail, sendEmail } from '$lib/preview/index.js';
+import { RESEND_API_KEY } from '$env/static/private';
 
-/**
- * Load all email templates from the emails directory
- */
 export function load() {
 	const emails = emailList({
 		root: process.cwd(),
@@ -12,7 +10,7 @@ export function load() {
 	return { emails };
 }
 
-/**
- * Form actions for previewing emails
- */
-export const actions = createEmail;
+export const actions = {
+	...createEmail,
+	...sendEmail({ resendApiKey: RESEND_API_KEY })
+};

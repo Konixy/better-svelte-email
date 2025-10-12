@@ -118,7 +118,14 @@ export const createEmail = {
 
 			// Remove all HTML comments from the body before formatting
 			const bodyWithoutComments = body.replace(/<!--[\s\S]*?-->/g, '');
-			return prettier.format(bodyWithoutComments, { parser: 'html', plugins: [parserHtml] });
+			const formattedBody = await prettier.format(bodyWithoutComments, {
+				parser: 'html',
+				plugins: [parserHtml]
+			});
+
+			return {
+				body: formattedBody
+			};
 		} catch (error) {
 			console.error('Error rendering email:', error);
 			return {
@@ -154,6 +161,20 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
 
 /**
  * Sends the email using the submitted form data.
+ *
+ * @param options.resendApiKey - Your Resend API key (keep this server-side only)
+ * @param options.customSendEmailFunction - Optional custom function to send emails
+ *
+ * @example
+ * ```ts
+ * // In +page.server.ts
+ * import { PRIVATE_RESEND_API_KEY } from '$env/static/private';
+ *
+ * export const actions = {
+ *   ...createEmail,
+ *   ...sendEmail({ resendApiKey: PRIVATE_RESEND_API_KEY })
+ * };
+ * ```
  */
 export const sendEmail = ({
 	customSendEmailFunction,
@@ -161,7 +182,7 @@ export const sendEmail = ({
 }: {
 	customSendEmailFunction?: typeof SendEmailFunction;
 	resendApiKey?: string;
-}) => {
+} = {}) => {
 	return {
 		'send-email': async (event: RequestEvent): Promise<{ success: boolean; error: any }> => {
 			const data = await event.request.formData();
@@ -178,11 +199,11 @@ export const sendEmail = ({
 			if (!customSendEmailFunction && resendApiKey) {
 				sent = await defaultSendEmailFunction(email, resendApiKey);
 			} else if (customSendEmailFunction) {
-				sent = await customSendEmailFunction(email);
+				sent = await customSendEmailFunction(email, resendApiKey);
 			} else if (!customSendEmailFunction && !resendApiKey) {
 				const error = {
 					message:
-						'Please pass your Resend API key into the "sendEmail" form action, or provide a custom function.'
+						'Resend API key not configured. Please pass your API key to the sendEmail() function in your +page.server.ts file.'
 				};
 				return { success: false, error };
 			}

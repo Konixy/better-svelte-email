@@ -2,6 +2,8 @@
 	import { HighlightAuto } from 'svelte-highlight';
 	import oneDark from 'svelte-highlight/styles/onedark';
 	import type { PreviewData } from './index.js';
+	import type { ActionResult } from '@sveltejs/kit';
+	import { applyAction, deserialize } from '$app/forms';
 
 	let { emailList }: { emailList: PreviewData } = $props();
 
@@ -10,6 +12,11 @@
 	let iframeContent = $state<string>('');
 	let loading = $state(false);
 	let error = $state<string | null>(null);
+	let showSendModal = $state(false);
+	let sendLoading = $state(false);
+	let sendSuccess = $state(false);
+	let sendError = $state<string | null>(null);
+	let recipientEmail = $state('');
 
 	const FONT_SANS_STYLE = `<style>
 		body {
@@ -72,27 +79,13 @@
 				})
 			});
 
-			const result = await response.json();
+			const result: ActionResult<{ body: string }> = deserialize(await response.text());
 
-			if (result.type === 'success' && result.data) {
-				let htmlOutput = '';
-				try {
-					const parsed = JSON.parse(result.data);
-					if (Array.isArray(parsed) && typeof parsed[0] === 'string') {
-						htmlOutput = parsed[0];
-					} else if (typeof parsed === 'string') {
-						htmlOutput = parsed;
-					}
-				} catch (parseError) {
-					htmlOutput = typeof result.data === 'string' ? result.data : '';
-				}
+			console.log('result', result);
 
-				if (!htmlOutput) {
-					throw new Error('Failed to parse rendered HTML response');
-				}
-
-				renderedHtml = htmlOutput;
-				iframeContent = withFontSans(htmlOutput);
+			if (result.type === 'success' && result.data?.body) {
+				renderedHtml = result.data.body;
+				iframeContent = withFontSans(result.data.body);
 			} else if (result.type === 'error') {
 				error = result.error?.message || 'Failed to render email';
 			}
@@ -106,6 +99,60 @@
 	function copyHtml() {
 		if (renderedHtml) {
 			navigator.clipboard.writeText(renderedHtml);
+		}
+	}
+
+	function openSendModal() {
+		showSendModal = true;
+		sendError = null;
+		sendSuccess = false;
+	}
+
+	function closeSendModal() {
+		showSendModal = false;
+		recipientEmail = '';
+		sendError = null;
+		sendSuccess = false;
+	}
+
+	async function sendTestEmail() {
+		if (!recipientEmail) {
+			sendError = 'Please provide an email address';
+			return;
+		}
+
+		sendLoading = true;
+		sendError = null;
+		sendSuccess = false;
+
+		try {
+			const response = await fetch('?/send-email', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					to: recipientEmail,
+					component: selectedEmail || 'Email Template',
+					html: renderedHtml
+				})
+			});
+
+			const result: ActionResult = deserialize(await response.text());
+
+			if (result.type === 'success' && result.data?.success) {
+				sendSuccess = true;
+				setTimeout(() => {
+					closeSendModal();
+				}, 2000);
+			} else if (result.type === 'error' || result.type === 'failure') {
+				sendError =
+					result.type === 'error'
+						? result.error?.message
+						: result.data?.error?.message || 'Failed to send email';
+			}
+		} catch (e) {
+			sendError = e instanceof Error ? e.message : 'Failed to send email';
+		} finally {
+			sendLoading = false;
 		}
 	}
 </script>
@@ -206,6 +253,13 @@
 					>
 						<span class="text-base">📋</span> Copy HTML
 					</button>
+					<button
+						class="flex cursor-pointer items-center gap-1.5 rounded-md border-0 bg-blue-500 px-3.5 py-2 text-sm font-medium text-white transition-all duration-150 hover:bg-blue-600"
+						onclick={openSendModal}
+						title="Send Test Email"
+					>
+						<span class="text-base">📨</span> Send Test
+					</button>
 				</div>
 			</div>
 
@@ -229,3 +283,71 @@
 		{/if}
 	</div>
 </div>
+
+{#if showSendModal}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+		onclick={closeSendModal}
+	>
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="modal-title"
+			tabindex="-1"
+			onclick={(e) => e.stopPropagation()}
+		>
+			<h3 id="modal-title" class="mb-4 text-xl font-semibold text-gray-900">Send Test Email</h3>
+
+			{#if sendSuccess}
+				<div class="mb-4 rounded-md bg-green-50 p-4 text-center">
+					<div class="mb-2 text-3xl">✅</div>
+					<p class="font-medium text-green-800">Email sent successfully!</p>
+				</div>
+			{:else}
+				<div class="mb-4">
+					<label for="recipient-email" class="mb-1 block text-sm font-medium text-gray-700">
+						Recipient Email
+					</label>
+					<input
+						id="recipient-email"
+						type="email"
+						bind:value={recipientEmail}
+						placeholder="your@email.com"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+					<p class="mt-1 text-xs text-gray-500">
+						The email will be sent using the Resend API key configured on the server.
+					</p>
+				</div>
+
+				{#if sendError}
+					<div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+						{sendError}
+					</div>
+				{/if}
+
+				<div class="flex justify-end gap-2">
+					<button
+						class="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50"
+						onclick={closeSendModal}
+						disabled={sendLoading}
+					>
+						Cancel
+					</button>
+					<button
+						class="cursor-pointer rounded-md border-0 bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+						onclick={sendTestEmail}
+						disabled={sendLoading}
+					>
+						{sendLoading ? 'Sending...' : 'Send Email'}
+					</button>
+				</div>
+			{/if}
+		</div>
+	</div>
+{/if}

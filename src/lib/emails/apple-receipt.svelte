@@ -14,7 +14,8 @@
 		Text
 	} from '$lib/components/index.js';
 
-	const baseUrl = '/';
+	const baseUrl =
+		process.env.VERCEL === '1' ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/` : '/';
 </script>
 
 <Html>

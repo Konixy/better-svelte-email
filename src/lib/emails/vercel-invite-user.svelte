@@ -40,6 +40,9 @@
 		inviteFromLocation = 'São Paulo, Brazil'
 	}: Props = $props();
 
+	const baseUrl =
+		process.env.VERCEL === '1' ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/` : '/';
+
 	const previewText = `Join ${invitedByUsername} on Vercel`;
 </script>
 
@@ -51,7 +54,13 @@
 			class="mx-auto my-[40px] max-w-[465px] rounded border border-solid border-[#eaeaea] p-[20px]"
 		>
 			<Section class="mt-[32px]">
-				<Img src="/vercel-logo.png" width="40" height="37" alt="Vercel Logo" class="mx-auto my-0" />
+				<Img
+					src="{baseUrl}vercel-logo.png"
+					width="40"
+					height="37"
+					alt="Vercel Logo"
+					class="mx-auto my-0"
+				/>
 			</Section>
 			<Heading as="h1" class="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
 				Join <strong>{teamName}</strong> on <strong>Vercel</strong>
@@ -73,19 +82,24 @@
 					<Column align="right">
 						<Img
 							class="rounded-full"
-							src={userImage}
+							src="{baseUrl}{userImage}"
 							width="64"
 							height="64"
 							alt={`${username}'s profile picture`}
 						/>
 					</Column>
 					<Column align="center">
-						<Img src="/vercel-arrow.png" width="12" height="9" alt="Arrow indicating invitation" />
+						<Img
+							src="{baseUrl}vercel-arrow.png"
+							width="12"
+							height="9"
+							alt="Arrow indicating invitation"
+						/>
 					</Column>
 					<Column align="left">
 						<Img
 							class="rounded-full"
-							src={teamImage}
+							src="{baseUrl}{teamImage}"
 							width="64"
 							height="64"
 							alt={`${teamName} team logo`}

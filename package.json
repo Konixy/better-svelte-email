@@ -18,6 +18,7 @@
 		"@eslint/compat": "^1.4.0",
 		"@eslint/js": "^9.37.0",
 		"@sveltejs/adapter-auto": "^6.1.1",
+		"@sveltejs/adapter-vercel": "^5.10.3",
 		"@sveltejs/kit": "^2.43.8",
 		"@sveltejs/package": "^2.5.4",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",

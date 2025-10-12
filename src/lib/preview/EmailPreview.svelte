@@ -319,6 +319,7 @@
 		grid-template-columns: 280px 1fr;
 		height: 100vh;
 		width: 100vw;
+		max-width: none;
 		background-color: #f9fafb;
 		font-family:
 			ui-sans-serif,
@@ -462,6 +463,8 @@
 		flex-direction: column;
 		overflow: hidden;
 		background-color: white;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.centered-state {

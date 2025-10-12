@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { styleToString, pxToPt } from '$lib/utils/index.js';
+	import { styleToString, pxToPt, combineStyles } from '$lib/utils/index.js';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let {
@@ -40,11 +40,9 @@
 		msoPaddingAlt: '0px',
 		msoTextRaise: pY ? pxToPt(pY.toString()) : undefined
 	});
-
-	const finalStyle = buttonStyle + (style ? ';' + style : '');
 </script>
 
-<a {...restProps} {href} {target} style={finalStyle}>
+<a {...restProps} {href} {target} style={combineStyles(buttonStyle, style)}>
 	{#if pX}
 		<span>
 			{@html `<!--[if mso]><i style="letter-spacing: ${pX}px;mso-font-width:-100%;mso-text-raise:${textRaise}" hidden>&nbsp;</i><![endif]-->`}

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { styleToString } from '$lib/utils/index.js';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import { combineStyles, styleToString } from '$lib/utils/index.js';
+	import type { HTMLTableAttributes } from 'svelte/elements';
 
 	let {
 		children,
@@ -8,11 +8,10 @@
 		...restProps
 	}: {
 		children: any;
-	} & HTMLAttributes<HTMLTableElement> = $props();
+	} & HTMLTableAttributes = $props();
 
 	// Default max-width for email containers (600px = 37.5em)
-	const baseStyle = styleToString({ maxWidth: '37.5em' });
-	const finalStyle = baseStyle + (style ? ';' + style : '');
+	const defaultStyles = styleToString({ maxWidth: '37.5em' });
 </script>
 
 <table
@@ -22,8 +21,8 @@
 	cellspacing="0"
 	cellpadding="0"
 	border="0"
+	style={combineStyles(defaultStyles, style)}
 	{...restProps}
-	style={finalStyle}
 >
 	<tbody>
 		<tr style="width: 100%;">

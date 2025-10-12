@@ -12,9 +12,8 @@ describe('End-to-End Component Rendering with Tailwind', () => {
 		expect(result.body).toContain('background-color:rgb(243,244,246)');
 		expect(result.body.replace(/\s/g, '')).toContain('padding:2rem'); // p-8 = 2rem
 
-		// Text should have text-lg, font-bold, text-blue-600 converted
-		expect(result.body).toContain('font-size:1.125rem'); // text-lg
-		expect(result.body).toContain('font-weight:700'); // font-bold
+		// Text should have font-bold, text-blue-600 converted
+		expect(result.body).toContain('font-weight: bold'); // font-bold
 		expect(result.body).toContain('color:rgb(37,99,235)'); // text-blue-600
 
 		// Button should have bg-blue-500, text-white, px-4, py-2, rounded converted

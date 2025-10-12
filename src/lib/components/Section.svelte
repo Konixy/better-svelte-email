@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLTableAttributes } from 'svelte/elements';
 
 	let {
 		children,
-		style,
 		...restProps
 	}: {
 		children: any;
-	} & HTMLAttributes<HTMLTableElement> = $props();
+	} & HTMLTableAttributes = $props();
 </script>
 
 <table
@@ -18,7 +17,6 @@
 	cellpadding="0"
 	role="presentation"
 	{...restProps}
-	{style}
 >
 	<tbody>
 		<tr>

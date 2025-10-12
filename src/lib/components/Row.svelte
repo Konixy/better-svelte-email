@@ -1,19 +1,15 @@
 <script lang="ts">
-	import { styleToString } from '$lib/utils/index.js';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLTableAttributes } from 'svelte/elements';
 
 	let {
-		style,
 		children,
 		...restProps
 	}: {
-		style?: string;
 		children: any;
-	} & HTMLAttributes<HTMLTableElement> = $props();
+	} & HTMLTableAttributes = $props();
 </script>
 
 <table
-	{style}
 	align="center"
 	width="100%"
 	border={0}

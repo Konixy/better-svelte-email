@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { styleToString } from '$lib/utils/index.js';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import { combineStyles, styleToString } from '$lib/utils/index.js';
+	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
 	let {
 		children,
@@ -12,15 +12,11 @@
 		href: string;
 		target?: string;
 		children: any;
-	} & HTMLAttributes<HTMLAnchorElement> = $props();
+	} & HTMLAnchorAttributes = $props();
+
+	const defaultStyles = styleToString({ textDecorationLine: 'none', color: '#067df7' });
 </script>
 
-<a
-	{href}
-	{target}
-	{...restProps}
-	style={styleToString({ textDecorationLine: 'none', color: '#067df7' }) +
-		(style ? ';' + style : '')}
->
+<a {href} {target} {...restProps} style={combineStyles(defaultStyles, style)}>
 	{@render children?.()}
 </a>

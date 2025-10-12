@@ -1,11 +1,12 @@
 <script lang="ts">
-	interface Props {
+	import type { HTMLHtmlAttributes } from 'svelte/elements';
+
+	type Props = HTMLHtmlAttributes & {
 		lang?: string;
 		dir?: 'ltr' | 'rtl' | 'auto' | null | undefined;
 		style?: string;
 		children?: any;
-		[key: string]: any;
-	}
+	};
 
 	let { lang = 'en', dir = 'ltr', children, ...restProps }: Props = $props();
 

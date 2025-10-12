@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Preview } from '$lib/preview/index.js';
+	import { EmailPreview } from '$lib/preview/index.js';
 	import type { PreviewData } from '$lib/preview/index.js';
 
 	let { data }: { data: { emails: PreviewData } } = $props();
@@ -9,4 +9,4 @@
 	<title>Email Preview | better-svelte-email</title>
 </svelte:head>
 
-<Preview emailList={data.emails} />
+<EmailPreview emailList={data.emails} />

@@ -258,4 +258,6 @@ function createEmailComponentList(root: string, paths: string[]) {
 }
 
 // Export the Preview component
-export { default as Preview } from './Preview.svelte';
+// Note: The component is available via: import EmailPreview from 'better-svelte-email/preview/EmailPreview.svelte'
+// or: import { EmailPreview } from 'better-svelte-email/preview'
+export { default as EmailPreview } from './EmailPreview.svelte';

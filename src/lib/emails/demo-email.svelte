@@ -24,7 +24,7 @@
 
 				<Container class="mb-6 rounded-lg bg-blue-50 p-4">
 					<Text class="mb-2 font-semibold text-blue-900">✨ Features Demonstrated:</Text>
-					<ul class="list-disc space-y-1 pl-5 text-blue-800">
+					<ul class="flex list-disc flex-col gap-1 pl-5 text-blue-800">
 						<li>Tailwind classes converted to inline styles</li>
 						<li>Responsive design with media queries</li>
 						<li>Email-safe CSS transformations</li>

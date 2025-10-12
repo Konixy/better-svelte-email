@@ -16,8 +16,8 @@ describe('End-to-End Component Rendering with Tailwind', () => {
 		expect(result.body).toContain('font-weight: bold'); // font-bold
 		expect(result.body).toContain('color:rgb(37,99,235)'); // text-blue-600
 
-		// Button should have bg-blue-500, text-white, px-4, py-2, rounded converted
-		expect(result.body).toContain('background-color:rgb(59,130,246)');
+		// Button should have bg-brand (from custom tailwind config), text-white, px-4, py-2, rounded converted
+		expect(result.body).toContain('background-color:rgb(255,62,0)');
 		expect(result.body).toContain('color:rgb(255,255,255)');
 		expect(result.body).toContain('padding-left:1rem'); // px-4 = 1rem
 		expect(result.body).toContain('padding-right:1rem');
@@ -34,7 +34,7 @@ describe('End-to-End Component Rendering with Tailwind', () => {
 		// Original Tailwind classes should be removed/converted
 		expect(result.body).not.toContain('class="bg-gray-100');
 		expect(result.body).not.toContain('class="text-lg');
-		expect(result.body).not.toContain('class="bg-blue-500');
+		expect(result.body).not.toContain('class="bg-brand');
 	});
 
 	it('should have inline styles in the rendered HTML', () => {
@@ -49,7 +49,7 @@ describe('End-to-End Component Rendering with Tailwind', () => {
 		// Verify styles are actually applied (not just attributes present)
 		const hasInlineBackgroundColor = result.body.includes('background-color:rgb(243,244,246)');
 		const hasInlineTextColor = result.body.includes('color:rgb(37,99,235)');
-		const hasInlineButtonColor = result.body.includes('background-color:rgb(59,130,246)');
+		const hasInlineButtonColor = result.body.includes('background-color:rgb(255,62,0)');
 
 		expect(hasInlineBackgroundColor).toBe(true);
 		expect(hasInlineTextColor).toBe(true);

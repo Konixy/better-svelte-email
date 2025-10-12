@@ -8,7 +8,16 @@ let emailPreprocessor = null;
 if (existsSync('./dist/preprocessor/index.js')) {
 	const { betterSvelteEmailPreprocessor } = await import('./dist/preprocessor/index.js');
 	emailPreprocessor = betterSvelteEmailPreprocessor({
-		pathToEmailFolder: '/src/lib/emails'
+		pathToEmailFolder: '/src/lib/emails',
+		tailwindConfig: {
+			theme: {
+				extend: {
+					colors: {
+						brand: '#FF3E00'
+					}
+				}
+			}
+		}
 	});
 }
 

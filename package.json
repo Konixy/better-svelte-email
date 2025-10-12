@@ -83,7 +83,7 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
+		"build": "bun run prepack && vite build",
 		"preview": "vite preview",
 		"package": "svelte-package",
 		"prepare": "svelte-kit sync || echo ''",

@@ -172,11 +172,11 @@ jobs:
               echo "$OTHER" >> $CHANGELOG_FILE
             fi
             
-            if [ ! -z "$CHORES" ]; then
-              echo "### 🔧 Maintenance" >> $CHANGELOG_FILE
-              echo "" >> $CHANGELOG_FILE
-              echo "$CHORES" >> $CHANGELOG_FILE
-            fi
+            # if [ ! -z "$CHORES" ]; then
+            #   echo "### 🔧 Maintenance" >> $CHANGELOG_FILE
+            #   echo "" >> $CHANGELOG_FILE
+            #   echo "$CHORES" >> $CHANGELOG_FILE
+            # fi
           fi
 
           echo "" >> $CHANGELOG_FILE

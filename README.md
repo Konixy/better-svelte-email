@@ -1,7 +1,7 @@
 <p align="center">
   <h3 align="center">Better Svelte Email</h3>
 	<p align="center">
-		Easily create and send emails with Svelte and Tailwind CSS
+		Create beautiful emails in Svelte with first-class Tailwind support
 	</p>
 	<p align="center">
 		<a href="https://better-svelte-email.vercel.app">Website</a>

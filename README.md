@@ -4,7 +4,7 @@
 		Create beautiful emails in Svelte with first-class Tailwind support
 	</p>
 	<p align="center">
-		<a href="https://better-svelte-email.vercel.app">Website</a>
+		<a href="https://better-svelte-email.konixy.fr">Website</a>
 		 · 
 		<a href="https://github.com/Konixy/better-svelte-email">GitHub</a>
 	</p>
@@ -43,11 +43,11 @@ Better Svelte Email is a complete rewrite built on Svelte's official preprocesso
 ### 1. Install the package
 
 ```bash
-npm install better-svelte-email
+npm i -D better-svelte-email
 # or
-bun add better-svelte-email
+bun add -D better-svelte-email
 # or
-pnpm add better-svelte-email
+pnpm add -D better-svelte-email
 ```
 
 ### 2. Configure the Preprocessor
@@ -220,6 +220,11 @@ betterSvelteEmailPreprocessor({
 	}
 });
 ```
+
+## Minimum Svelte Version
+
+The minimum supported Svelte version is 5.14.3.
+For older versions, you can use [`svelte-email-tailwind`](https://github.com/steveninety/svelte-email-tailwind).
 
 ## Supported Features
 

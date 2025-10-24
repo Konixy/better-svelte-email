@@ -74,6 +74,17 @@ export const emailList = ({
 	return { files, path: emailPath };
 };
 
+const getEmailComponent = async (emailPath: string, file: string) => {
+	try {
+		// Import the email component dynamically
+		return (await import(/* @vite-ignore */ `${emailPath}/${file}.svelte`)).default;
+	} catch {
+		throw new Error(
+			`Failed to import email component '${file}'. Make sure the file exists and includes the <Head /> component.`
+		);
+	}
+};
+
 /**
  * SvelteKit form action to render an email component.
  * Use this with the Preview component to render email templates on demand.
@@ -100,18 +111,7 @@ export const createEmail = {
 				};
 			}
 
-			const getEmailComponent = async () => {
-				try {
-					// Import the email component dynamically
-					return (await import(/* @vite-ignore */ `${emailPath}/${file}.svelte`)).default;
-				} catch {
-					throw new Error(
-						`Failed to import email component '${file}'. Make sure the file exists and includes the <Head /> component.`
-					);
-				}
-			};
-
-			const emailComponent = await getEmailComponent();
+			const emailComponent = await getEmailComponent(emailPath as string, file as string);
 
 			// Render the component to HTML
 			const { body } = render(emailComponent);
@@ -186,12 +186,23 @@ export const sendEmail = ({
 	return {
 		'send-email': async (event: RequestEvent): Promise<{ success: boolean; error: any }> => {
 			const data = await event.request.formData();
+			const emailPath = data.get('path');
+			const file = data.get('file');
+
+			if (!file || !emailPath) {
+				return {
+					success: false,
+					error: { message: 'Missing file or path parameter' }
+				};
+			}
+
+			const emailComponent = await getEmailComponent(emailPath as string, file as string);
 
 			const email = {
 				from: 'svelte-email-tailwind <onboarding@resend.dev>',
 				to: `${data.get('to')}`,
 				subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
-				html: `${data.get('html')}`
+				html: (await render(emailComponent)).body
 			};
 
 			let sent: { success: boolean; error?: any } = { success: false, error: null };

@@ -3,7 +3,7 @@
 	import oneDark from 'svelte-highlight/styles/onedark';
 	import type { PreviewData } from './index.js';
 	import type { ActionResult } from '@sveltejs/kit';
-	import { applyAction, deserialize } from '$app/forms';
+	import { deserialize } from '$app/forms';
 
 	let { emailList }: { emailList: PreviewData } = $props();
 
@@ -130,7 +130,8 @@
 				body: new URLSearchParams({
 					to: recipientEmail,
 					component: selectedEmail || 'Email Template',
-					html: renderedHtml
+					path: emailList.path || '/src/lib/emails',
+					file: selectedEmail as string
 				})
 			});
 

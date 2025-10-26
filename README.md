@@ -29,6 +29,8 @@
 - **TypeScript First** - Fully typed with comprehensive type definitions
 - **Well Tested** - Extensive test coverage with unit and integration tests
 
+_See [Roadmap](./ROADMAP.md) for future features and planned improvements._
+
 ## Why?
 
 Existing Svelte email solutions have significant limitations:

@@ -1,12 +1,13 @@
 <script>
 	import { Html, Head, Body, Text, Button, Container, Heading } from '../components/index.js';
+	import Template from './templates/title.svelte';
 </script>
 
 <Html>
 	<Head />
 	<Body>
 		<Container class="bg-gray-100" style="padding: 2rem;">
-			<Heading as="h1" m="10" style="font-weight: bold;" class="text-blue-600">Title</Heading>
+			<Template />
 			<Heading as="h2" class="font-semibold">Subtitle</Heading>
 			<Text style="font-weight: bold;">Basic text</Text>
 			<Button

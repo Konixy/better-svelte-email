@@ -2,9 +2,12 @@
 	import { onMount } from 'svelte';
 	import { codeToHtml } from 'shiki';
 	import { gsap } from 'gsap';
-	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-	gsap.registerPlugin(ScrollTrigger);
+	onMount(async () => {
+		const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+
+		gsap.registerPlugin(ScrollTrigger);
+	});
 
 	const features = [
 		{

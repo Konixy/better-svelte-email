@@ -200,7 +200,7 @@
 						for
 						<span class="flex flex-row items-center gap-1 text-svelte"
 							><svg
-								class="size-12"
+								class="size-14"
 								xmlns="http://www.w3.org/2000/svg"
 								width="107"
 								height="128"

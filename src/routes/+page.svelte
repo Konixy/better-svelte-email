@@ -3,12 +3,6 @@
 	import { codeToHtml } from 'shiki';
 	import { gsap } from 'gsap';
 
-	onMount(async () => {
-		const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-
-		gsap.registerPlugin(ScrollTrigger);
-	});
-
 	const features = [
 		{
 			title: 'Stable & Future-Proof',
@@ -35,7 +29,10 @@
 	let codeExample = $state<string>('');
 
 	onMount(async () => {
-		// Animate hero elements with cascade effect
+		const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+
+		gsap.registerPlugin(ScrollTrigger);
+
 		const heroTimeline = gsap.timeline();
 
 		heroTimeline

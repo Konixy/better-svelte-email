@@ -126,15 +126,15 @@ jobs:
               
               COMMIT_LINE="- $message ([${hash}](https://github.com/${{ github.repository }}/commit/${hash}))"
               
-              if [[ $message == feat:* ]] || [[ $message == feature:* ]]; then
+              if [[ $message == feat* ]] || [[ $message == feature* ]]; then
                 FEATURES="$FEATURES$COMMIT_LINE"$'\n'
-              elif [[ $message == fix:* ]]; then
+              elif [[ $message == fix* ]]; then
                 FIXES="$FIXES$COMMIT_LINE"$'\n'
-              elif [[ $message == docs:* ]]; then
+              elif [[ $message == docs* ]]; then
                 DOCS="$DOCS$COMMIT_LINE"$'\n'
-              elif [[ $message == test:* ]]; then
+              elif [[ $message == test* ]]; then
                 TESTS="$TESTS$COMMIT_LINE"$'\n'
-              elif [[ $message == chore:* ]] || [[ $message == build:* ]] || [[ $message == ci:* ]]; then
+              elif [[ $message == chore* ]] || [[ $message == build* ]] || [[ $message == ci* ]]; then
                 CHORES="$CHORES$COMMIT_LINE"$'\n'
               else
                 OTHER="$OTHER$COMMIT_LINE"$'\n'

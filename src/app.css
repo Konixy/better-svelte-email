@@ -1,1 +1,5 @@
 @import 'tailwindcss';
+
+@theme {
+	--color-svelte: #f73b01;
+}

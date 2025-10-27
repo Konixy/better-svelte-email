@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { HighlightAuto } from 'svelte-highlight';
-	import oneDark from 'svelte-highlight/styles/onedark';
 	import type { PreviewData } from './index.js';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { deserialize } from '$app/forms';
+	import { codeToHtml } from 'shiki';
 
 	let { emailList }: { emailList: PreviewData } = $props();
 
 	let selectedEmail = $state<string | null>(null);
 	let renderedHtml = $state<string>('');
+	let highlightedHtml = $state<string>('');
 	let iframeContent = $state<string>('');
 	let loading = $state(false);
 	let error = $state<string | null>(null);
@@ -84,6 +84,10 @@
 			if (result.type === 'success' && result.data?.body) {
 				renderedHtml = result.data.body;
 				iframeContent = withFontSans(result.data.body);
+				highlightedHtml = await codeToHtml(result.data.body, {
+					lang: 'html',
+					theme: 'github-dark-default'
+				});
 			} else if (result.type === 'error') {
 				error = result.error?.message || 'Failed to render email';
 			}
@@ -155,10 +159,6 @@
 		}
 	}
 </script>
-
-<svelte:head>
-	{@html oneDark}
-</svelte:head>
 
 <div class="container">
 	<div class="sidebar">
@@ -248,7 +248,7 @@
 			<details class="code-section">
 				<summary class="code-summary"> View HTML Source </summary>
 				<div class="code-content">
-					<HighlightAuto code={renderedHtml} />
+					{@html highlightedHtml}
 				</div>
 			</details>
 		{/if}
@@ -321,7 +321,7 @@
 		height: 100vh;
 		width: 100vw;
 		max-width: none;
-		background-color: #f9fafb;
+		background-color: #fafaf9;
 		font-family:
 			ui-sans-serif,
 			system-ui,
@@ -345,7 +345,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		border-right: 1px solid #e5e7eb;
+		border-right: 1px solid #e7e5e4;
 		background-color: white;
 	}
 
@@ -353,7 +353,7 @@
 		.sidebar {
 			max-height: 40vh;
 			border-right: 0;
-			border-bottom: 1px solid #e5e7eb;
+			border-bottom: 1px solid #e7e5e4;
 		}
 	}
 
@@ -362,7 +362,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 0.5rem;
-		border-bottom: 1px solid #e5e7eb;
+		border-bottom: 1px solid #e7e5e4;
 		padding: 1.5rem;
 		padding-bottom: 1rem;
 	}
@@ -371,13 +371,13 @@
 		margin: 0;
 		font-size: 1.125rem;
 		font-weight: 600;
-		color: #111827;
+		color: #1c1917;
 	}
 
 	.badge {
 		min-width: 1.5rem;
 		border-radius: 9999px;
-		background-color: #3b82f6;
+		background-color: #ea580c;
 		padding: 0.125rem 0.5rem;
 		text-align: center;
 		font-size: 0.75rem;
@@ -388,7 +388,7 @@
 	.empty-state {
 		padding: 2rem 1rem;
 		text-align: center;
-		color: #6b7280;
+		color: #78716c;
 	}
 
 	.empty-state p {
@@ -398,12 +398,12 @@
 
 	.empty-state p:last-child {
 		font-size: 0.75rem;
-		color: #9ca3af;
+		color: #a8a29e;
 	}
 
 	.empty-state code {
-		border-radius: 0.25rem;
-		background-color: #f3f4f6;
+		border-radius: 0.375rem;
+		background-color: #f5f5f4;
 		padding: 0.125rem 0.375rem;
 		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 		font-size: 0.75rem;
@@ -427,23 +427,23 @@
 		cursor: pointer;
 		align-items: center;
 		gap: 0.75rem;
-		border-radius: 0.5rem;
+		border-radius: 0.75rem;
 		border: 0;
 		background-color: transparent;
 		padding: 0.75rem;
 		text-align: left;
 		font-size: 0.875rem;
-		color: #374151;
+		color: #57534e;
 		transition: all 0.15s;
 	}
 
 	.email-button:hover {
-		background-color: #f3f4f6;
+		background-color: #f5f5f4;
 	}
 
 	.email-button.active {
-		background-color: #eff6ff;
-		color: #1e3a8a;
+		background-color: #fff7ed;
+		color: #c2410c;
 		font-weight: 500;
 	}
 
@@ -473,7 +473,7 @@
 		flex: 1;
 		align-items: center;
 		justify-content: center;
-		background-color: #f9fafb;
+		background-color: #fafaf9;
 	}
 
 	.centered-content {
@@ -497,8 +497,8 @@
 		height: 3rem;
 		width: 3rem;
 		border-radius: 9999px;
-		border: 4px solid #e5e7eb;
-		border-top-color: #3b82f6;
+		border: 4px solid #e7e5e4;
+		border-top-color: #ea580c;
 		animation: spin 1s linear infinite;
 	}
 
@@ -512,20 +512,20 @@
 		margin-bottom: 0.5rem;
 		font-size: 1.5rem;
 		font-weight: 600;
-		color: #111827;
+		color: #1c1917;
 	}
 
 	.text-gray {
 		margin: 0;
-		color: #6b7280;
+		color: #78716c;
 	}
 
 	.btn {
 		margin-top: 1rem;
 		cursor: pointer;
-		border-radius: 0.375rem;
+		border-radius: 0.75rem;
 		border: 0;
-		background-color: #3b82f6;
+		background-color: #ea580c;
 		padding: 0.5rem 1rem;
 		font-weight: 500;
 		color: white;
@@ -533,14 +533,14 @@
 	}
 
 	.btn:hover {
-		background-color: #2563eb;
+		background-color: #c2410c;
 	}
 
 	.preview-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		border-bottom: 1px solid #e5e7eb;
+		border-bottom: 1px solid #e7e5e4;
 		background-color: white;
 		padding: 1rem 1.5rem;
 	}
@@ -549,7 +549,7 @@
 		margin: 0;
 		font-size: 1.125rem;
 		font-weight: 600;
-		color: #111827;
+		color: #1c1917;
 	}
 
 	.button-group {
@@ -562,19 +562,19 @@
 		cursor: pointer;
 		align-items: center;
 		gap: 0.375rem;
-		border-radius: 0.375rem;
-		border: 1px solid #d1d5db;
+		border-radius: 0.75rem;
+		border: 1px solid #d6d3d1;
 		background-color: white;
 		padding: 0.5rem 0.875rem;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #374151;
+		color: #57534e;
 		transition: all 0.15s;
 	}
 
 	.btn-secondary:hover {
-		border-color: #9ca3af;
-		background-color: #f9fafb;
+		border-color: #a8a29e;
+		background-color: #fafaf9;
 	}
 
 	.btn-primary {
@@ -582,9 +582,9 @@
 		cursor: pointer;
 		align-items: center;
 		gap: 0.375rem;
-		border-radius: 0.375rem;
+		border-radius: 0.75rem;
 		border: 0;
-		background-color: #3b82f6;
+		background-color: #ea580c;
 		padding: 0.5rem 0.875rem;
 		font-size: 0.875rem;
 		font-weight: 500;
@@ -593,7 +593,7 @@
 	}
 
 	.btn-primary:hover {
-		background-color: #2563eb;
+		background-color: #c2410c;
 	}
 
 	.btn-icon {
@@ -603,40 +603,42 @@
 	.preview-container {
 		flex: 1;
 		overflow: hidden;
-		background-color: #f9fafb;
+		background-color: #fafaf9;
 		padding: 1rem;
 	}
 
 	.preview-iframe {
 		height: 100%;
 		width: 100%;
-		border-radius: 0.5rem;
-		border: 1px solid #e5e7eb;
+		border-radius: 0.75rem;
+		border: 1px solid #e7e5e4;
 		background-color: white;
 	}
 
 	.code-section {
 		overflow: auto;
-		border-top: 1px solid #e5e7eb;
-		background-color: #f9fafb;
+		border-top: 1px solid #e7e5e4;
+		background-color: #fafaf9;
 	}
 
 	.code-summary {
 		cursor: pointer;
 		padding: 0.75rem 1.5rem;
 		font-weight: 500;
-		color: #374151;
+		color: #57534e;
 		user-select: none;
 	}
 
 	.code-summary:hover {
-		background-color: #f3f4f6;
+		background-color: #f5f5f4;
 	}
 
 	.code-content {
 		height: 100%;
 		overflow-y: scroll;
 		font-size: 0.75rem;
+		padding: 1rem;
+		background-color: #0d1117;
 	}
 
 	.modal-overlay {
@@ -652,7 +654,7 @@
 	.modal {
 		width: 100%;
 		max-width: 28rem;
-		border-radius: 0.5rem;
+		border-radius: 0.75rem;
 		background-color: white;
 		padding: 1.5rem;
 		box-shadow:
@@ -664,12 +666,12 @@
 		margin-bottom: 1rem;
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: #111827;
+		color: #1c1917;
 	}
 
 	.success-message {
 		margin-bottom: 1rem;
-		border-radius: 0.375rem;
+		border-radius: 0.75rem;
 		background-color: #f0fdf4;
 		padding: 1rem;
 		text-align: center;
@@ -695,32 +697,32 @@
 		margin-bottom: 0.25rem;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #374151;
+		color: #57534e;
 	}
 
 	.form-input {
 		width: 100%;
-		border-radius: 0.375rem;
-		border: 1px solid #d1d5db;
+		border-radius: 0.75rem;
+		border: 1px solid #d6d3d1;
 		padding: 0.5rem 0.75rem;
 		font-size: 0.875rem;
 	}
 
 	.form-input:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+		border-color: #ea580c;
+		box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2);
 	}
 
 	.form-help {
 		margin-top: 0.25rem;
 		font-size: 0.75rem;
-		color: #6b7280;
+		color: #78716c;
 	}
 
 	.error-message {
 		margin-bottom: 1rem;
-		border-radius: 0.375rem;
+		border-radius: 0.75rem;
 		background-color: #fef2f2;
 		padding: 0.75rem;
 		font-size: 0.875rem;
@@ -735,18 +737,18 @@
 
 	.btn-cancel {
 		cursor: pointer;
-		border-radius: 0.375rem;
-		border: 1px solid #d1d5db;
+		border-radius: 0.75rem;
+		border: 1px solid #d6d3d1;
 		background-color: white;
 		padding: 0.5rem 1rem;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #374151;
+		color: #57534e;
 		transition: all 0.15s;
 	}
 
 	.btn-cancel:hover {
-		background-color: #f9fafb;
+		background-color: #fafaf9;
 	}
 
 	.btn-cancel:disabled {
@@ -756,9 +758,9 @@
 
 	.btn-submit {
 		cursor: pointer;
-		border-radius: 0.375rem;
+		border-radius: 0.75rem;
 		border: 0;
-		background-color: #3b82f6;
+		background-color: #ea580c;
 		padding: 0.5rem 1rem;
 		font-size: 0.875rem;
 		font-weight: 500;
@@ -767,7 +769,7 @@
 	}
 
 	.btn-submit:hover {
-		background-color: #2563eb;
+		background-color: #c2410c;
 	}
 
 	.btn-submit:disabled {

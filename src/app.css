@@ -3,3 +3,7 @@
 @theme {
 	--color-svelte: #f73b01;
 }
+
+html {
+	background-color: #fafaf9;
+}

@@ -6,6 +6,7 @@
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git"
 	},
+	"homepage": "https://better-svelte-email.konixy.fr",
 	"peerDependencies": {
 		"svelte": ">5.14.3",
 		"@sveltejs/kit": ">=2"

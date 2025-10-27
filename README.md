@@ -78,7 +78,7 @@ Create your email templates in `src/lib/emails/`:
 ```svelte
 <!-- src/lib/emails/welcome.svelte -->
 <script>
-	import { Html, Head, Body, Container, Text, Button } from 'better-svelte-email';
+	import { Html, Head, Body, Preview, Container, Text, Button } from 'better-svelte-email';
 
 	let { name = 'User' } = $props();
 </script>
@@ -86,6 +86,7 @@ Create your email templates in `src/lib/emails/`:
 <Html>
 	<Head />
 	<Body class="bg-gray-100">
+		<Preview preview="Welcome Email" />
 		<Container class="mx-auto p-8">
 			<Text class="mb-4 text-2xl font-bold">
 				Welcome, {name}!
@@ -93,7 +94,7 @@ Create your email templates in `src/lib/emails/`:
 
 			<Button
 				href="https://example.com"
-				class="rounded bg-blue-600 px-6 py-3 text-white sm:bg-green-600"
+				class="rounded bg-orange-600 px-6 py-3 text-white sm:text-sm"
 			>
 				Get Started
 			</Button>
@@ -234,7 +235,7 @@ For older versions, you can use [`svelte-email-tailwind`](https://github.com/ste
 
 - ✅ Static Tailwind classes
 - ✅ Custom Tailwind classes (`bg-[#fff]`, `my:[40px]`, ...)
-- ✅ All standard Tailwind utilities (colors, spacing, typography, etc.)
+- ✅ All standard Tailwind (v3) utilities (colors, spacing, typography, etc.)
 - ✅ Responsive breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
 - ✅ HTML elements and Svelte components
 - ✅ Nested components
@@ -242,8 +243,10 @@ For older versions, you can use [`svelte-email-tailwind`](https://github.com/ste
 - ✅ Each blocks (`{#each}`)
 - ✅ Custom Tailwind configurations
 
-### ❌ Not Supported (Yet)
+### ❌ Not Supported (Yet) (See [Roadmap](./ROADMAP.md))
 
+- ❌ Tailwind v4
+- ❌ CSS Object (`style={{ color: 'red' }}`)
 - ❌ Dynamic class expressions (`class={someVar}`)
 - ❌ Arbitrary values in responsive classes (`sm:[color:red]`)
 - ❌ Container queries

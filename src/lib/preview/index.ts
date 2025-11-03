@@ -50,9 +50,10 @@ export const emailList = ({
 	if (!root) {
 		try {
 			root = process.cwd();
-		} catch {
+		} catch (err) {
 			throw new Error(
-				'Could not determine the root path of your project. Please pass in the root param manually using process.cwd() or an absolute path'
+				'Could not determine the root path of your project. Please pass in the root param manually using process.cwd() or an absolute path.\nOriginal error: ' +
+					err
 			);
 		}
 	}
@@ -75,12 +76,13 @@ export const emailList = ({
 };
 
 const getEmailComponent = async (emailPath: string, file: string) => {
+	const fileName = `${file}.svelte`;
 	try {
 		// Import the email component dynamically
-		return (await import(/* @vite-ignore */ `${emailPath}${path.sep}${file}.svelte`)).default;
-	} catch {
+		return (await import(/* @vite-ignore */ path.join(emailPath, fileName))).default;
+	} catch (err) {
 		throw new Error(
-			`Failed to import email component '${file}'. Make sure the file exists and includes the <Head /> component.`
+			`Failed to import email component '${fileName}'. Make sure the file exists and includes the <Head /> component.\nOriginal error: ${err}`
 		);
 	}
 };
@@ -236,7 +238,7 @@ function getFiles(dir: string, files: string[] = []) {
 	const fileList = fs.readdirSync(dir);
 	// Create the full path of the file/directory by concatenating the passed directory and file/directory name
 	for (const file of fileList) {
-		const name = `${dir}${path.sep}${file}`;
+		const name = path.join(dir, file);
 		// Check if the current file/directory is a directory using fs.statSync
 		if (fs.statSync(name).isDirectory()) {
 			// If it is a directory, recursively call the getFiles function with the directory path and the files array

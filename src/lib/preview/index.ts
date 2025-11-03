@@ -77,7 +77,7 @@ export const emailList = ({
 const getEmailComponent = async (emailPath: string, file: string) => {
 	try {
 		// Import the email component dynamically
-		return (await import(/* @vite-ignore */ `${emailPath}/${file}.svelte`)).default;
+		return (await import(/* @vite-ignore */ `${emailPath}${path.sep}${file}.svelte`)).default;
 	} catch {
 		throw new Error(
 			`Failed to import email component '${file}'. Make sure the file exists and includes the <Head /> component.`
@@ -236,7 +236,7 @@ function getFiles(dir: string, files: string[] = []) {
 	const fileList = fs.readdirSync(dir);
 	// Create the full path of the file/directory by concatenating the passed directory and file/directory name
 	for (const file of fileList) {
-		const name = `${dir}/${file}`;
+		const name = `${dir}${path.sep}${file}`;
 		// Check if the current file/directory is a directory using fs.statSync
 		if (fs.statSync(name).isDirectory()) {
 			// If it is a directory, recursively call the getFiles function with the directory path and the files array

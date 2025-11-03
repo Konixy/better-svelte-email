@@ -6,6 +6,11 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	test: {
 		expect: { requireAssertions: true },
+		server: {
+			deps: {
+				inline: ['@sveltejs/kit']
+			}
+		},
 		projects: [
 			{
 				extends: './vite.config.ts',
@@ -13,7 +18,10 @@ export default defineConfig({
 					name: 'server',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					alias: {
+						$app: '/node_modules/@sveltejs/kit/src/runtime/app'
+					}
 				}
 			}
 		]

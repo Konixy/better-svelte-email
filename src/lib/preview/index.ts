@@ -53,7 +53,7 @@ export const emailList = ({
 		} catch (err) {
 			throw new Error(
 				'Could not determine the root path of your project. Please pass in the root param manually using process.cwd() or an absolute path.\nOriginal error: ' +
-				err
+					err
 			);
 		}
 	}
@@ -77,14 +77,13 @@ export const emailList = ({
 	return { files, path: emailPath };
 };
 
-const getEmailComponent = async (emailPath: string, file: string) => {
+export const getEmailComponent = async (emailPath: string, file: string) => {
 	const fileName = `${file}.svelte`;
 	try {
+		// Import the email component dynamically
 		const normalizedEmailPath = emailPath.replace(/\\/g, '/').replace(/\/+$/, '');
 		const normalizedFile = file.replace(/\\/g, '/').replace(/^\/+/, '');
 		const importPath = `${normalizedEmailPath}/${normalizedFile}.svelte`;
-
-		// Import the email component dynamically
 		return (await import(/* @vite-ignore */ importPath)).default;
 	} catch (err) {
 		throw new Error(
@@ -239,7 +238,7 @@ export const sendEmail = ({
 };
 
 // Recursive function to get files
-function getFiles(dir: string, files: string[] = []) {
+export function getFiles(dir: string, files: string[] = []) {
 	// Get an array of all files and directories in the passed directory using fs.readdirSync
 	const fileList = fs.readdirSync(dir);
 	// Create the full path of the file/directory by concatenating the passed directory and file/directory name
@@ -264,12 +263,28 @@ function createEmailComponentList(root: string, paths: string[]) {
 	const emailComponentList: string[] = [];
 
 	paths.forEach((filePath) => {
-		if (filePath.includes(`.svelte`)) {
-			// Compute the path relative to the provided root and normalize separators
-			// so the list displays consistently across platforms (use forward slashes)
-			const relative = path.relative(root, filePath).replace(/\\/g, '/');
-			const fileName = relative.replace(/\.svelte$/i, '');
-			emailComponentList.push(fileName);
+		if (filePath.endsWith('.svelte')) {
+			// Get the directory name from the full path
+			const fileDir = path.dirname(filePath);
+			// Get the base name without extension
+			const baseName = path.basename(filePath, '.svelte');
+
+			// Normalize paths for cross-platform comparison
+			const rootNormalized = path.normalize(root);
+			const fileDirNormalized = path.normalize(fileDir);
+
+			// Find where root appears in the full directory path
+			const rootIndex = fileDirNormalized.indexOf(rootNormalized);
+
+			if (rootIndex !== -1) {
+				// Get everything after the root path
+				const afterRoot = fileDirNormalized.substring(rootIndex + rootNormalized.length);
+				// Combine with the base name using path.join for proper separators
+				const relativePath = afterRoot ? path.join(afterRoot, baseName) : baseName;
+				// Remove leading path separators
+				const cleanPath = relativePath.replace(/^[/\\]+/, '');
+				emailComponentList.push(cleanPath);
+			}
 		}
 	});
 

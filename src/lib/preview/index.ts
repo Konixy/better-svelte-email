@@ -53,7 +53,7 @@ export const emailList = ({
 		} catch (err) {
 			throw new Error(
 				'Could not determine the root path of your project. Please pass in the root param manually using process.cwd() or an absolute path.\nOriginal error: ' +
-					err
+				err
 			);
 		}
 	}
@@ -66,7 +66,9 @@ export const emailList = ({
 		return { files: null, path: emailPath };
 	}
 
-	const files = createEmailComponentList(emailPath, getFiles(fullPath));
+	// Use the absolute folder path as the root when creating the component list so
+	// we can compute correct relative paths on all platforms.
+	const files = createEmailComponentList(fullPath, getFiles(fullPath));
 
 	if (!files.length) {
 		return { files: null, path: emailPath };
@@ -78,8 +80,12 @@ export const emailList = ({
 const getEmailComponent = async (emailPath: string, file: string) => {
 	const fileName = `${file}.svelte`;
 	try {
+		const normalizedEmailPath = emailPath.replace(/\\/g, '/').replace(/\/+$/, '');
+		const normalizedFile = file.replace(/\\/g, '/').replace(/^\/+/, '');
+		const importPath = `${normalizedEmailPath}/${normalizedFile}.svelte`;
+
 		// Import the email component dynamically
-		return (await import(/* @vite-ignore */ path.join(emailPath, fileName))).default;
+		return (await import(/* @vite-ignore */ importPath)).default;
 	} catch (err) {
 		throw new Error(
 			`Failed to import email component '${fileName}'. Make sure the file exists and includes the <Head /> component.\nOriginal error: ${err}`
@@ -259,10 +265,10 @@ function createEmailComponentList(root: string, paths: string[]) {
 
 	paths.forEach((filePath) => {
 		if (filePath.includes(`.svelte`)) {
-			const fileName = filePath.substring(
-				filePath.indexOf(root) + root.length + 1,
-				filePath.indexOf('.svelte')
-			);
+			// Compute the path relative to the provided root and normalize separators
+			// so the list displays consistently across platforms (use forward slashes)
+			const relative = path.relative(root, filePath).replace(/\\/g, '/');
+			const fileName = relative.replace(/\.svelte$/i, '');
 			emailComponentList.push(fileName);
 		}
 	});

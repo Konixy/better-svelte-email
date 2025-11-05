@@ -89,10 +89,10 @@ export async function POST({ request }) {
 
 	// Send email using your preferred service (Resend, SendGrid, etc.)
 	await resend.emails.send({
-	  from: 'noreply@example.com',
-	  to: email,
-	  subject: 'Welcome!',
-	  html: result.body
+		from: 'noreply@example.com',
+		to: email,
+		subject: 'Welcome!',
+		html: result.body
 	});
 
 	return new Response('Sent');

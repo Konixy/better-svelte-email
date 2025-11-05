@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { styleToString, pxToPt, combineStyles } from '$lib/utils/index.js';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
 	let {
 		href = '#',
@@ -16,7 +16,7 @@
 		pX?: number;
 		pY?: number;
 		children: any;
-	} & HTMLAttributes<HTMLAnchorElement> = $props();
+	} & HTMLAnchorAttributes = $props();
 
 	const y = pY * 2;
 	const textRaise = pxToPt(y.toString());
@@ -43,17 +43,15 @@
 </script>
 
 <a {...restProps} {href} {target} style={combineStyles(buttonStyle, style)}>
-	{#if pX}
-		<span>
-			{@html `<!--[if mso]><i style="letter-spacing: ${pX}px;mso-font-width:-100%;mso-text-raise:${textRaise}" hidden>&nbsp;</i><![endif]-->`}
-		</span>
-	{/if}
+	<span>
+		{@html `<!--[if mso]><i style="letter-spacing: ${pX}px;mso-font-width:-100%;mso-text-raise:${textRaise}" hidden>&nbsp;</i><![endif]-->`}
+	</span>
+
 	<span style={buttonTextStyle}>
 		{@render children?.()}
 	</span>
-	{#if pX}
-		<span>
-			{@html `<!--[if mso]><i style="letter-spacing: ${pX}px;mso-font-width:-100%" hidden>&nbsp;</i><![endif]-->`}
-		</span>
-	{/if}
+
+	<span style="display: none;">
+		{@html `<!--[if mso]><i style="letter-spacing: ${pX}px;mso-font-width:-100%" hidden>&nbsp;</i><![endif]-->`}
+	</span>
 </a>

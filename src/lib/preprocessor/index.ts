@@ -20,8 +20,11 @@ import path from 'path';
 /**
  * Svelte 5 preprocessor for transforming Tailwind classes in email components
  *
+ * @deprecated The preprocessor approach is deprecated. Use the `Renderer` class instead for better performance and flexibility.
+ *
  * @example
  * ```javascript
+ * // Old (deprecated):
  * // svelte.config.js
  * import { betterSvelteEmailPreprocessor } from 'better-svelte-email/preprocessor';
  *
@@ -34,6 +37,22 @@ import path from 'path';
  *     })
  *   ]
  * };
+ *
+ * // New (recommended):
+ * import Renderer from 'better-svelte-email/renderer';
+ * import EmailComponent from './email.svelte';
+ *
+ * const renderer = new Renderer({
+ *   theme: {
+ *     extend: {
+ *       colors: { brand: '#FF3E00' }
+ *     }
+ *   }
+ * });
+ *
+ * const html = await renderer.render(EmailComponent, {
+ *   props: { name: 'John' }
+ * });
  * ```
  *
  * Reference: https://svelte.dev/docs/svelte/svelte-compiler#preprocess

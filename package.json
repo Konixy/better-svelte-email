@@ -17,8 +17,10 @@
 		}
 	},
 	"dependencies": {
+		"css-tree": "^3.1.0",
 		"html-to-text": "^9.0.5",
 		"magic-string": "^0.30.21",
+		"parse5": "^8.0.0",
 		"tw-to-css": "^0.0.12"
 	},
 	"optionalDependencies": {
@@ -34,6 +36,7 @@
 		"@sveltejs/package": "^2.5.4",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.16",
+		"@types/css-tree": "^2.3.11",
 		"@types/html-to-text": "^9.0.4",
 		"@types/node": "^24.9.1",
 		"eslint": "^9.38.0",
@@ -85,6 +88,11 @@
 			"import": "./dist/utils/index.js",
 			"default": "./dist/utils/index.js"
 		},
+		"./render": {
+			"types": "./dist/render/index.d.ts",
+			"import": "./dist/render/index.js",
+			"default": "./dist/render/index.js"
+		},
 		"./package.json": "./package.json"
 	},
 	"description": "Svelte email renderer with Tailwind support",
@@ -92,6 +100,7 @@
 		"dist",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*",
+		"!dist/**/__fixtures__",
 		"!dist/emails"
 	],
 	"keywords": [
@@ -112,6 +121,7 @@
 		"build": "bun run prepack && vite build",
 		"preview": "vite preview",
 		"package": "svelte-package",
+		"package:watch": "nodemon -x \"bun run package\" -i dist -e ts,svelte",
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

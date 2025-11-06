@@ -30,18 +30,20 @@
 
 	let {
 		username = 'alanturing',
-		userImage = '/vercel-user.png',
+		userImage = 'vercel-user.png',
 		invitedByUsername = 'Alan',
 		invitedByEmail = 'alan.turing@example.com',
 		teamName = 'Enigma',
-		teamImage = '/vercel-team.png',
+		teamImage = 'vercel-team.png',
 		inviteLink = 'https://vercel.com',
 		inviteFromIp = '204.13.186.218',
 		inviteFromLocation = 'São Paulo, Brazil'
 	}: Props = $props();
 
 	const baseUrl =
-		process.env.VERCEL === '1' ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/` : '/';
+		process.env.VERCEL === '1'
+			? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+			: 'http://localhost:5173';
 
 	const previewText = `Join ${invitedByUsername} on Vercel`;
 </script>
@@ -55,7 +57,7 @@
 		>
 			<Section class="mt-[32px]">
 				<Img
-					src="{baseUrl}vercel-logo.png"
+					src="{baseUrl}/vercel-logo.png"
 					width="40"
 					height="37"
 					alt="Vercel Logo"
@@ -82,7 +84,7 @@
 					<Column align="right">
 						<Img
 							class="rounded-full"
-							src="{baseUrl}{userImage}"
+							src="{baseUrl}/{userImage}"
 							width="64"
 							height="64"
 							alt={`${username}'s profile picture`}
@@ -90,7 +92,7 @@
 					</Column>
 					<Column align="center">
 						<Img
-							src="{baseUrl}vercel-arrow.png"
+							src="{baseUrl}/vercel-arrow.png"
 							width="12"
 							height="9"
 							alt="Arrow indicating invitation"
@@ -99,7 +101,7 @@
 					<Column align="left">
 						<Img
 							class="rounded-full"
-							src="{baseUrl}{teamImage}"
+							src="{baseUrl}/{teamImage}"
 							width="64"
 							height="64"
 							alt={`${teamName} team logo`}

@@ -1,102 +1,128 @@
-<script>
-	import { Html, Head, Body, Container, Section, Text, Button } from '$lib/components/index.js';
+<script lang="ts">
+	import {
+		Body,
+		Button,
+		Column,
+		Container,
+		Head,
+		Heading,
+		Hr,
+		Html,
+		Link,
+		Preview,
+		Row,
+		Section,
+		Text
+	} from '$lib/components/index.js';
 
-	let { userName = 'User', testMessage = 'This is a test email!' } = $props();
+	type Feature = {
+		title: string;
+		description: string;
+	};
+
+	interface Props {
+		name?: string;
+		preview?: string;
+	}
+
+	let { name = 'there' }: Props = $props();
+
+	const features: Feature[] = [
+		{
+			title: 'Stable & Future-Proof',
+			description: "Built on Svelte's official preprocessor API for long-term reliability."
+		},
+		{
+			title: 'Tailwind CSS Support',
+			description: 'Write Tailwind classes, get inline styles automatically for email clients.'
+		},
+		{
+			title: 'Visual Email Preview',
+			description: 'Develop and test your emails with a built-in preview component.'
+		},
+		{
+			title: 'TypeScript First',
+			description: 'Fully typed with comprehensive type definitions out of the box.'
+		}
+	];
 </script>
 
 <Html>
 	<Head />
-	<Body class="bg-gray-100 font-sans">
-		<Container class="mx-auto max-w-2xl bg-white p-8">
-			<!-- Header -->
-			<Section class="mb-6 border-b border-gray-200 pb-6">
-				<Text as="h1" class="mb-2 text-3xl font-bold text-gray-900">better-svelte-email Demo</Text>
-				<Text class="text-gray-600">
-					This email was generated using Tailwind classes and transformed by the preprocessor!
+	<Body class="bg-stone-50 px-4 py-10 font-sans text-gray-800">
+		<Preview preview="Demo Email - better-svelte-email" />
+
+		<Container class="w-full max-w-[520px] rounded-2xl border border-stone-200 bg-white px-6 py-10">
+			<Section>
+				<Text class="m-0 text-xs tracking-widest text-orange-600 uppercase">
+					Better Svelte Email
+				</Text>
+				<Heading as="h1" class="mt-3 mb-5 text-3xl leading-8 font-semibold text-slate-900">
+					Welcome, {name}! 👋
+				</Heading>
+				<Text class="m-0 text-sm leading-6 text-gray-600">
+					Create beautiful, responsive emails using Svelte components and Tailwind CSS. Better
+					Svelte Email transforms your familiar workflow into email-safe HTML with full Tailwind
+					support.
 				</Text>
 			</Section>
 
-			<!-- Main Content -->
-			<Section class="mb-6">
-				<Text class="mb-4 text-lg text-gray-800">Hello {userName}! 👋</Text>
+			<Section class="mt-7">
+				<Heading as="h2" class="m-0 mb-4 text-xl leading-7 font-semibold text-gray-900">
+					Why Better Svelte Email?
+				</Heading>
+				{#each features as feature, index}
+					<Row>
+						<Column valign="top" class="w-7">
+							<Text as="span" class="m-0 text-lg leading-6 text-orange-600">✓</Text>
+						</Column>
+						<Column align="left" class={index < features.length - 1 ? 'pb-4' : undefined}>
+							<Heading as="h3" class="m-0 text-base leading-snug font-semibold text-gray-900">
+								{feature.title}
+							</Heading>
+							<Text class="mt-1.5 mb-0 text-xs leading-5 text-gray-600">
+								{feature.description}
+							</Text>
+						</Column>
+					</Row>
+				{/each}
+			</Section>
 
-				<Text class="mb-4 text-gray-700">{testMessage}</Text>
+			<Section class="mt-8 mb-6 text-center">
+				<Button
+					href="https://better-svelte-email.konixy.fr/docs/getting-started"
+					pX={24}
+					pY={14}
+					class="rounded-lg bg-orange-600 text-center text-sm font-semibold text-white no-underline"
+				>
+					Get Started
+				</Button>
+			</Section>
 
-				<Container class="mb-6 rounded-lg bg-blue-50 p-4">
-					<Text class="mb-2 font-semibold text-blue-900">✨ Features Demonstrated:</Text>
-					<ul class="flex list-disc flex-col gap-1 pl-5 text-blue-800">
-						<li>Tailwind classes converted to inline styles</li>
-						<li>Responsive design with media queries</li>
-						<li>Email-safe CSS transformations</li>
-						<li>Build-time preprocessing (zero runtime cost)</li>
-					</ul>
-				</Container>
+			<Hr class="mx-0 my-6" />
 
-				<!-- Buttons showcase -->
-				<Section class="mb-6">
-					<Button
+			<Section class="mt-8 text-center">
+				<Text class="m-0 text-xs leading-5 text-gray-600">
+					Check out the
+					<Link
+						href="https://better-svelte-email.konixy.fr/docs"
+						class="font-semibold text-orange-600 no-underline"
+					>
+						documentation
+					</Link>
+					to learn more,<br />or star on
+					<Link
 						href="https://github.com/Konixy/better-svelte-email"
-						class="inline-block rounded bg-blue-600 px-6 py-3 font-semibold text-white sm:bg-green-600"
+						class="font-semibold text-orange-600 no-underline"
 					>
-						View on GitHub
-					</Button>
-
-					<Button
-						href="https://svelte.dev"
-						class="ml-3 inline-block rounded border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700"
+						GitHub
+					</Link>
+					to support the project.
+				</Text>
+				<Text class="mt-4 mb-0 text-xs leading-5 text-gray-400">
+					Built with ❤️ by <Link href="https://github.com/Konixy" class="text-gray-500 no-underline"
+						>Konixy</Link
 					>
-						Learn Svelte 5
-					</Button>
-				</Section>
-			</Section>
-
-			<!-- Stats Grid -->
-			<Section class="mb-6">
-				<table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-					<tbody>
-						<tr>
-							<td class="rounded-lg bg-purple-50 p-4 text-center" style="width: 33.33%;">
-								<Text as="div" class="mb-1 text-3xl font-bold text-purple-600">52+</Text>
-								<Text as="div" class="text-sm text-purple-700">Tests Passing</Text>
-							</td>
-							<td style="width: 10px;"></td>
-							<td class="rounded-lg bg-green-50 p-4 text-center" style="width: 33.33%;">
-								<Text as="div" class="mb-1 text-3xl font-bold text-green-600">100%</Text>
-								<Text as="div" class="text-sm text-green-700">TypeScript</Text>
-							</td>
-							<td style="width: 10px;"></td>
-							<td class="rounded-lg bg-orange-50 p-4 text-center" style="width: 33.33%;">
-								<Text as="div" class="mb-1 text-3xl font-bold text-orange-600">0ms</Text>
-								<Text as="div" class="text-sm text-orange-700">Runtime Cost</Text>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</Section>
-
-			<!-- Code Example -->
-			<Container class="mb-6 rounded-lg bg-gray-50 p-4">
-				<Text class="mb-2 text-sm font-semibold text-gray-700">How it works:</Text>
-				<pre
-					class="overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100"
-					style="margin: 0;"><code
-						>// Input
-&lt;Button class="bg-blue-500 text-white p-4"&gt;
-  Click Me
-&lt;/Button&gt;
-
-// Output (after preprocessing)
-&lt;Button styleString="background-color: rgb(59, 130, 246); ..."&gt;
-  Click Me
-&lt;/Button&gt;</code
-					></pre>
-			</Container>
-
-			<!-- Footer -->
-			<Section class="border-t border-gray-200 pt-6 text-center">
-				<Text class="mb-2 text-sm text-gray-600">Built with Svelte 5 & Tailwind CSS</Text>
-				<Text class="text-xs text-gray-500">
-					You're receiving this email because you tested the better-svelte-email demo.
 				</Text>
 			</Section>
 		</Container>

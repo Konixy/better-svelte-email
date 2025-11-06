@@ -1,0 +1,31 @@
+---
+alwaysApply: true
+---
+
+## Package Manager & Commands
+
+### Use Bun Instead of npm/pnpm/yarn
+
+- Always use `bun` instead of `npm`, `pnpm`, or `yarn` for package management
+- Use `bunx` instead of `npx` for running packages
+- If `bunx` fails, try `bun x` as an alternative
+
+### Prioritize package.json Scripts
+
+- Always check and use the scripts defined in `package.json` for:
+  - Building: `bun run build`
+  - Testing: `bun run test`
+  - Development: `bun run dev`
+  - Packaging and other tasks defined in the project
+- Don't reinvent commands that already exist in package.json
+
+### Working Directory
+
+- Don't `cd` into the working directory before every command
+- The shell is already in the correct workspace directory
+
+### Testing Commands
+
+- **Never** run `bun test` directly
+- **Always** run `bun run test` to use the project's test script
+- For specific test files or directories, run: `bun run test src/path/to/file`

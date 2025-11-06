@@ -70,6 +70,11 @@
 			"import": "./dist/preprocessor/index.js",
 			"default": "./dist/preprocessor/index.js"
 		},
+		"./components": {
+			"types": "./dist/components/index.d.ts",
+			"import": "./dist/components/index.js",
+			"default": "./dist/components/index.js"
+		},
 		"./components/*": {
 			"types": "./dist/components/*.svelte.d.ts",
 			"svelte": "./dist/components/*.svelte"

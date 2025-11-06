@@ -2,28 +2,8 @@ import adapter from '@sveltejs/adapter-vercel';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { mdsvex, escapeSvelte } from 'mdsvex';
 import { createHighlighter } from 'shiki';
-import { existsSync } from 'fs';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-
-// Conditionally import preprocessor (only if dist exists)
-// This avoids bootstrap issues when building for the first time
-let emailPreprocessor = null;
-if (existsSync('./dist/preprocessor/index.js')) {
-	const { betterSvelteEmailPreprocessor } = await import('./dist/preprocessor/index.js');
-	emailPreprocessor = betterSvelteEmailPreprocessor({
-		pathToEmailFolder: '/src/lib/emails',
-		tailwindConfig: {
-			theme: {
-				extend: {
-					colors: {
-						brand: '#FF3E00'
-					}
-				}
-			}
-		}
-	});
-}
 
 const theme = 'vesper';
 const highlighter = await createHighlighter({
@@ -48,18 +28,12 @@ const mdsvexOptions = {
 	}
 };
 
-const preprocessors = [mdsvex({ extensions: ['.svx', '.md'], ...mdsvexOptions }), vitePreprocess()];
-
-if (emailPreprocessor) {
-	preprocessors.push(emailPreprocessor);
-}
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', '.svx', '.md'],
 	// Consult https://svelte.dev/docs/kit/integrations
 	// for more information about preprocessors
-	preprocess: preprocessors,
+	preprocess: [mdsvex({ extensions: ['.svx', '.md'], ...mdsvexOptions }), vitePreprocess()],
 
 	kit: {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.

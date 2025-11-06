@@ -1,10 +1,10 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import fs from 'fs';
-import { render } from 'svelte/server';
 import path from 'path';
 import prettier from 'prettier/standalone';
 import parserHtml from 'prettier/parser-html';
+import Renderer from '$lib/render/index.js';
 
 /**
  * Import all Svelte email components file paths.
@@ -96,53 +96,67 @@ export const getEmailComponent = async (emailPath: string, file: string) => {
  * SvelteKit form action to render an email component.
  * Use this with the Preview component to render email templates on demand.
  *
+ * @param options.renderer - Optional renderer to use for rendering the email component (use this if you want to use a custom tailwind config)
+ *
  * @example
  * ```ts
  * // +page.server.ts
  * import { createEmail } from 'better-svelte-email/preview';
+ * import Renderer from 'better-svelte-email/render';
  *
- * export const actions = createEmail;
+ * const renderer = new Renderer({
+ *   theme: {
+ *     extend: {
+ *       colors: {
+ *         brand: '#FF3E00'
+ *       }
+ *     }
+ *   }
+ * });
+ *
+ * export const actions = createEmail(renderer);
  * ```
  */
-export const createEmail = {
-	'create-email': async (event: RequestEvent) => {
-		try {
-			const data = await event.request.formData();
-			const file = data.get('file');
-			const emailPath = data.get('path');
+export const createEmail = (renderer: Renderer = new Renderer()) => {
+	return {
+		'create-email': async (event: RequestEvent) => {
+			try {
+				const data = await event.request.formData();
+				const file = data.get('file');
+				const emailPath = data.get('path');
 
-			if (!file || !emailPath) {
+				if (!file || !emailPath) {
+					return {
+						status: 400,
+						body: { error: 'Missing file or path parameter' }
+					};
+				}
+
+				const emailComponent = await getEmailComponent(emailPath as string, file as string);
+
+				// Render the component to HTML
+				const html = await renderer.render(emailComponent);
+
+				// Remove all HTML comments from the body before formatting
+				const formattedHtml = await prettier.format(html, {
+					parser: 'html',
+					plugins: [parserHtml]
+				});
+
 				return {
-					status: 400,
-					body: { error: 'Missing file or path parameter' }
+					body: formattedHtml
+				};
+			} catch (error) {
+				console.error('Error rendering email:', error);
+				return {
+					status: 500,
+					error: {
+						message: error instanceof Error ? error.message : 'Failed to render email'
+					}
 				};
 			}
-
-			const emailComponent = await getEmailComponent(emailPath as string, file as string);
-
-			// Render the component to HTML
-			const { body } = render(emailComponent);
-
-			// Remove all HTML comments from the body before formatting
-			const bodyWithoutComments = body.replace(/<!--[\s\S]*?-->/g, '');
-			const formattedBody = await prettier.format(bodyWithoutComments, {
-				parser: 'html',
-				plugins: [parserHtml]
-			});
-
-			return {
-				body: formattedBody
-			};
-		} catch (error) {
-			console.error('Error rendering email:', error);
-			return {
-				status: 500,
-				error: {
-					message: error instanceof Error ? error.message : 'Failed to render email'
-				}
-			};
 		}
-	}
+	};
 };
 
 export declare const SendEmailFunction: (
@@ -171,23 +185,37 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
  *
  * @param options.resendApiKey - Your Resend API key (keep this server-side only)
  * @param options.customSendEmailFunction - Optional custom function to send emails
+ * @param options.renderer - Optional renderer to use for rendering the email component (use this if you want to use a custom tailwind config)
  *
  * @example
  * ```ts
  * // In +page.server.ts
  * import { PRIVATE_RESEND_API_KEY } from '$env/static/private';
+ * import Renderer from 'better-svelte-email/render';
+ *
+ * const renderer = new Renderer({
+ *   theme: {
+ *     extend: {
+ *       colors: {
+ *         brand: '#FF3E00'
+ *       }
+ *     }
+ *   }
+ * });
  *
  * export const actions = {
- *   ...createEmail,
- *   ...sendEmail({ resendApiKey: PRIVATE_RESEND_API_KEY })
+ *   ...createEmail(renderer),
+ *   ...sendEmail({ resendApiKey: PRIVATE_RESEND_API_KEY, renderer })
  * };
  * ```
  */
 export const sendEmail = ({
 	customSendEmailFunction,
-	resendApiKey
+	resendApiKey,
+	renderer = new Renderer()
 }: {
 	customSendEmailFunction?: typeof SendEmailFunction;
+	renderer?: Renderer;
 	resendApiKey?: string;
 } = {}) => {
 	return {
@@ -209,7 +237,7 @@ export const sendEmail = ({
 				from: 'svelte-email-tailwind <onboarding@resend.dev>',
 				to: `${data.get('to')}`,
 				subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
-				html: (await render(emailComponent)).body
+				html: await renderer.render(emailComponent)
 			};
 
 			let sent: { success: boolean; error?: any } = { success: false, error: null };

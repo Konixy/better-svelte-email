@@ -5,17 +5,17 @@ describe('Utils', () => {
 	describe('combineStyles', () => {
 		it('should combine multiple style strings with semicolons', () => {
 			const style1 = 'color:red';
-			const style2 = 'background-color:blue';
+			const style2 = 'background-color:blue;font-size:14px;';
 			const style3 = 'font-size:16px';
 
 			const result = combineStyles(style1, style2, style3);
 
-			expect(result).toBe('color:red;background-color:blue;font-size:16px');
+			expect(result).toBe('color:red;background-color:blue;font-size:14px;font-size:16px');
 		});
 
-		it('should filter out empty strings', () => {
-			const style1 = 'color:red';
-			const style2 = '';
+		it('should filter out empty strings and trim them', () => {
+			const style1 = 'color:red ';
+			const style2 = ' ';
 			const style3 = 'background-color:blue';
 
 			const result = combineStyles(style1, style2, style3);
@@ -44,7 +44,7 @@ describe('Utils', () => {
 		});
 
 		it('should handle all empty values', () => {
-			const result = combineStyles('', '', '');
+			const result = combineStyles('', ' ', '');
 
 			expect(result).toBe('');
 		});
@@ -86,7 +86,7 @@ describe('Utils', () => {
 
 			const result = combineStyles(style1, style2);
 
-			expect(result).toBe('color:red;;background-color:blue;');
+			expect(result).toBe('color:red;background-color:blue');
 		});
 
 		it('should combine complex style strings', () => {

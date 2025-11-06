@@ -1,4 +1,4 @@
-import { convert } from 'html-to-text';
+import { toPlainText } from '$lib/render/index.js';
 
 /**
  * Convert a style object to a CSS string
@@ -70,19 +70,24 @@ function withSpace(value: string | undefined, properties: string[]) {
  * @returns Combined style string
  */
 export function combineStyles(...styles: (string | undefined | null)[]) {
-	return styles.filter((style) => style !== '' && style !== undefined && style !== null).join(';');
+	return styles
+		.filter(Boolean)
+		.map((s) =>
+			s
+				?.split(';')
+				.map((s) => s.trim())
+				.filter(Boolean)
+		)
+		.flat()
+		.join(';');
 }
 
 /**
  * Render HTML as plain text
+ * @deprecated Use toPlainText from `better-svelte-email/render` instead
  * @param markup - HTML string
  * @returns Plain text string
  */
-export const renderAsPlainText = (markup: string) => {
-	return convert(markup, {
-		selectors: [
-			{ selector: 'img', format: 'skip' },
-			{ selector: '#__better-svelte-email-preview', format: 'skip' }
-		]
-	});
-};
+export function renderAsPlainText(markup: string) {
+	return toPlainText(markup);
+}

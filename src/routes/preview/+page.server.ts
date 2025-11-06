@@ -2,9 +2,23 @@ import { sendEmail } from '$lib/preview/index.js';
 import { env } from '$env/dynamic/private';
 import type { PreviewData } from '$lib/preview/index.js';
 import type { RequestEvent } from '@sveltejs/kit';
-import { render } from 'svelte/server';
+import Renderer, { type TailwindConfig } from '$lib/render/index.js';
 import prettier from 'prettier/standalone';
 import parserHtml from 'prettier/parser-html';
+import { pixelBasedPreset } from '$lib/render/utils/tailwindcss/pixel-based-preset.js';
+
+const tailwindConfig: TailwindConfig = {
+	theme: {
+		extend: {
+			colors: {
+				brand: '#FF3E00'
+			}
+		}
+	},
+	presets: [pixelBasedPreset]
+};
+
+const { render } = new Renderer(tailwindConfig);
 
 // Import all email components at build time using import.meta.glob
 // This creates a map of all email components that can be accessed at runtime
@@ -64,17 +78,16 @@ const createEmailVercel = {
 			const emailComponent = module.default;
 
 			// Render the component to HTML
-			const { body } = render(emailComponent);
+			const html = await render(emailComponent);
 
 			// Remove all HTML comments from the body before formatting
-			const bodyWithoutComments = body.replace(/<!--[\s\S]*?-->/g, '');
-			const formattedBody = await prettier.format(bodyWithoutComments, {
+			const formattedHtml = await prettier.format(html, {
 				parser: 'html',
 				plugins: [parserHtml]
 			});
 
 			return {
-				body: formattedBody
+				body: formattedHtml
 			};
 		} catch (error) {
 			console.error('Error rendering email:', error);

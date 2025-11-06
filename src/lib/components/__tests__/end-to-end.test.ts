@@ -1,58 +1,33 @@
 import { describe, it, expect } from 'vitest';
-import { render } from 'svelte/server';
-import TestEmail from '../../emails/test-email.svelte';
+import Renderer from '$lib/render/index.js';
+import TestEmail from './__fixtures__/test-email.svelte';
 
-describe('End-to-End Component Rendering with Tailwind', () => {
-	it('should render component with Tailwind classes converted to inline styles', () => {
-		const result = render(TestEmail, {
-			props: {}
-		});
+describe('End-to-End Email Rendering', () => {
+	it('should render a complete email with all Tailwind classes inlined', async () => {
+		const renderer = new Renderer();
+		const html = await renderer.render(TestEmail);
 
-		// Container should have bg-gray-100 and p-8 converted to inline styles
-		expect(result.body).toContain('background-color:rgb(243,244,246)');
-		expect(result.body.replace(/\s/g, '')).toContain('padding:2rem'); // p-8 = 2rem
-
-		// Text should have font-bold, text-blue-600 converted
-		expect(result.body).toContain('font-weight: bold'); // font-bold
-		expect(result.body).toContain('color:rgb(37,99,235)'); // text-blue-600
-
-		// Button should have bg-brand (from custom tailwind config), text-white, px-4, py-2, rounded converted
-		expect(result.body).toContain('background-color:rgb(255,62,0)');
-		expect(result.body).toContain('color:rgb(255,255,255)');
-		expect(result.body).toContain('padding-left:1rem'); // px-4 = 1rem
-		expect(result.body).toContain('padding-right:1rem');
-		expect(result.body).toContain('padding-top:0.5rem'); // py-2 = 0.5rem
-		expect(result.body).toContain('padding-bottom:0.5rem');
-		expect(result.body).toContain('border-radius:0.25rem'); // rounded
+		// Snapshot captures:
+		// - All Tailwind classes converted to inline styles
+		// - Proper HTML structure with email-safe DOCTYPE
+		// - All components rendered correctly
+		// - Mixed inline styles and Tailwind classes handled properly
+		expect(html).toMatchSnapshot();
 	});
 
-	it('should not have class attributes with Tailwind classes', () => {
-		const result = render(TestEmail, {
-			props: {}
+	it('should handle custom Tailwind config (bg-brand color)', async () => {
+		const renderer = new Renderer({
+			theme: {
+				extend: {
+					colors: {
+						brand: '#ff3e00'
+					}
+				}
+			}
 		});
+		const html = await renderer.render(TestEmail);
 
-		// Original Tailwind classes should be removed/converted
-		expect(result.body).not.toContain('class="bg-gray-100');
-		expect(result.body).not.toContain('class="text-lg');
-		expect(result.body).not.toContain('class="bg-brand');
-	});
-
-	it('should have inline styles in the rendered HTML', () => {
-		const result = render(TestEmail, {
-			props: {}
-		});
-
-		// After rendering, styleString prop becomes style attribute in HTML
-		// Components receive styleString and apply it to their style attribute
-		expect(result.body).toContain('style=');
-
-		// Verify styles are actually applied (not just attributes present)
-		const hasInlineBackgroundColor = result.body.includes('background-color:rgb(243,244,246)');
-		const hasInlineTextColor = result.body.includes('color:rgb(37,99,235)');
-		const hasInlineButtonColor = result.body.includes('background-color:rgb(255,62,0)');
-
-		expect(hasInlineBackgroundColor).toBe(true);
-		expect(hasInlineTextColor).toBe(true);
-		expect(hasInlineButtonColor).toBe(true);
+		// The bg-brand class should use the custom color from config
+		expect(html).toMatchSnapshot();
 	});
 });

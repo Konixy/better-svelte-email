@@ -4,8 +4,8 @@ Welcome to **Better Svelte Email**! This guide walks you through installation, c
 
 ## Requirements
 
-- Svelte 5.14.3 or higher
-- Tailwind CSS (soon will be optional)
+- `svelte >= v5.14.3`
+- `tailwindcss >= v4`
 
 ## Installation
 

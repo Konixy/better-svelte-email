@@ -92,6 +92,33 @@ export const getEmailComponent = async (emailPath: string, file: string) => {
 	}
 };
 
+const getEmailSource = async (emailPath: string, file: string) => {
+	const normalizedEmailPath = emailPath.replace(/\\/g, '/').replace(/\/+$/, '');
+	const normalizedFile = file.replace(/\\/g, '/').replace(/^\/+/, '');
+
+	const candidates = new Set<string>();
+	const relativeEmailPath = normalizedEmailPath.replace(/^\/+/, '');
+
+	if (normalizedEmailPath) {
+		candidates.add(path.resolve(process.cwd(), relativeEmailPath, `${normalizedFile}.svelte`));
+		candidates.add(path.resolve(process.cwd(), normalizedEmailPath, `${normalizedFile}.svelte`));
+		candidates.add(path.resolve(normalizedEmailPath, `${normalizedFile}.svelte`));
+	}
+
+	candidates.add(path.resolve(process.cwd(), `${normalizedFile}.svelte`));
+
+	for (const candidate of candidates) {
+		try {
+			return await fs.promises.readFile(candidate, 'utf8');
+		} catch {
+			// continue to next candidate
+		}
+	}
+
+	console.warn(`Source file not found for ${normalizedFile} in ${normalizedEmailPath}`);
+	return null;
+};
+
 /**
  * SvelteKit form action to render an email component.
  * Use this with the Preview component to render email templates on demand.
@@ -133,6 +160,7 @@ export const createEmail = (renderer: Renderer = new Renderer()) => {
 				}
 
 				const emailComponent = await getEmailComponent(emailPath as string, file as string);
+				const source = await getEmailSource(emailPath as string, file as string);
 
 				// Render the component to HTML
 				const html = await renderer.render(emailComponent);
@@ -144,7 +172,8 @@ export const createEmail = (renderer: Renderer = new Renderer()) => {
 				});
 
 				return {
-					body: formattedHtml
+					body: formattedHtml,
+					source
 				};
 			} catch (error) {
 				console.error('Error rendering email:', error);

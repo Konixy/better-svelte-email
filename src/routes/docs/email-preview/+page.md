@@ -10,7 +10,7 @@ The Email Preview component provides a visual development environment for creati
 - **Template Management** - Browse all your email templates in one place
 - **Copy & Export** - Copy rendered HTML to clipboard with one click
 
-> **Try it live!** Check out the preview in action on [this website at `/preview`](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project.
+> **Try it live!** Check out the preview in action in [this page](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project.
 
 ## Setup
 

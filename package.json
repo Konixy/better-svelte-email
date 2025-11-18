@@ -43,8 +43,8 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.12.5",
 		"globals": "^16.4.0",
-		"gsap": "^3.13.0",
 		"mdsvex": "^0.12.6",
+		"mode-watcher": "^1.1.0",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.7.1",
 		"publint": "^0.3.15",
@@ -53,6 +53,7 @@
 		"svelte": "5.43.6",
 		"svelte-check": "^4.3.3",
 		"tailwindcss": "^4.1.16",
+		"tailwindcss-motion": "^1.1.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.46.2",
 		"vite": "^7.1.12",
@@ -87,6 +88,9 @@
 		"./preview/EmailPreview.svelte": {
 			"types": "./dist/preview/EmailPreview.svelte.d.ts",
 			"svelte": "./dist/preview/EmailPreview.svelte"
+		},
+		"./preview/theme.css": {
+			"default": "./dist/preview/theme.css"
 		},
 		"./utils": {
 			"types": "./dist/utils/index.d.ts",

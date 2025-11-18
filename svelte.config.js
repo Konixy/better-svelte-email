@@ -15,10 +15,12 @@ const highlighter = await createHighlighter({
 const mdsvexOptions = {
 	rehypePlugins: [
 		rehypeSlug,
-		() =>
-			rehypeAutolinkHeadings({
+		[
+			rehypeAutolinkHeadings,
+			{
 				properties: { class: 'heading-link', title: 'Link to this heading' }
-			})
+			}
+		]
 	],
 	highlight: {
 		highlighter: async (code, lang = 'text') => {

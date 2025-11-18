@@ -1,4 +1,5 @@
 <p align="center">
+	<img src="static/favicon.svg" alt="Better Svelte Email" width="128" height="128">
   <h3 align="center">Better Svelte Email</h3>
 	<p align="center">
 		Create beautiful emails in Svelte with first-class Tailwind support

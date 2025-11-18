@@ -6,6 +6,8 @@ import Renderer, { type TailwindConfig } from '$lib/render/index.js';
 import prettier from 'prettier/standalone';
 import parserHtml from 'prettier/parser-html';
 import { pixelBasedPreset } from '$lib/render/utils/tailwindcss/pixel-based-preset.js';
+import fs from 'fs';
+import path from 'path';
 
 const tailwindConfig: TailwindConfig = {
 	theme: {
@@ -80,6 +82,11 @@ const createEmailVercel = {
 			// Render the component to HTML
 			const html = await render(emailComponent);
 
+			const source = fs.readFileSync(
+				path.resolve(process.cwd(), path.relative('/', fullPath)),
+				'utf8'
+			);
+
 			// Remove all HTML comments from the body before formatting
 			const formattedHtml = await prettier.format(html, {
 				parser: 'html',
@@ -87,7 +94,8 @@ const createEmailVercel = {
 			});
 
 			return {
-				body: formattedHtml
+				body: formattedHtml,
+				source
 			};
 		} catch (error) {
 			console.error('Error rendering email:', error);

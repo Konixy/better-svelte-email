@@ -1,4 +1,3 @@
-import { sendEmail } from '$lib/preview/index.js';
 import { env } from '$env/dynamic/private';
 import type { PreviewData } from '$lib/preview/index.js';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -8,6 +7,9 @@ import parserHtml from 'prettier/parser-html';
 import { pixelBasedPreset } from '$lib/render/utils/tailwindcss/pixel-based-preset.js';
 import fs from 'fs';
 import path from 'path';
+import { Resend } from 'resend';
+
+const resend = new Resend(env.RESEND_API_KEY ?? 're_1234');
 
 const tailwindConfig: TailwindConfig = {
 	theme: {
@@ -109,6 +111,54 @@ const createEmailVercel = {
 	}
 };
 
+const sendEmailVercel = {
+	'send-email': async (event: RequestEvent): Promise<{ success: boolean; error: any }> => {
+		const data = await event.request.formData();
+		const emailPath = data.get('path');
+		const file = data.get('file');
+
+		if (!file || !emailPath) {
+			return {
+				success: false,
+				error: { message: 'Missing file or path parameter' }
+			};
+		}
+
+		// Construct the full path to match the keys in emailModules
+		const fullPath = `${emailPath}/${file}.svelte`;
+
+		// Get the component from the pre-imported modules
+		const module = emailModules[fullPath] as { default: any } | undefined;
+
+		if (!module || !module.default) {
+			throw new Error(
+				`Failed to import email component '${file}' in '${emailPath}'. Make sure the file exists and includes the <Head /> component.`
+			);
+		}
+
+		const emailComponent = module.default;
+
+		const html = await render(emailComponent);
+
+		const email = {
+			from: 'svelte-email-tailwind <onboarding@resend.dev>',
+			to: `${data.get('to')}`,
+			subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
+			html
+		};
+
+		const sent = await resend.emails.send(email);
+
+		if (sent && sent.error) {
+			console.log('Error:', sent.error);
+			return { success: false, error: sent.error };
+		} else {
+			console.log('Email was sent successfully.');
+			return { success: true, error: null };
+		}
+	}
+};
+
 export function load() {
 	const emails = emailListVercel();
 	return { emails };
@@ -116,5 +166,5 @@ export function load() {
 
 export const actions = {
 	...createEmailVercel,
-	...sendEmail({ resendApiKey: env.RESEND_API_KEY ?? 're_1234' })
+	...sendEmailVercel
 };

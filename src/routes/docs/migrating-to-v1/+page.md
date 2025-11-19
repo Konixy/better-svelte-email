@@ -4,8 +4,12 @@ If you are using v0.x.x of Better Svelte Email, you can migrate to v1.x.x by fol
 
 ## Update your dependencies
 
+<!-- TODO: Update this when v1 is released -->
+
+The v1 is currently in beta, so you will need to install the beta version:
+
 ```bash
-npm install better-svelte-email@latest
+npm install better-svelte-email@beta
 ```
 
 If you are using tailwind:

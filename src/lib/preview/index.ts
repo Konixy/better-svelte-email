@@ -141,10 +141,11 @@ const getEmailSource = async (emailPath: string, file: string) => {
  *   }
  * });
  *
- * export const actions = createEmail(renderer);
+ * export const actions = createEmail({ renderer });
  * ```
  */
-export const createEmail = (renderer: Renderer = new Renderer()) => {
+export const createEmail = (options: { renderer?: Renderer } = {}) => {
+	const { renderer = new Renderer() } = options;
 	return {
 		'create-email': async (event: RequestEvent) => {
 			try {
@@ -243,7 +244,15 @@ export const sendEmail = ({
 	resendApiKey,
 	renderer = new Renderer()
 }: {
-	customSendEmailFunction?: typeof SendEmailFunction;
+	customSendEmailFunction?: (email: {
+		from: string;
+		to: string;
+		subject: string;
+		html: string;
+	}) => Promise<{
+		success: boolean;
+		error?: any;
+	}>;
 	renderer?: Renderer;
 	resendApiKey?: string;
 } = {}) => {
@@ -274,7 +283,7 @@ export const sendEmail = ({
 			if (!customSendEmailFunction && resendApiKey) {
 				sent = await defaultSendEmailFunction(email, resendApiKey);
 			} else if (customSendEmailFunction) {
-				sent = await customSendEmailFunction(email, resendApiKey);
+				sent = await customSendEmailFunction(email);
 			} else if (!customSendEmailFunction && !resendApiKey) {
 				const error = {
 					message:

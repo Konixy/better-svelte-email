@@ -6,6 +6,9 @@
 
 	const sections = [
 		{ title: 'Getting started', slug: 'getting-started' },
+		{ title: 'Migrating to v1', slug: 'migrating-to-v1' },
+		{ title: 'Renderer API', slug: 'render' },
+		{ title: 'Components', slug: 'components' },
 		{ title: 'Email Preview', slug: 'email-preview' }
 	];
 </script>

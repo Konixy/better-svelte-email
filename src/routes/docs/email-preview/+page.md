@@ -1,14 +1,6 @@
 # Email Preview
 
-The Email Preview component provides a visual development environment for creating and testing your email templates. It includes features like live preview, HTML source viewing, and test email sending—all within your SvelteKit application.
-
-## Why use the preview?
-
-- **Visual Development** - See your email templates rendered in real-time
-- **HTML Inspection** - View the generated HTML with syntax highlighting
-- **Quick Testing** - Send test emails directly from the UI
-- **Template Management** - Browse all your email templates in one place
-- **Copy & Export** - Copy rendered HTML to clipboard with one click
+The Email Preview component provides a visual development environment for creating and testing your email templates. It includes features like live preview, HTML source and code source viewing, and test email sending—all within your SvelteKit application.
 
 > **Try it live!** Check out the preview in action in [this page](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project.
 
@@ -16,25 +8,24 @@ The Email Preview component provides a visual development environment for creati
 
 ### 1. Create a preview route
 
-Create a new route in your SvelteKit app to host the preview component:
+Create a new route under `src/routes/email-preview/[...email]` in your SvelteKit app to host the preview component:
 
 ```svelte
-<!-- src/routes/preview/+page.svelte -->
+<!-- src/routes/email-preview/[...email]/+page.svelte -->
 <script lang="ts">
 	import { EmailPreview } from 'better-svelte-email/preview';
-
-	let { data } = $props();
+	import { page } from '$app/state';
 </script>
 
-<EmailPreview emailList={data.emails} />
+<EmailPreview {page} />
 ```
 
 ### 2. Configure the server-side logic
 
-Create a `+page.server.ts` file to load your email templates and handle preview actions:
+Create a `+page.server.ts` file in the same route to load your email templates and handle preview actions:
 
 ```typescript
-// src/routes/preview/+page.server.ts
+// src/routes/email-preview/[...email]/+page.server.ts
 import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
 import { env } from '$env/dynamic/private';
 
@@ -47,7 +38,7 @@ export function load() {
 }
 
 export const actions = {
-	...createEmail,
+	...createEmail(),
 	...sendEmail({ resendApiKey: env.RESEND_API_KEY })
 };
 ```
@@ -62,9 +53,28 @@ To enable test email sending, add your Resend API key to your `.env` file:
 RESEND_API_KEY=re_your_api_key_here
 ```
 
-Get your API key from [Resend](https://resend.com/).
+Get your API key from [Resend](https://resend.com/docs/dashboard/api-keys/introduction).
 
 ## Configuration Options
+
+### Tailwind configuration
+
+To use Tailwind in your email templates, you need to pass a renderer instance to the `createEmail` and `sendEmail` actions.
+
+```typescript
+import Renderer from 'better-svelte-email/render';
+import { createEmail, sendEmail } from 'better-svelte-email/preview';
+
+const tailwindConfig = {
+	theme: { extend: { colors: { brand: '#FF3E00' } } }
+};
+const renderer = new Renderer(tailwindConfig);
+
+export const actions = {
+	...createEmail({ renderer }),
+	...sendEmail({ renderer })
+};
+```
 
 ### Custom Email Folder
 
@@ -101,7 +111,7 @@ If you prefer to use a different email service (SendGrid, Mailgun, etc.), pass a
 
 ```typescript
 export const actions = {
-	...createEmail,
+	...createEmail(),
 	...sendEmail({
 		customSendEmailFunction: async ({ from, to, subject, html }) => {
 			// Use your preferred email service
@@ -158,6 +168,12 @@ export const actions = {
 	})
 };
 ```
+
+## Vercel setup
+
+If you're using Vercel serverless functions, the `createEmail` and `sendEmail` actions will not work out of the box. You will need to create some custom serverless functions to handle the actions.
+
+You can see an example implementation in [this file](https://github.com/Konixy/better-svelte-email/blob/main/src/routes/preview/%5B...email%5D/%2Bpage.server.ts).
 
 ## Troubleshooting
 

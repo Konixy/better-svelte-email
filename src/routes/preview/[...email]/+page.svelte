@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Email Preview | better-svelte-email</title>
+	<title>Email Preview · Better Svelte Email</title>
 </svelte:head>
 
 <EmailPreview {page} />

@@ -10,6 +10,10 @@
 	];
 </script>
 
+<svelte:head>
+	<title>Docs · Better Svelte Email</title>
+</svelte:head>
+
 <div
 	class="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-20 lg:px-12"
 >

@@ -22,10 +22,13 @@
   </p>
 </p>
 
+## Usage
+
+See the [documentation](https://better-svelte-email.konixy.fr/docs) for a complete guide on how to use Better Svelte Email.
+
 ## Features
 
-- **Stable & Future-Proof** - Uses Svelte's public preprocessor API
-- **Tailwind CSS Support** - Transforms Tailwind classes to inline styles for email clients
+- **Tailwind v4 Support** - Transforms Tailwind classes to inline styles for email clients
 - **Built-in Email Preview** - Visual email preview and test sending
 - **TypeScript First** - Fully typed with comprehensive type definitions
 - **Well Tested** - Extensive test coverage with unit and integration tests
@@ -39,191 +42,7 @@ Existing Svelte email solutions have significant limitations:
 - **svelte-email** hasn't been updated in over 2 years
 - **svelte-email-tailwind** suffers from stability issues and maintaining it is not sustainable anymore
 
-Better Svelte Email is a complete rewrite built on Svelte's official preprocessor API, providing the rock-solid foundation your email infrastructure needs. It brings the simplicity, reliability, and feature richness of [React Email](https://react.email/) to the Svelte ecosystem.
-
-## Quick Start
-
-### 1. Install the package
-
-```bash
-npm i -D better-svelte-email
-# or
-bun add -D better-svelte-email
-# or
-pnpm add -D better-svelte-email
-```
-
-### 2. Configure the Preprocessor
-
-Add the preprocessor to your `svelte.config.js`:
-
-```javascript
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { betterSvelteEmailPreprocessor } from 'better-svelte-email';
-
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	preprocess: [vitePreprocess(), betterSvelteEmailPreprocessor()],
-	kit: {
-		adapter: adapter()
-	}
-};
-
-export default config;
-```
-
-### 3. Create Email Components
-
-Create your email templates in `src/lib/emails/`:
-
-```svelte
-<!-- src/lib/emails/welcome.svelte -->
-<script>
-	import { Html, Head, Body, Preview, Container, Text, Button } from 'better-svelte-email';
-
-	let { name = 'User' } = $props();
-</script>
-
-<Html>
-	<Head />
-	<Body class="bg-gray-100">
-		<Preview preview="Welcome Email" />
-		<Container class="mx-auto p-8">
-			<Text class="mb-4 text-2xl font-bold">
-				Welcome, {name}!
-			</Text>
-
-			<Button
-				href="https://example.com"
-				class="rounded bg-orange-600 px-6 py-3 text-white sm:text-sm"
-			>
-				Get Started
-			</Button>
-		</Container>
-	</Body>
-</Html>
-```
-
-### 4. Render and Send
-
-```typescript
-// src/routes/api/send-email/+server.ts
-import { render } from 'svelte/server';
-import WelcomeEmail from '$lib/emails/welcome.svelte';
-
-export async function POST({ request }) {
-	const { name, email } = await request.json();
-
-	// Render email (preprocessor already ran at build time!)
-	const result = render(WelcomeEmail, { props: { name } });
-
-	// Send email using your preferred service (Resend, SendGrid, etc.)
-	// await resend.emails.send({
-	//   from: 'noreply@example.com',
-	//   to: email,
-	//   subject: 'Welcome!',
-	//   html: result.body
-	// });
-
-	return new Response('Sent');
-}
-```
-
-## Email Preview Component
-
-Better Svelte Email includes a built-in preview component for visually developing and testing your email templates during development.
-
-### Setup
-
-Create a preview route in your SvelteKit app:
-
-```svelte
-<!-- src/routes/preview/+page.svelte -->
-<script lang="ts">
-	import { EmailPreview } from 'better-svelte-email/preview';
-
-	let { data } = $props();
-</script>
-
-<EmailPreview emailList={data.emails} />
-```
-
-```typescript
-// src/routes/preview/+page.server.ts
-import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
-import { env } from '$env/dynamic/private';
-
-export function load() {
-	const emails = emailList({
-		path: '/src/lib/emails' // optional, defaults to '/src/lib/emails'
-	});
-
-	return { emails };
-}
-
-export const actions = {
-	...createEmail,
-	...sendEmail({ resendApiKey: env.RESEND_API_KEY })
-};
-```
-
-### Features
-
-- **HTML Source View** - Inspect the generated HTML with syntax highlighting
-- **Copy to Clipboard** - Quickly copy the rendered HTML
-- **Test Email Sending** - Send test emails directly from the preview UI using Resend
-- **Template List** - Browse all your email templates in one place
-
-### Environment Variables
-
-To enable test email sending, add your Resend API key to your `.env` file:
-
-```env
-RESEND_API_KEY=re_your_api_key_here
-```
-
-Get your API key from [Resend](https://resend.com/).
-
-### Custom Email Provider
-
-If you prefer to use a different email provider, you can pass a custom send function:
-
-```typescript
-export const actions = {
-	...createEmail,
-	...sendEmail({
-		customSendEmailFunction: async ({ from, to, subject, html }) => {
-			// Use your preferred email service (SendGrid, Mailgun, etc.)
-			try {
-				await yourEmailService.send({ from, to, subject, html });
-				return { success: true };
-			} catch (error) {
-				return { success: false, error };
-			}
-		}
-	})
-};
-```
-
-## Configuration
-
-Here are the available options:
-
-```javascript
-betterSvelteEmailPreprocessor({
-	pathToEmailFolder: '/src/lib/emails',
-	debug: false,
-	tailwindConfig: {
-		theme: {
-			extend: {
-				colors: {
-					brand: '#FF3E00'
-				}
-			}
-		}
-	}
-});
-```
+Better Svelte Email is a complete rewrite of [svelte-email-tailwind](https://github.com/steveninety/svelte-email-tailwind) inspired by [React Email](https://react.email/), providing the rock-solid foundation your email infrastructure needs. It brings the simplicity, reliability, and feature richness of [React Email](https://react.email/) to the Svelte ecosystem.
 
 ## Minimum Svelte Version
 
@@ -234,27 +53,28 @@ For older versions, you can use [`svelte-email-tailwind`](https://github.com/ste
 
 ### ✅ Supported
 
-- ✅ Static Tailwind classes
-- ✅ Custom Tailwind classes (`bg-[#fff]`, `my:[40px]`, ...)
-- ✅ All standard Tailwind (v3) utilities (colors, spacing, typography, etc.)
-- ✅ Responsive breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
-- ✅ HTML elements and Svelte components
-- ✅ Nested components
-- ✅ Conditional blocks (`{#if}`)
-- ✅ Each blocks (`{#each}`)
-- ✅ Custom Tailwind configurations
-
-### ❌ Not Supported (Yet) (See [Roadmap](./ROADMAP.md))
-
-- ❌ Tailwind v4
-- ❌ CSS Object (`style={{ color: 'red' }}`)
-- ❌ Dynamic class expressions (`class={someVar}`)
-- ❌ Arbitrary values in responsive classes (`sm:[color:red]`)
-- ❌ Container queries
+- All tailwindcss v4 utilities
+- Custom Tailwind classes (`bg-[#fff]`, `my:[40px]`, ...)
+- Dynamic Tailwind classes (`class={someVar}`)
+- Responsive breakpoints (`sm:`, `md:`, `lg:`, `xl:`, `2xl:`)
+- HTML elements and Svelte components
+- Nested components
+- All svelte features such as each blocks (`{#each}`) and if blocks (`{#if}`), and more
+- Custom Tailwind configurations
 
 ## Author
 
 Anatole Dufour ([@Konixy](https://github.com/Konixy))
+
+### Author of `svelte-email-tailwind`
+
+Steven Polak ([@steveninety](https://github.com/steveninety))
+
+### Authors of `react-email`
+
+Bu Kinoshita ([@bukinoshita](https://github.com/bukinoshita))
+
+Zeno Rocha ([@zenorocha](https://github.com/zenorocha))
 
 ## Development
 

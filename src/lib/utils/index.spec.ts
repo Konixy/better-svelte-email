@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { combineStyles, styleToString, pxToPt, withMargin, renderAsPlainText } from '../index.js';
+import { combineStyles, styleToString, pxToPt, withMargin, renderAsPlainText } from './index.js';
 
 describe('Utils', () => {
 	describe('combineStyles', () => {

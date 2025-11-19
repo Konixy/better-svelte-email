@@ -162,7 +162,7 @@ export function load() {
 }
 
 export const actions = {
-	...createEmail,
+	...createEmail(),
 	...sendEmail({ resendApiKey: env.RESEND_API_KEY })
 };
 ```

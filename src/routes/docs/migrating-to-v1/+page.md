@@ -53,9 +53,20 @@ const plainText = toPlainText(html);
 
 ## Email Preview
 
-If you are using the preview system, you will need to slightly update your code.
+In v1, the preview system now uses a route-based approach instead. For that to work, you will need to move your `+page.svelte` and `+page.server.ts` files from the `src/routes/email-preview` directory to the `src/routes/email-preview/[...email]` directory.
 
-The `createEmail` action is now function that needs to be called like the `sendEmail` function:
+```
+// Before
+src/routes/email-preview
+├── +page.svelte
+└── +page.server.ts
+// After
+src/routes/email-preview/[...email]
+├── +page.svelte
+└── +page.server.ts
+```
+
+In the `+page.server.ts` file, the `createEmail` action is now a function that needs to be called like the `sendEmail` function:
 
 ```typescript
 // src/routes/email-preview/[...email]/+page.server.ts

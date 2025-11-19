@@ -63,13 +63,8 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js",
-			"import": "./dist/preprocessor/index.js",
-			"default": "./dist/preprocessor/index.js"
-		},
-		"./preprocessor": {
-			"types": "./dist/preprocessor/index.d.ts",
-			"import": "./dist/preprocessor/index.js",
-			"default": "./dist/preprocessor/index.js"
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
 		},
 		"./components": {
 			"types": "./dist/components/index.d.ts",
@@ -88,9 +83,6 @@
 		"./preview/EmailPreview.svelte": {
 			"types": "./dist/preview/EmailPreview.svelte.d.ts",
 			"svelte": "./dist/preview/EmailPreview.svelte"
-		},
-		"./preview/theme.css": {
-			"default": "./dist/preview/theme.css"
 		},
 		"./utils": {
 			"types": "./dist/utils/index.d.ts",

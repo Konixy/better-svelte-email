@@ -1,5 +1,4 @@
-// Email Components for better-svelte-email
-// These components work with the preprocessor's styleString prop
+// Email components for better-svelte-email
 
 export { default as Body } from './Body.svelte';
 export { default as Button } from './Button.svelte';

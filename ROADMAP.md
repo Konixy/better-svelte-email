@@ -2,6 +2,7 @@
 
 ## v1.0.0
 
+- [ ] Responsive behaviours on the preview UI
 - [ ] Make Tailwind support optional (maybe through `@better-svelte-email/tailwind`)
 - [ ] Insight on email good practices and things not supported (like react-email)
 - [x] Tailwind v4 support

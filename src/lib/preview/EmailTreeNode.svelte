@@ -142,24 +142,39 @@
 	.email-directory {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		width: 100%;
 		padding: 0.375rem 0.75rem;
 		padding-left: calc(0.75rem + var(--node-depth, 0) * 1rem);
 		border-radius: 0.5rem;
 		border: 0;
 		background-color: transparent;
-		font-size: 0.75rem;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--muted-foreground);
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--secondary-foreground);
 		cursor: pointer;
 		transition: all 0.15s;
 		justify-content: flex-start;
 	}
 
+	.email-directory .email-icon.folder {
+		display: block;
+	}
+
+	.email-directory .email-icon.caret {
+		display: none;
+	}
+
 	.email-directory:hover {
 		background-color: var(--muted);
+	}
+
+	.email-directory:not(.active):hover .email-icon.folder {
+		display: none;
+	}
+
+	.email-directory:not(.active):hover .email-icon.caret {
+		display: block;
 	}
 
 	.email-button {
@@ -206,13 +221,13 @@
 		background-color: color-mix(in srgb, var(--muted) 80%, transparent);
 	}
 
-	.email-directory.collapsed .folder {
+	/* .email-directory.collapsed .folder {
 		opacity: 0.7;
-	}
+	} */
 
-	.email-directory.collapsed .email-directory-name {
+	/* .email-directory.collapsed .email-directory-name {
 		color: var(--muted-foreground);
-	}
+	} */
 
 	.email-children {
 		margin: 0.125rem 0 0;

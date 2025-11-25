@@ -1,5 +1,6 @@
 {
 	"name": "better-svelte-email",
+	"description": "Svelte email renderer with Tailwind support",
 	"version": "1.0.0",
 	"author": "Konixy",
 	"repository": {
@@ -19,9 +20,7 @@
 	"dependencies": {
 		"css-tree": "^3.1.0",
 		"html-to-text": "^9.0.5",
-		"magic-string": "^0.30.21",
-		"parse5": "^8.0.0",
-		"tw-to-css": "^0.0.12"
+		"parse5": "^8.0.0"
 	},
 	"optionalDependencies": {
 		"prettier": "^3.6.2",
@@ -96,7 +95,6 @@
 		},
 		"./package.json": "./package.json"
 	},
-	"description": "Svelte email renderer with Tailwind support",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
@@ -110,11 +108,9 @@
 		"email",
 		"tailwind",
 		"tailwindcss",
-		"preprocessor",
 		"inline-styles",
 		"responsive-email",
-		"email-templates",
-		"svelte-preprocessor"
+		"email-templates"
 	],
 	"license": "MIT",
 	"scripts": {

@@ -1,4 +1,3 @@
-import { generate } from 'css-tree';
 import { setupTailwind } from '../tailwindcss/setup-tailwind.js';
 import { sanitizeNonInlinableRules } from './sanitize-non-inlinable-rules.js';
 import { expect, describe, it } from 'vitest';
@@ -10,7 +9,7 @@ describe('sanitizeNonInlinableRules()', () => {
 		const stylesheet = tailwind.getStyleSheet();
 
 		sanitizeNonInlinableRules(stylesheet);
-		expect(generate(stylesheet)).toMatchSnapshot();
+		expect(stylesheet.toString()).toMatchSnapshot();
 	});
 
 	it('handles CSS nesting in hover pseudo styles', async () => {
@@ -25,7 +24,7 @@ describe('sanitizeNonInlinableRules()', () => {
 		const stylesheet = tailwind.getStyleSheet();
 
 		sanitizeNonInlinableRules(stylesheet);
-		expect(generate(stylesheet)).toMatchSnapshot();
+		expect(stylesheet.toString()).toMatchSnapshot();
 	});
 
 	it('supports basic media query rules', async () => {
@@ -35,6 +34,6 @@ describe('sanitizeNonInlinableRules()', () => {
 
 		sanitizeNonInlinableRules(stylesheet);
 
-		expect(generate(stylesheet)).toMatchSnapshot();
+		expect(stylesheet.toString()).toMatchSnapshot();
 	});
 });

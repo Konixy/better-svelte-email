@@ -1,55 +1,7 @@
-import {
-	type CssNode,
-	type Declaration,
-	type FunctionNode,
-	generate,
-	List,
-	parse,
-	type Raw,
-	type Value,
-	walk
-} from 'css-tree';
+import type { Root } from 'postcss';
+import valueParser, { type Node, type FunctionNode } from 'postcss-value-parser';
 
-function rgbNode(r: number, g: number, b: number, alpha?: number): FunctionNode {
-	const children = new List<CssNode>();
-	children.appendData({
-		type: 'Number',
-		value: r.toFixed(0)
-	});
-	children.appendData({
-		type: 'Operator',
-		value: ','
-	});
-	children.appendData({
-		type: 'Number',
-		value: g.toFixed(0)
-	});
-	children.appendData({
-		type: 'Operator',
-		value: ','
-	});
-	children.appendData({
-		type: 'Number',
-		value: b.toFixed(0)
-	});
-	if (alpha !== 1 && alpha !== undefined) {
-		children.appendData({
-			type: 'Operator',
-			value: ','
-		});
-		children.appendData({
-			type: 'Number',
-			value: alpha.toString()
-		});
-	}
-
-	return {
-		type: 'Function',
-		name: 'rgb',
-		children
-	};
-}
-
+// Color conversion constants
 const LAB_TO_LMS = {
 	l: [0.3963377773761749, 0.2158037573099136],
 	m: [-0.1055613458156586, -0.0638541728258133],
@@ -61,7 +13,7 @@ const LSM_TO_RGB = {
 	b: [-0.0041960761386756, -0.7034186179359362, 1.7076146940746117]
 };
 
-function lrgbToRgb(input: number) {
+function lrgbToRgb(input: number): number {
 	const absoluteNumber = Math.abs(input);
 	const sign = input < 0 ? -1 : 1;
 
@@ -72,7 +24,7 @@ function lrgbToRgb(input: number) {
 	return input * 12.92;
 }
 
-function clamp(value: number, min: number, max: number) {
+function clamp(value: number, min: number, max: number): number {
 	return Math.min(Math.max(value, min), max);
 }
 
@@ -84,8 +36,12 @@ function oklchToOklab(oklch: { l: number; c: number; h: number }) {
 	};
 }
 
-/** Convert oklab to RGB */
-function oklchToRgb(oklch: { l: number; c: number; h: number }) {
+/** Convert oklch to RGB */
+function oklchToRgb(oklch: { l: number; c: number; h: number }): {
+	r: number;
+	g: number;
+	b: number;
+} {
 	const oklab = oklchToOklab(oklch);
 
 	const l = (oklab.l + LAB_TO_LMS.l[0] * oklab.a + LAB_TO_LMS.l[1] * oklab.b) ** 3;
@@ -103,39 +59,176 @@ function oklchToRgb(oklch: { l: number; c: number; h: number }) {
 	};
 }
 
-function separteShorthandDeclaration(
-	shorthandToReplace: Declaration,
-	[start, end]: [string, string]
-): Declaration {
-	shorthandToReplace.property = start;
+function formatRgb(r: number, g: number, b: number, a?: number): string {
+	const rInt = Math.round(r);
+	const gInt = Math.round(g);
+	const bInt = Math.round(b);
 
-	const values =
-		shorthandToReplace.value.type === 'Value'
-			? shorthandToReplace.value.children
-					.toArray()
-					.filter(
-						(child) =>
-							child.type === 'Dimension' || child.type === 'Number' || child.type === 'Percentage'
-					)
-			: [shorthandToReplace.value];
-	let endValue = shorthandToReplace.value;
-	if (values.length === 2) {
-		endValue = {
-			type: 'Value',
-			children: new List<CssNode>().fromArray([values[1]])
-		};
-		shorthandToReplace.value = {
-			type: 'Value',
-			children: new List<CssNode>().fromArray([values[0]])
+	if (a !== undefined && a !== 1) {
+		return `rgb(${rInt}, ${gInt}, ${bInt}, ${a})`;
+	}
+	return `rgb(${rInt}, ${gInt}, ${bInt})`;
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number; a?: number } {
+	hex = hex.replace('#', '');
+
+	if (hex.length === 3) {
+		return {
+			r: parseInt(hex[0] + hex[0], 16),
+			g: parseInt(hex[1] + hex[1], 16),
+			b: parseInt(hex[2] + hex[2], 16)
 		};
 	}
-
+	if (hex.length === 4) {
+		return {
+			r: parseInt(hex[0] + hex[0], 16),
+			g: parseInt(hex[1] + hex[1], 16),
+			b: parseInt(hex[2] + hex[2], 16),
+			a: parseInt(hex[3] + hex[3], 16) / 255
+		};
+	}
+	if (hex.length === 5) {
+		return {
+			r: parseInt(hex.slice(0, 2), 16),
+			g: parseInt(hex[2] + hex[2], 16),
+			b: parseInt(hex[3] + hex[3], 16),
+			a: parseInt(hex[4] + hex[4], 16) / 255
+		};
+	}
+	if (hex.length === 6) {
+		return {
+			r: parseInt(hex.slice(0, 2), 16),
+			g: parseInt(hex.slice(2, 4), 16),
+			b: parseInt(hex.slice(4, 6), 16)
+		};
+	}
+	if (hex.length === 7) {
+		return {
+			r: parseInt(hex.slice(0, 2), 16),
+			g: parseInt(hex.slice(2, 4), 16),
+			b: parseInt(hex.slice(4, 6), 16),
+			a: parseInt(hex[6] + hex[6], 16) / 255
+		};
+	}
+	// 8 character hex
 	return {
-		type: 'Declaration',
-		property: end,
-		value: endValue,
-		important: shorthandToReplace.important
+		r: parseInt(hex.slice(0, 2), 16),
+		g: parseInt(hex.slice(2, 4), 16),
+		b: parseInt(hex.slice(4, 6), 16),
+		a: parseInt(hex.slice(6, 8), 16) / 255
 	};
+}
+
+interface ParsedOklch {
+	l?: number;
+	c?: number;
+	h?: number;
+	a?: number;
+}
+
+function parseOklchValues(nodes: Node[]): ParsedOklch {
+	const result: ParsedOklch = {};
+
+	for (const node of nodes) {
+		if (node.type === 'word') {
+			const numMatch = node.value.match(/^(-?[\d.]+)(%|deg)?$/i);
+			if (numMatch) {
+				const value = parseFloat(numMatch[1]);
+				const unit = numMatch[2]?.toLowerCase();
+
+				if (unit === '%') {
+					if (result.l === undefined) {
+						result.l = value / 100;
+					} else if (result.a === undefined) {
+						result.a = value / 100;
+					}
+				} else if (unit === 'deg') {
+					if (result.h === undefined) {
+						result.h = value;
+					}
+				} else {
+					if (result.l === undefined) {
+						result.l = value;
+					} else if (result.c === undefined) {
+						result.c = value;
+					} else if (result.h === undefined) {
+						result.h = value;
+					} else if (result.a === undefined) {
+						result.a = value;
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+interface ParsedRgb {
+	r?: number;
+	g?: number;
+	b?: number;
+	a?: number;
+}
+
+function parseRgbValues(nodes: Node[]): ParsedRgb {
+	const result: ParsedRgb = {};
+
+	for (const node of nodes) {
+		if (node.type === 'word') {
+			const numMatch = node.value.match(/^(-?[\d.]+)(%)?$/);
+			if (numMatch) {
+				const value = parseFloat(numMatch[1]);
+				const isPercent = numMatch[2] === '%';
+
+				if (result.r === undefined) {
+					result.r = isPercent ? (value * 255) / 100 : value;
+				} else if (result.g === undefined) {
+					result.g = isPercent ? (value * 255) / 100 : value;
+				} else if (result.b === undefined) {
+					result.b = isPercent ? (value * 255) / 100 : value;
+				} else if (result.a === undefined) {
+					result.a = isPercent ? value / 100 : value;
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+function transformColorMix(node: FunctionNode): string | null {
+	// We're expecting the structure to be something like:
+	// color-mix(in oklab, rgb(...) X%, transparent)
+
+	// Check if it ends with transparent
+	const lastNode = node.nodes[node.nodes.length - 1];
+	if (lastNode?.type !== 'word' || lastNode.value !== 'transparent') {
+		return null;
+	}
+
+	// Find the rgb function and percentage
+	let rgbFunc: FunctionNode | null = null;
+	let percentage: number | null = null;
+
+	for (const child of node.nodes) {
+		if (child.type === 'function' && child.value === 'rgb') {
+			rgbFunc = child;
+		}
+		if (child.type === 'word' && child.value.endsWith('%')) {
+			percentage = parseFloat(child.value) / 100;
+		}
+	}
+
+	if (rgbFunc && percentage !== null) {
+		const rgbValues = parseRgbValues(rgbFunc.nodes);
+		if (rgbValues.r !== undefined && rgbValues.g !== undefined && rgbValues.b !== undefined) {
+			return formatRgb(rgbValues.r, rgbValues.g, rgbValues.b, percentage);
+		}
+	}
+
+	return null;
 }
 
 /**
@@ -151,247 +244,110 @@ function separteShorthandDeclaration(
  * - convert `margin-inline` into `margin-left` and `margin-right`;
  * - convert `margin-block` into `margin-top` and `margin-bottom`.
  */
-export function sanitizeDeclarations(nodeContainingDeclarations: CssNode) {
-	walk(nodeContainingDeclarations, {
-		visit: 'Declaration',
-		enter(declaration, item, list) {
-			if (declaration.value.type === 'Raw') {
-				declaration.value = parse(declaration.value.value, {
-					context: 'value'
-				}) as Value | Raw;
-			}
-			if (/border-radius\s*:\s*calc\s*\(\s*infinity\s*\*\s*1px\s*\)/i.test(generate(declaration))) {
-				declaration.value = parse('9999px', { context: 'value' }) as Value;
-			}
-			walk(declaration, {
-				visit: 'Function',
-				enter(func, funcParentListItem) {
-					const children = func.children.toArray();
-					if (func.name === 'oklch') {
-						let l: number | undefined;
-						let c: number | undefined;
-						let h: number | undefined;
-						let a: number | undefined;
-						for (const child of children) {
-							if (child.type === 'Number') {
-								if (l === undefined) {
-									l = Number.parseFloat(child.value);
-									continue;
-								}
-								if (c === undefined) {
-									c = Number.parseFloat(child.value);
-									continue;
-								}
-								if (h === undefined) {
-									h = Number.parseFloat(child.value);
-									continue;
-								}
-								if (a === undefined) {
-									a = Number.parseFloat(child.value);
-									continue;
-								}
-							}
-							if (child.type === 'Dimension' && child.unit === 'deg') {
-								if (h === undefined) {
-									h = Number.parseFloat(child.value);
-									continue;
-								}
-							}
-							if (child.type === 'Percentage') {
-								if (l === undefined) {
-									l = Number.parseFloat(child.value) / 100;
-									continue;
-								}
-								if (a === undefined) {
-									a = Number.parseFloat(child.value) / 100;
-								}
-							}
-						}
+export function sanitizeDeclarations(root: Root) {
+	root.walkDecls((decl) => {
+		// Handle infinity calc for border-radius
+		if (decl.prop === 'border-radius' && /calc\s*\(\s*infinity\s*\*\s*1px\s*\)/i.test(decl.value)) {
+			decl.value = '9999px';
+		}
 
-						if (l === undefined || c === undefined || h === undefined) {
-							throw new Error('Could not determine the parameters of an oklch() function.', {
-								cause: declaration
-							});
-						}
+		// Handle shorthand properties
+		if (decl.prop === 'padding-inline') {
+			const values = decl.value.split(/\s+/).filter(Boolean);
+			decl.prop = 'padding-left';
+			decl.value = values[0];
+			decl.cloneAfter({ prop: 'padding-right', value: values[1] || values[0] });
+		}
+		if (decl.prop === 'padding-block') {
+			const values = decl.value.split(/\s+/).filter(Boolean);
+			decl.prop = 'padding-top';
+			decl.value = values[0];
+			decl.cloneAfter({ prop: 'padding-bottom', value: values[1] || values[0] });
+		}
+		if (decl.prop === 'margin-inline') {
+			const values = decl.value.split(/\s+/).filter(Boolean);
+			decl.prop = 'margin-left';
+			decl.value = values[0];
+			decl.cloneAfter({ prop: 'margin-right', value: values[1] || values[0] });
+		}
+		if (decl.prop === 'margin-block') {
+			const values = decl.value.split(/\s+/).filter(Boolean);
+			decl.prop = 'margin-top';
+			decl.value = values[0];
+			decl.cloneAfter({ prop: 'margin-bottom', value: values[1] || values[0] });
+		}
 
-						const rgb = oklchToRgb({
-							l,
-							c,
-							h
+		// Parse and transform color values
+		if (
+			decl.value.includes('oklch(') ||
+			decl.value.includes('rgb(') ||
+			decl.value.includes('#') ||
+			decl.value.includes('color-mix(')
+		) {
+			const parsed = valueParser(decl.value);
+
+			parsed.walk((node) => {
+				// Convert oklch to rgb
+				if (node.type === 'function' && node.value === 'oklch') {
+					const oklchValues = parseOklchValues(node.nodes);
+
+					if (
+						oklchValues.l === undefined ||
+						oklchValues.c === undefined ||
+						oklchValues.h === undefined
+					) {
+						throw new Error('Could not determine the parameters of an oklch() function.', {
+							cause: decl
 						});
-
-						funcParentListItem.data = rgbNode(rgb.r, rgb.g, rgb.b, a);
 					}
 
-					if (func.name === 'rgb') {
-						let r: number | undefined;
-						let g: number | undefined;
-						let b: number | undefined;
-						let a: number | undefined;
-						for (const child of children) {
-							if (child.type === 'Number') {
-								if (r === undefined) {
-									r = Number.parseFloat(child.value);
-									continue;
-								}
-								if (g === undefined) {
-									g = Number.parseFloat(child.value);
-									continue;
-								}
-								if (b === undefined) {
-									b = Number.parseFloat(child.value);
-									continue;
-								}
-								if (a === undefined) {
-									a = Number.parseFloat(child.value);
-									continue;
-								}
-							}
-							if (child.type === 'Percentage') {
-								if (r === undefined) {
-									r = (Number.parseFloat(child.value) * 255) / 100;
-									continue;
-								}
-								if (g === undefined) {
-									g = (Number.parseFloat(child.value) * 255) / 100;
-									continue;
-								}
-								if (b === undefined) {
-									b = (Number.parseFloat(child.value) * 255) / 100;
-									continue;
-								}
-								if (a === undefined) {
-									a = Number.parseFloat(child.value) / 100;
-								}
-							}
-						}
+					const rgb = oklchToRgb({
+						l: oklchValues.l,
+						c: oklchValues.c,
+						h: oklchValues.h
+					});
 
-						if (r === undefined || g === undefined || b === undefined) {
-							throw new Error('Could not determine the parameters of an rgb() function.', {
-								cause: declaration
-							});
-						}
+					// Transform function node to word node
+					(node as unknown as Node).type = 'word';
+					node.value = formatRgb(rgb.r, rgb.g, rgb.b, oklchValues.a);
+					node.nodes = [];
+				}
 
-						if (a === undefined || a === 1) {
-							funcParentListItem.data = rgbNode(r, g, b);
-						} else {
-							funcParentListItem.data = rgbNode(r, g, b, a);
-						}
+				// Convert space-based rgb to comma-based
+				if (node.type === 'function' && node.value === 'rgb') {
+					const rgbValues = parseRgbValues(node.nodes);
+
+					if (rgbValues.r === undefined || rgbValues.g === undefined || rgbValues.b === undefined) {
+						throw new Error('Could not determine the parameters of an rgb() function.', {
+							cause: decl
+						});
+					}
+
+					// Transform function node to word node
+					(node as unknown as Node).type = 'word';
+					node.value = formatRgb(rgbValues.r, rgbValues.g, rgbValues.b, rgbValues.a);
+					node.nodes = [];
+				}
+
+				// Handle color-mix with transparent
+				if (node.type === 'function' && node.value === 'color-mix') {
+					const result = transformColorMix(node);
+					if (result) {
+						// Transform function node to word node
+						(node as unknown as Node).type = 'word';
+						node.value = result;
+						node.nodes = [];
 					}
 				}
-			});
-			walk(declaration, {
-				visit: 'Hash',
-				enter(hash, hashParentListItem) {
-					const hex = hash.value.trim();
-					if (hex.length === 3) {
-						const r = Number.parseInt(hex.charAt(0) + hex.charAt(0), 16);
-						const g = Number.parseInt(hex.charAt(1) + hex.charAt(1), 16);
-						const b = Number.parseInt(hex.charAt(2) + hex.charAt(2), 16);
-						hashParentListItem.data = rgbNode(r, g, b);
-						return;
-					}
-					if (hex.length === 4) {
-						const r = Number.parseInt(hex.charAt(0) + hex.charAt(0), 16);
-						const g = Number.parseInt(hex.charAt(1) + hex.charAt(1), 16);
-						const b = Number.parseInt(hex.charAt(2) + hex.charAt(2), 16);
-						const a = Number.parseInt(hex.charAt(3) + hex.charAt(3), 16) / 255;
-						hashParentListItem.data = rgbNode(r, g, b, a);
-						return;
-					}
-					if (hex.length === 5) {
-						const r = Number.parseInt(hex.slice(0, 2), 16);
-						const g = Number.parseInt(hex.charAt(2) + hex.charAt(2), 16);
-						const b = Number.parseInt(hex.charAt(3) + hex.charAt(3), 16);
-						const a = Number.parseInt(hex.charAt(4) + hex.charAt(4), 16) / 255;
-						hashParentListItem.data = rgbNode(r, g, b, a);
-						return;
-					}
-					if (hex.length === 6) {
-						const r = Number.parseInt(hex.slice(0, 2), 16);
-						const g = Number.parseInt(hex.slice(2, 4), 16);
-						const b = Number.parseInt(hex.slice(4, 6), 16);
-						hashParentListItem.data = rgbNode(r, g, b);
-						return;
-					}
-					if (hex.length === 7) {
-						const r = Number.parseInt(hex.slice(0, 2), 16);
-						const g = Number.parseInt(hex.slice(2, 4), 16);
-						const b = Number.parseInt(hex.slice(4, 6), 16);
-						const a = Number.parseInt(hex.charAt(6) + hex.charAt(6), 16) / 255;
-						hashParentListItem.data = rgbNode(r, g, b, a);
-						return;
-					}
-					const r = Number.parseInt(hex.slice(0, 2), 16);
-					const g = Number.parseInt(hex.slice(2, 4), 16);
-					const b = Number.parseInt(hex.slice(4, 6), 16);
-					const a = Number.parseInt(hex.slice(6, 8), 16) / 255;
-					hashParentListItem.data = rgbNode(r, g, b, a);
+
+				// Convert hex to rgb
+				if (node.type === 'word' && node.value.startsWith('#')) {
+					const rgb = hexToRgb(node.value);
+					node.value = formatRgb(rgb.r, rgb.g, rgb.b, rgb.a);
 				}
 			});
 
-			walk(declaration, {
-				visit: 'Function',
-				enter(func, parentListItem) {
-					if (func.name === 'color-mix') {
-						const children = func.children.toArray();
-						// We're expecting the children here to be something like:
-						// Identifier (in)
-						// Identifier (oklab)
-						// Operator (,)
-						// FunctionNode (rgb(...))
-						// Node (opacity)
-						// Operator (,)
-						// Identifier (transparent)
-						const color: CssNode | undefined = children[3];
-						const opacity: CssNode | undefined = children[4];
-						if (
-							func.children.last?.type === 'Identifier' &&
-							func.children.last.name === 'transparent' &&
-							color?.type === 'Function' &&
-							color?.name === 'rgb' &&
-							opacity
-						) {
-							color.children.appendData({
-								type: 'Operator',
-								value: ','
-							});
-							color.children.appendData(opacity);
-							parentListItem.data = color;
-						}
-					}
-				}
-			});
-
-			if (declaration.property === 'padding-inline') {
-				const paddingRight = separteShorthandDeclaration(declaration, [
-					'padding-left',
-					'padding-right'
-				]);
-				list.insertData(paddingRight, item);
-			}
-			if (declaration.property === 'padding-block') {
-				const paddingBottom = separteShorthandDeclaration(declaration, [
-					'padding-top',
-					'padding-bottom'
-				]);
-				list.insertData(paddingBottom, item);
-			}
-			if (declaration.property === 'margin-inline') {
-				const marginRight = separteShorthandDeclaration(declaration, [
-					'margin-left',
-					'margin-right'
-				]);
-				list.insertData(marginRight, item);
-			}
-			if (declaration.property === 'margin-block') {
-				const paddingBottom = separteShorthandDeclaration(declaration, [
-					'margin-top',
-					'margin-bottom'
-				]);
-
-				list.insertData(paddingBottom, item);
-			}
+			decl.value = valueParser.stringify(parsed.nodes);
 		}
 	});
 }

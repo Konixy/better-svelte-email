@@ -1,19 +1,11 @@
-import {
-	type CssNode,
-	type Declaration,
-	generate,
-	type List,
-	type ListItem,
-	parse,
-	type Raw,
-	type SelectorList,
-	type Value,
-	walk
-} from 'css-tree';
+import type { Root, Declaration, Rule, AtRule, Container } from 'postcss';
+import valueParser from 'postcss-value-parser';
 
 interface VariableUse {
 	declaration: Declaration;
-	path: CssNode[];
+	selector: string;
+	inAtRule: boolean;
+	atRuleSelector?: string;
 	fallback?: string;
 	variableName: string;
 	raw: string;
@@ -21,112 +13,131 @@ interface VariableUse {
 
 export interface VariableDefinition {
 	declaration: Declaration;
-	path: CssNode[];
+	selector: string;
 	variableName: string;
 	definition: string;
 }
 
-function doSelectorsIntersect(first: SelectorList | Raw, second: SelectorList | Raw): boolean {
-	const firstStringified = generate(first);
-	const secondStringified = generate(second);
-	if (firstStringified === secondStringified) {
-		return true;
+function getSelector(decl: Declaration): string {
+	const parent = decl.parent;
+	if (parent?.type === 'rule') {
+		return (parent as Rule).selector;
 	}
+	return '*';
+}
 
-	let hasSomeUniversal = false;
-	const walker = (node: CssNode, _parentListItem: ListItem<CssNode>, parentList: List<CssNode>) => {
-		if (hasSomeUniversal) return;
-		if (node.type === 'PseudoClassSelector' && node.name === 'root') {
-			hasSomeUniversal = true;
+function getAtRuleSelector(decl: Declaration): string | undefined {
+	let parent = decl.parent;
+	while (parent) {
+		if (parent.type === 'atrule') {
+			// Check if parent of atrule is a rule
+			const atRuleParent = parent.parent;
+			if (atRuleParent?.type === 'rule') {
+				return (atRuleParent as Rule).selector;
+			}
 		}
-		if (node.type === 'TypeSelector' && node.name === '*' && parentList.size === 1) {
-			hasSomeUniversal = true;
+		if (parent.type === 'rule') {
+			return (parent as Rule).selector;
 		}
-	};
-	walk(first, walker);
-	walk(second, walker);
-
-	if (hasSomeUniversal) {
-		return true;
+		parent = parent.parent as Container | undefined;
 	}
+	return undefined;
+}
+
+function isInAtRule(decl: Declaration): boolean {
+	let parent = decl.parent;
+	while (parent) {
+		if (parent.type === 'atrule') {
+			return true;
+		}
+		parent = parent.parent as Container | undefined;
+	}
+	return false;
+}
+
+function isInPropertiesLayer(decl: Declaration): boolean {
+	let parent = decl.parent;
+	while (parent) {
+		if (parent.type === 'atrule') {
+			const atRule = parent as AtRule;
+			if (atRule.name === 'layer' && atRule.params?.includes('properties')) {
+				return true;
+			}
+		}
+		parent = parent.parent as Container | undefined;
+	}
+	return false;
+}
+
+function doSelectorsIntersect(first: string, second: string): boolean {
+	if (first === second) return true;
+
+	// Check for universal selectors
+	if (first.includes(':root') || second.includes(':root')) return true;
+	if (first === '*' || second === '*') return true;
 
 	return false;
 }
 
-export function resolveAllCssVariables(node: CssNode) {
+export function resolveAllCssVariables(root: Root) {
 	const variableDefinitions = new Set<VariableDefinition>();
-	const variableUses = new Set<VariableUse>();
+	const variableUses: VariableUse[] = [];
 
-	const path: CssNode[] = [];
+	// First pass: collect variable definitions and uses
+	root.walkDecls((decl) => {
+		// Skip @layer (properties) { ... } to avoid variable resolution conflicts
+		if (isInPropertiesLayer(decl)) {
+			return;
+		}
 
-	walk(node, {
-		leave() {
-			path.shift();
-		},
-		enter(node: CssNode) {
-			if (node.type === 'Declaration') {
-				const declaration = node;
-				// Ignores @layer (properties) { ... } to avoid variable resolution conflicts
-				if (
-					path.some(
-						(ancestor) =>
-							ancestor.type === 'Atrule' &&
-							ancestor.name === 'layer' &&
-							ancestor.prelude !== null &&
-							generate(ancestor.prelude).includes('properties')
-					)
-				) {
-					path.unshift(node);
-					return;
-				}
+		if (decl.prop.startsWith('--')) {
+			variableDefinitions.add({
+				declaration: decl,
+				selector: getSelector(decl),
+				variableName: decl.prop,
+				definition: decl.value
+			});
+		} else if (decl.value.includes('var(')) {
+			const parseVariableUses = (value: string) => {
+				const parsed = valueParser(value);
 
-				if (/--[\S]+/.test(declaration.property)) {
-					variableDefinitions.add({
-						declaration,
-						path: [...path],
-						variableName: declaration.property,
-						definition: generate(declaration.value)
-					});
-				} else {
-					function parseVariableUsesFrom(node: CssNode) {
-						walk(node, {
-							visit: 'Function',
-							enter(funcNode) {
-								if (funcNode.name === 'var') {
-									const children = funcNode.children.toArray();
-									const name = generate(children[0]);
-									const fallback =
-										// The second argument should be an "," Operator Node,
-										// such that the actual fallback is only in the third argument
-										children[2] ? generate(children[2]) : undefined;
+				parsed.walk((node) => {
+					if (node.type === 'function' && node.value === 'var') {
+						const varNameNode = node.nodes[0];
+						const varName = varNameNode ? valueParser.stringify(varNameNode).trim() : '';
 
-									variableUses.add({
-										declaration,
-										path: [...path],
-										fallback,
-										variableName: name,
-										raw: generate(funcNode)
-									});
+						// Find fallback (after the comma)
+						let fallback: string | undefined;
+						const commaIndex = node.nodes.findIndex((n) => n.type === 'div' && n.value === ',');
+						if (commaIndex !== -1) {
+							fallback = valueParser.stringify(node.nodes.slice(commaIndex + 1)).trim();
+						}
 
-									if (fallback?.includes('var(')) {
-										const parsedFallback = parse(fallback, {
-											context: 'value'
-										});
+						const raw = valueParser.stringify(node);
 
-										parseVariableUsesFrom(parsedFallback);
-									}
-								}
-							}
+						variableUses.push({
+							declaration: decl,
+							selector: getSelector(decl),
+							inAtRule: isInAtRule(decl),
+							atRuleSelector: getAtRuleSelector(decl),
+							fallback,
+							variableName: varName,
+							raw
 						});
-					}
 
-					parseVariableUsesFrom(declaration.value);
-				}
-			}
-			path.unshift(node);
+						// If fallback contains var(), recursively parse those too
+						if (fallback?.includes('var(')) {
+							parseVariableUses(fallback);
+						}
+					}
+				});
+			};
+
+			parseVariableUses(decl.value);
 		}
 	});
 
+	// Second pass: resolve variables
 	for (const use of variableUses) {
 		let hasReplaced = false;
 
@@ -135,48 +146,27 @@ export function resolveAllCssVariables(node: CssNode) {
 				continue;
 			}
 
+			// Check if use is in an at-rule and definition is in a matching rule
 			if (
-				use.path[0]?.type === 'Block' &&
-				use.path[1]?.type === 'Atrule' &&
-				use.path[2]?.type === 'Block' &&
-				use.path[3]?.type === 'Rule' &&
-				definition.path[0].type === 'Block' &&
-				definition.path[1].type === 'Rule' &&
-				doSelectorsIntersect(use.path[3].prelude, definition.path[1].prelude)
+				use.inAtRule &&
+				use.atRuleSelector &&
+				doSelectorsIntersect(use.atRuleSelector, definition.selector)
 			) {
-				use.declaration.value = parse(
-					generate(use.declaration.value).replaceAll(use.raw, definition.definition),
-					{
-						context: 'value'
-					}
-				) as Raw | Value;
+				use.declaration.value = use.declaration.value.replaceAll(use.raw, definition.definition);
 				hasReplaced = true;
 				break;
 			}
 
-			if (
-				use.path[0]?.type === 'Block' &&
-				use.path[1]?.type === 'Rule' &&
-				definition.path[0]?.type === 'Block' &&
-				definition.path[1]?.type === 'Rule' &&
-				doSelectorsIntersect(use.path[1].prelude, definition.path[1].prelude)
-			) {
-				use.declaration.value = parse(
-					generate(use.declaration.value).replaceAll(use.raw, definition.definition),
-					{
-						context: 'value'
-					}
-				) as Raw | Value;
+			// Check if both are in rules with matching selectors
+			if (!use.inAtRule && doSelectorsIntersect(use.selector, definition.selector)) {
+				use.declaration.value = use.declaration.value.replaceAll(use.raw, definition.definition);
 				hasReplaced = true;
 				break;
 			}
 		}
 
 		if (!hasReplaced && use.fallback) {
-			use.declaration.value = parse(
-				generate(use.declaration.value).replaceAll(use.raw, use.fallback),
-				{ context: 'value' }
-			) as Raw | Value;
+			use.declaration.value = use.declaration.value.replaceAll(use.raw, use.fallback);
 		}
 	}
 }

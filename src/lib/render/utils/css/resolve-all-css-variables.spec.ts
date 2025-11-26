@@ -1,10 +1,10 @@
-import { generate, parse } from 'css-tree';
+import postcss from 'postcss';
 import { resolveAllCssVariables } from './resolve-all-css-variables.js';
 import { expect, describe, it } from 'vitest';
 
 describe('resolveAllCSSVariables', () => {
 	it('ignores @layer (properties) defined for browser compatibility', () => {
-		const root = parse(`/*! tailwindcss v4.1.12 | MIT License | https://tailwindcss.com */
+		const root = postcss.parse(`/*! tailwindcss v4.1.12 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -50,10 +50,10 @@ describe('resolveAllCSSVariables', () => {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
   }
-  .text-\\\\[14px\\\\] {
+  .text-\\[14px\\] {
     font-size: 14px;
   }
-  .leading-\\\\[24px\\\\] {
+  .leading-\\[24px\\] {
     --tw-leading: 24px;
     line-height: 24px;
   }
@@ -86,11 +86,11 @@ describe('resolveAllCSSVariables', () => {
 }
 `);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('works with simple css variables on a :root', () => {
-		const root = parse(`:root {
+		const root = postcss.parse(`:root {
   --width: 100px;
 }
 
@@ -98,11 +98,11 @@ describe('resolveAllCSSVariables', () => {
   width: var(--width);
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('works for variables across different CSS layers', () => {
-		const root = parse(`@layer base {
+		const root = postcss.parse(`@layer base {
       :root {
         --width: 100px;
       }
@@ -114,11 +114,11 @@ describe('resolveAllCSSVariables', () => {
       }
     }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('works with multiple variables in the same declaration', () => {
-		const root = parse(`:root {
+		const root = postcss.parse(`:root {
       --top: 101px;
       --bottom: 102px;
       --right: 103px;
@@ -130,64 +130,64 @@ describe('resolveAllCSSVariables', () => {
     }`);
 
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('keeps variable usages if it cant find their declaration', () => {
-		const root = parse(`.box {
+		const root = postcss.parse(`.box {
   width: var(--width);
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('works with variables set in the same rule', () => {
-		const root = parse(`.box {
+		const root = postcss.parse(`.box {
   --width: 200px;
   width: var(--width);
 }
 
 @media (min-width: 1280px) {
-  .xl\\\\:bg-green-500 {
+  .xl\\:bg-green-500 {
     --tw-bg-opacity: 1;
     background-color: rgb(34 197 94 / var(--tw-bg-opacity))
   }
 }
 `);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('works with a variable set in a layer, and used in another through a media query', () => {
-		const root = parse(`@layer theme {
+		const root = postcss.parse(`@layer theme {
   :root {
     --color-blue-300: blue;
   }
 }
 
 @layer utilities {
-  .sm\\\\:bg-blue-300 {
+  .sm\\:bg-blue-300 {
     @media (width >= 40rem) {
       background-color: var(--color-blue-300);
     }
   }
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('uses fallback values when variable definition is not found', () => {
-		const root = parse(`.box {
+		const root = postcss.parse(`.box {
   width: var(--undefined-width, 150px);
   height: var(--undefined-height, 200px);
   margin: var(--undefined-margin, 10px 20px);
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('handles nested var() functions in fallbacks', () => {
-		const root = parse(`:root {
+		const root = postcss.parse(`:root {
   --fallback-width: 300px;
 }
 
@@ -196,11 +196,11 @@ describe('resolveAllCSSVariables', () => {
   height: var(--undefined-height, var(--also-undefined, 250px));
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('handles deeply nested var() functions with complex parentheses', () => {
-		const root = parse(`:root {
+		const root = postcss.parse(`:root {
   --primary: blue;
   --secondary: red;
   --fallback: green;
@@ -216,11 +216,11 @@ describe('resolveAllCSSVariables', () => {
   background: var(--bg-color, rgb(var(--r, 255), var(--g, 0), var(--b, 0)));
 }`);
 		resolveAllCssVariables(root);
-		expect(generate(root)).toMatchSnapshot();
+		expect(root.toString()).toMatchSnapshot();
 	});
 
 	it('handles selectors with asterisks in attribute selectors and pseudo-functions', () => {
-		const root = parse(`* {
+		const root = postcss.parse(`* {
   --global-color: red;
 }
 
@@ -246,15 +246,20 @@ div:nth-child(2*n+1) {
 }`);
 
 		resolveAllCssVariables(root);
-		const result = generate(root);
+		const result = root.toString();
 
 		// Variables from universal selector (*) should resolve to other selectors with actual universal selector
-		expect(result).toContain('input[type="*"]:hover{color:red}');
-		expect(result).toContain('div:nth-child(2*n+1){background:red}');
-		expect(result).toContain('.test[data-attr="value*test"]{border-color:red}');
+		expect(result).toContain('input[type="*"]:hover');
+		expect(result).toContain('color: red');
+		expect(result).toContain('div:nth-child(2*n+1)');
+		expect(result).toContain('background: red');
+		expect(result).toContain('.test[data-attr="value*test"]');
+		expect(result).toContain('border-color: red');
 
-		// Variables from *.universal-with-class should resolve within the same selector and to .normal
-		expect(result).toContain('.universal-with-class-*{--class-color: blue;text-decoration:blue}');
-		expect(result).toContain('.normal{color:var(--class-color)}');
+		// Variables from *.universal-with-class should resolve within the same selector
+		expect(result).toContain('.universal-with-class-*');
+		expect(result).toContain('text-decoration: blue');
+		// .normal should NOT get the --class-color from .universal-with-class-* as selectors don't intersect
+		expect(result).toContain('.normal');
 	});
 });

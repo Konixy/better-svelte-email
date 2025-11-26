@@ -1,11 +1,11 @@
-import { generate, type Rule } from 'css-tree';
+import type { Rule } from 'postcss';
 import { setupTailwind } from '../tailwindcss/setup-tailwind.js';
 import { extractRulesPerClass } from './extract-rules-per-class.js';
 import { expect, describe, it } from 'vitest';
 
 describe('extractRulesPerClass()', async () => {
 	function convertToComparable(map: Map<string, Rule>): Record<string, string> {
-		return Object.fromEntries([...map.entries()].map(([k, v]) => [k, generate(v)]));
+		return Object.fromEntries([...map.entries()].map(([k, v]) => [k, v.toString()]));
 	}
 
 	it('works with just inlinable utilities', async () => {

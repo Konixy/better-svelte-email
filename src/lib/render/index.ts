@@ -1,12 +1,12 @@
 import { render as svelteRender } from 'svelte/server';
 import { parse, serialize, type DefaultTreeAdapterTypes } from 'parse5';
+import postcss from 'postcss';
 import { walk } from './utils/html/walk.js';
 import { setupTailwind } from './utils/tailwindcss/setup-tailwind.js';
 import type { Config } from 'tailwindcss';
 import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet.js';
 import { extractRulesPerClass } from './utils/css/extract-rules-per-class.js';
 import { getCustomProperties } from './utils/css/get-custom-properties.js';
-import { generate, List, type CssNode, type StyleSheet } from 'css-tree';
 import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules.js';
 import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element.js';
 import { isValidNode } from './utils/html/is-valid-node.js';
@@ -108,10 +108,11 @@ export default class Renderer {
 
 		const customProperties = getCustomProperties(styleSheet);
 
-		const nonInlineStyles: StyleSheet = {
-			type: 'StyleSheet',
-			children: new List<CssNode>().fromArray(Array.from(nonInlinableRules.values()))
-		};
+		// Create a new Root for non-inline styles
+		const nonInlineStyles = postcss.root();
+		for (const rule of nonInlinableRules.values()) {
+			nonInlineStyles.append(rule.clone());
+		}
 		sanitizeNonInlinableRules(nonInlineStyles);
 
 		const hasNonInlineStylesToApply = nonInlinableRules.size > 0;
@@ -148,7 +149,7 @@ export default class Renderer {
 			appliedNonInlineStyles = true;
 			serialized = serialized.replace(
 				'<head>',
-				'<head>' + '<style>' + generate(nonInlineStyles) + '</style>'
+				'<head>' + '<style>' + nonInlineStyles.toString() + '</style>'
 			);
 		}
 

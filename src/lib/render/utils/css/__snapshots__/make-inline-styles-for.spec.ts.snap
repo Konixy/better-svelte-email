@@ -1,5 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`makeInlineStylesFor() > does basic local variable resolution 1`] = `"background-color:  #3490dc ;color:  #fff ;padding: 0.5rem 1rem ;border-radius: 0.25rem ;"`;
+exports[`makeInlineStylesFor() > does basic local variable resolution 1`] = `"background-color: #3490dc ;color: #fff ;padding: 0.5rem 1rem ;border-radius: 0.25rem ;"`;
 
 exports[`makeInlineStylesFor() > works in simple use case 1`] = `"background-color: #f56565 ;width: 100% ;"`;

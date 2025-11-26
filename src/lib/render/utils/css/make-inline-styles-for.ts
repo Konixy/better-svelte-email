@@ -1,60 +1,65 @@
-import { type CssNode, type Declaration, generate, walk } from 'css-tree';
+import type { Rule, Declaration } from 'postcss';
+import valueParser from 'postcss-value-parser';
 import type { CustomProperties } from './get-custom-properties.js';
-import { unwrapValue } from './unwrap-value.js';
 
-export function makeInlineStylesFor(inlinableRules: CssNode[], customProperties: CustomProperties) {
+export function makeInlineStylesFor(
+	inlinableRules: Rule[],
+	customProperties: CustomProperties
+): string {
 	let styles = '';
 
+	// Collect local variable declarations
 	const localVariableDeclarations = new Map<string, Declaration>();
 	for (const rule of inlinableRules) {
-		walk(rule, {
-			visit: 'Declaration',
-			enter(declaration) {
-				if (declaration.property.startsWith('--')) {
-					localVariableDeclarations.set(declaration.property, declaration);
-				}
+		rule.walkDecls((decl) => {
+			if (decl.prop.startsWith('--')) {
+				localVariableDeclarations.set(decl.prop, decl);
 			}
 		});
 	}
 
+	// Process rules and resolve variables
 	for (const rule of inlinableRules) {
-		walk(rule, {
-			visit: 'Function',
-			enter(func, funcParentListItem) {
-				if (func.name === 'var') {
-					let variableName: string | undefined;
-					walk(func, {
-						visit: 'Identifier',
-						enter(identifier) {
-							variableName = identifier.name;
-							return this.break;
-						}
-					});
-					if (variableName) {
-						const definition = localVariableDeclarations.get(variableName);
-						if (definition) {
-							funcParentListItem.data = unwrapValue(definition.value);
-						} else {
-							// For most variables tailwindcss defines, they also define a custom
-							// property for them with an initial value that we can inline here
-							const customProperty = customProperties.get(variableName);
-							if (customProperty?.initialValue) {
-								funcParentListItem.data = unwrapValue(customProperty.initialValue.value);
+		rule.walkDecls((decl) => {
+			// Skip variable declarations
+			if (decl.prop.startsWith('--')) return;
+
+			let value = decl.value;
+
+			// Resolve var() references
+			if (value.includes('var(')) {
+				const parsed = valueParser(value);
+
+				parsed.walk((node) => {
+					if (node.type === 'function' && node.value === 'var') {
+						const varNameNode = node.nodes[0];
+						const variableName = varNameNode ? valueParser.stringify(varNameNode).trim() : '';
+
+						if (variableName) {
+							// Check local declarations first
+							const localDef = localVariableDeclarations.get(variableName);
+							if (localDef) {
+								node.type = 'word';
+								node.value = localDef.value;
+								node.nodes = [];
+							} else {
+								// Check custom properties (from @property rules)
+								const customProp = customProperties.get(variableName);
+								if (customProp?.initialValue) {
+									node.type = 'word';
+									node.value = customProp.initialValue.value;
+									node.nodes = [];
+								}
 							}
 						}
 					}
-				}
-			}
-		});
+				});
 
-		walk(rule, {
-			visit: 'Declaration',
-			enter(declaration) {
-				if (declaration.property.startsWith('--')) {
-					return;
-				}
-				styles += `${declaration.property}: ${generate(declaration.value)} ${declaration.important ? '!important' : ''};`;
+				value = valueParser.stringify(parsed.nodes);
 			}
+
+			const important = decl.important ? '!important' : '';
+			styles += `${decl.prop}: ${value} ${important};`;
 		});
 	}
 

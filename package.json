@@ -18,9 +18,10 @@
 		}
 	},
 	"dependencies": {
-		"css-tree": "^3.1.0",
 		"html-to-text": "^9.0.5",
 		"parse5": "^8.0.0",
+		"postcss": "^8.5.6",
+		"postcss-value-parser": "^4.2.0",
 		"tailwindcss": "^4.1.17"
 	},
 	"optionalDependencies": {
@@ -36,9 +37,9 @@
 		"@sveltejs/package": "^2.5.4",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.17",
-		"@types/css-tree": "^2.3.11",
 		"@types/html-to-text": "^9.0.4",
 		"@types/node": "^24.10.1",
+		"@vitest/coverage-v8": "^4.0.14",
 		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.0",

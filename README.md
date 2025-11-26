@@ -31,7 +31,7 @@ See the [documentation](https://better-svelte-email.konixy.fr/docs) for a comple
 - **Tailwind v4 Support** - Transforms Tailwind classes to inline styles for email clients
 - **Built-in Email Preview** - Visual email preview and test sending
 - **TypeScript First** - Fully typed with comprehensive type definitions
-- **Well Tested** - Extensive test coverage with unit and integration tests
+- **Well Tested** - >90% test coverage with unit and integration tests
 
 _See [Roadmap](./ROADMAP.md) for future features and planned improvements._
 

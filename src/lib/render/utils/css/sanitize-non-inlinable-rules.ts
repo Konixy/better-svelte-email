@@ -1,4 +1,4 @@
-import { type CssNode, string, walk } from 'css-tree';
+import type { Root } from 'postcss';
 import { sanitizeClassName } from '../compatibility/sanitize-class-name.js';
 import { isRuleInlinable } from './is-rule-inlinable.js';
 
@@ -11,25 +11,21 @@ import { isRuleInlinable } from './is-rule-inlinable.js';
  * 1. Converts all declarations in all rules into important ones
  * 2. Sanitizes class selectors of all non-inlinable rules
  */
-export function sanitizeNonInlinableRules(node: CssNode) {
-	walk(node, {
-		visit: 'Rule',
-		enter(rule) {
-			if (!isRuleInlinable(rule)) {
-				walk(rule.prelude, (node) => {
-					if (node.type === 'ClassSelector') {
-						const unescapedClassName = string.decode(node.name);
-						node.name = sanitizeClassName(unescapedClassName);
-					}
-				});
+export function sanitizeNonInlinableRules(root: Root) {
+	root.walkRules((rule) => {
+		if (!isRuleInlinable(rule)) {
+			// Sanitize class names in selector
+			// The regex matches class names including escaped characters (like \: or \/)
+			// Note: \\. must come FIRST in the alternation to properly match escapes
+			rule.selector = rule.selector.replace(/\.((?:\\.|[^\s.:>+~[#,])+)/g, (match, className) => {
+				const unescaped = className.replace(/\\(.)/g, '$1');
+				return '.' + sanitizeClassName(unescaped);
+			});
 
-				walk(rule, {
-					visit: 'Declaration',
-					enter(declaration) {
-						declaration.important = true;
-					}
-				});
-			}
+			// Make all declarations important
+			rule.walkDecls((decl) => {
+				decl.important = true;
+			});
 		}
 	});
 }

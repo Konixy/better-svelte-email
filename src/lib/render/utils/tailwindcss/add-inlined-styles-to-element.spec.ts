@@ -1,4 +1,4 @@
-import { parse as parseCss, type Rule, type StyleSheet, walk as walkCss } from 'css-tree';
+import postcss, { type Rule } from 'postcss';
 import { addInlinedStylesToElement } from './add-inlined-styles-to-element.js';
 import type { CustomProperties } from '$lib/render/utils/css/get-custom-properties.js';
 import { expect, describe, it } from 'vitest';
@@ -21,23 +21,19 @@ describe('addInlinedStylesToElement()', () => {
 	}
 
 	function extractRulesMap(css: string): Map<string, Rule> {
-		const stylesheet = parseCss(css) as StyleSheet;
+		const root = postcss.parse(css);
 		const rulesMap = new Map<string, Rule>();
 
-		for (const child of stylesheet.children) {
-			if (child.type === 'Rule') {
-				const rule = child as Rule;
-				// Extract class name from selector using walk
-				walkCss(rule, {
-					visit: 'ClassSelector',
-					enter(node) {
-						if (!rulesMap.has(node.name)) {
-							rulesMap.set(node.name, rule);
-						}
-					}
-				});
+		root.walkRules((rule) => {
+			// Extract class names from selector
+			const classMatches = rule.selector.matchAll(/\.([^\s.:>+~[#,]+)/g);
+			for (const match of classMatches) {
+				const className = match[1].replace(/\\(.)/g, '$1');
+				if (!rulesMap.has(className)) {
+					rulesMap.set(className, rule);
+				}
 			}
-		}
+		});
 
 		return rulesMap;
 	}

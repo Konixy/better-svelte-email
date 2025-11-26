@@ -1,4 +1,4 @@
-import { type CssNode, type Declaration, generate, walk } from 'css-tree';
+import type { Root, Declaration } from 'postcss';
 
 export interface CustomProperty {
 	syntax?: Declaration;
@@ -8,40 +8,28 @@ export interface CustomProperty {
 
 export type CustomProperties = Map<string, CustomProperty>;
 
-export function getCustomProperties(node: CssNode) {
+export function getCustomProperties(root: Root): CustomProperties {
 	const customProperties = new Map<string, CustomProperty>();
 
-	walk(node, {
-		visit: 'Atrule',
-		enter(atrule) {
-			if (atrule.name === 'property' && atrule.prelude) {
-				const prelude = generate(atrule.prelude);
-				if (prelude.startsWith('--')) {
-					let syntax: Declaration | undefined;
-					let inherits: Declaration | undefined;
-					let initialValue: Declaration | undefined;
-					walk(atrule, {
-						visit: 'Declaration',
-						enter(declaration) {
-							if (declaration.property === 'syntax') {
-								syntax = declaration;
-							}
-							if (declaration.property === 'inherits') {
-								inherits = declaration;
-							}
-							if (declaration.property === 'initial-value') {
-								initialValue = declaration;
-							}
-						}
-					});
+	root.walkAtRules('property', (atRule) => {
+		const propertyName = atRule.params.trim();
 
-					customProperties.set(prelude, {
-						syntax,
-						inherits,
-						initialValue
-					});
+		if (propertyName.startsWith('--')) {
+			const prop: CustomProperty = {};
+
+			atRule.walkDecls((decl) => {
+				if (decl.prop === 'syntax') {
+					prop.syntax = decl;
 				}
-			}
+				if (decl.prop === 'inherits') {
+					prop.inherits = decl;
+				}
+				if (decl.prop === 'initial-value') {
+					prop.initialValue = decl;
+				}
+			});
+
+			customProperties.set(propertyName, prop);
 		}
 	});
 

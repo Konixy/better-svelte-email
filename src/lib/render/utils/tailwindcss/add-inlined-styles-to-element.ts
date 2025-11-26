@@ -1,4 +1,4 @@
-import type { Rule } from 'css-tree';
+import type { Rule } from 'postcss';
 import { sanitizeClassName } from '$lib/render/utils/compatibility/sanitize-class-name.js';
 import type { CustomProperties } from '$lib/render/utils/css/get-custom-properties.js';
 import { makeInlineStylesFor } from '$lib/render/utils/css/make-inline-styles-for.js';

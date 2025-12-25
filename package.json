@@ -119,7 +119,7 @@
 		"build": "bun run prepack && vite build",
 		"preview": "vite preview",
 		"package": "svelte-package",
-		"package:watch": "nodemon -x \"bun run package\" -i dist -e ts,svelte",
+		"package:watch": "svelte-package --watch",
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

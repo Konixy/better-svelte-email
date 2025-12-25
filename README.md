@@ -61,6 +61,33 @@ For older versions, you can use [`svelte-email-tailwind`](https://github.com/ste
 - Nested components
 - All svelte features such as each blocks (`{#each}`) and if blocks (`{#if}`), and more
 - Custom Tailwind configurations
+- Custom CSS injection (for app theme integration)
+
+## Quick Start
+
+```typescript
+import Renderer from 'better-svelte-email';
+import MyEmail from './emails/MyEmail.svelte';
+
+// Basic usage
+const renderer = new Renderer();
+const html = await renderer.render(MyEmail, { props: { name: 'John' } });
+
+// With Tailwind config
+const renderer = new Renderer({
+  tailwindConfig: {
+    theme: { extend: { colors: { brand: '#FF3E00' } } }
+  }
+});
+
+// With custom CSS (e.g., shadcn-svelte theme variables)
+import appStyles from './app.css?raw';
+const renderer = new Renderer({
+  customCSS: appStyles
+});
+```
+
+The `customCSS` option allows you to inject your app's CSS (including CSS variables) into email rendering. This is useful for maintaining consistent styling between your app and emails.
 
 ## Author
 

@@ -8,6 +8,8 @@ import { pixelBasedPreset } from '$lib/render/utils/tailwindcss/pixel-based-pres
 import fs from 'fs';
 import path from 'path';
 import { Resend } from 'resend';
+import themeCSS from '$lib/preview/theme.css?raw';
+import appCSS from '../../../app.css?raw';
 
 const resend = new Resend(env.RESEND_API_KEY ?? 're_1234');
 
@@ -22,7 +24,26 @@ const tailwindConfig: TailwindConfig = {
 	presets: [pixelBasedPreset]
 };
 
-const { render } = new Renderer(tailwindConfig);
+// Extract theme CSS variables and @theme inline directives from app CSS
+function extractThemeCSS(css: string): string {
+	const parts: string[] = [];
+
+	// Extract :root block (CSS variables)
+	const rootMatch = css.match(/:root\s*\{[^}]+\}/s);
+	if (rootMatch) parts.push(rootMatch[0]);
+
+	// Extract @theme inline block (Tailwind v4 color mappings)
+	const themeMatch = css.match(/@theme(?:\s+inline)?\s*\{[\s\S]*?\n\}/);
+	if (themeMatch) parts.push(themeMatch[0]);
+
+	return parts.join('\n\n');
+}
+
+// Use real shadcn-svelte theme from theme.css + app.css
+const customCSS = `${themeCSS}\n${extractThemeCSS(appCSS)}`;
+
+const renderer = new Renderer({ tailwindConfig, customCSS });
+const { render } = renderer;
 
 // Import all email components at build time using import.meta.glob
 // This creates a map of all email components that can be accessed at runtime

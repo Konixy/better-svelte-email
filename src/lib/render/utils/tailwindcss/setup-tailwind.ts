@@ -14,7 +14,7 @@ export type TailwindSetup = Awaited<ReturnType<typeof setupTailwind>>;
  * @param customCSS - Optional custom CSS string to inject (e.g., your theme CSS variables)
  */
 export async function setupTailwind(config: TailwindConfig, customCSS?: string) {
-	// customCSS so Tailwind can process @theme directives
+	// Inject customCSS after base imports for theme variable resolution during compilation
 	const baseCss = `
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);

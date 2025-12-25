@@ -119,5 +119,22 @@ describe('End-to-End Email Rendering', () => {
 			// Verify actual color values are present (converted to rgb)
 			expect(html).toMatch(/rgb\(/);
 		});
+
+		it('should handle invalid CSS gracefully', async () => {
+			const renderer = new Renderer({
+				customCSS: `
+					:root {
+						--broken-var: this is not valid CSS
+					}
+					.invalid { color }
+				`
+			});
+
+			// Should not throw during rendering
+			// Tailwind will skip invalid CSS during compilation
+			const html = await renderer.render(TestEmail);
+			expect(html).toBeDefined();
+			expect(html).toContain('<!DOCTYPE html');
+		});
 	});
 });

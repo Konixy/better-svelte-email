@@ -22,7 +22,20 @@ export type { DefaultTreeAdapterTypes as AST };
 export type RendererOptions = {
 	/** Tailwind CSS configuration */
 	tailwindConfig?: TailwindConfig;
-	/** Custom CSS string to inject (e.g., CSS variables from your app's stylesheet) */
+	/**
+	 * Custom CSS to inject into email rendering (e.g., app theme variables).
+	 *
+	 * This CSS is injected during Tailwind compilation, making variables and styles
+	 * available for processing. Useful for maintaining consistent styling between
+	 * your app and emails (e.g., shadcn-svelte theme variables).
+	 *
+	 *
+	 * @example
+	 * ```ts
+	 * import appStyles from './app.css?raw';
+	 * const renderer = new Renderer({ customCSS: appStyles });
+	 * ```
+	 */
 	customCSS?: string;
 };
 

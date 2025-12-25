@@ -17,6 +17,16 @@ export type TailwindConfig = Omit<Config, 'content'>;
 export type { DefaultTreeAdapterTypes as AST };
 
 /**
+ * Options for creating a Renderer instance
+ */
+export type RendererOptions = {
+	/** Tailwind CSS configuration */
+	tailwindConfig?: TailwindConfig;
+	/** Custom CSS string to inject (e.g., CSS variables from your app's stylesheet) */
+	customCSS?: string;
+};
+
+/**
  * Options for rendering a Svelte component
  */
 export type RenderOptions = {
@@ -34,13 +44,21 @@ export type RenderOptions = {
  * import EmailComponent from './email.svelte';
  *
  * const renderer = new Renderer({
- *   theme: {
- *     extend: {
- *       colors: {
- *         brand: '#FF3E00'
+ *   tailwindConfig: {
+ *     theme: {
+ *       extend: {
+ *         colors: {
+ *           brand: '#FF3E00'
+ *         }
  *       }
  *     }
  *   }
+ * });
+ *
+ * // With custom CSS (e.g., app theme variables)
+ * import appStyles from './app.css?raw';
+ * const renderer = new Renderer({
+ *   customCSS: appStyles
  * });
  *
  * const html = await renderer.render(EmailComponent, {
@@ -50,9 +68,11 @@ export type RenderOptions = {
  */
 export default class Renderer {
 	private tailwindConfig: TailwindConfig;
+	private customCSS?: string;
 
-	constructor(tailwindConfig: TailwindConfig = {}) {
-		this.tailwindConfig = tailwindConfig;
+	constructor(options: RendererOptions = {}) {
+		this.tailwindConfig = options.tailwindConfig || {};
+		this.customCSS = options.customCSS;
 	}
 
 	/**
@@ -82,7 +102,7 @@ export default class Renderer {
 		ast = removeAttributesFunctions(ast);
 
 		let classesUsed: string[] = [];
-		const tailwindSetup = await setupTailwind(this.tailwindConfig);
+		const tailwindSetup = await setupTailwind(this.tailwindConfig, this.customCSS);
 
 		walk(ast, (node) => {
 			if (isValidNode(node)) {

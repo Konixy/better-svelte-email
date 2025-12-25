@@ -61,10 +61,12 @@ describe('Renderer', () => {
 		};
 
 		const renderer = new Renderer({
-			theme: {
-				extend: {
-					colors: {
-						'custom-color': '#123456'
+			tailwindConfig: {
+				theme: {
+					extend: {
+						colors: {
+							'custom-color': '#123456'
+						}
 					}
 				}
 			}

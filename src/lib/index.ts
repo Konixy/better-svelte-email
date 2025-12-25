@@ -6,5 +6,6 @@ export {
 	default as Renderer,
 	toPlainText,
 	type TailwindConfig,
+	type RendererOptions,
 	type RenderOptions
 } from './render/index.js';

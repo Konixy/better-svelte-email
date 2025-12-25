@@ -8,11 +8,18 @@ import utilitiesCss from './tailwind-stylesheets/utilities.js';
 
 export type TailwindSetup = Awaited<ReturnType<typeof setupTailwind>>;
 
-export async function setupTailwind(config: TailwindConfig) {
+/**
+ * Set up Tailwind CSS compiler with optional custom CSS injection
+ * @param config - Tailwind configuration
+ * @param customCSS - Optional custom CSS string to inject (e.g., your theme CSS variables)
+ */
+export async function setupTailwind(config: TailwindConfig, customCSS?: string) {
+	// customCSS so Tailwind can process @theme directives
 	const baseCss = `
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+${customCSS || ''}
 @config;
 `;
 	const compiler = await compile(baseCss, {

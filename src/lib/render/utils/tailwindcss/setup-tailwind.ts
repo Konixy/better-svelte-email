@@ -5,6 +5,7 @@ import indexCss from './tailwind-stylesheets/index.js';
 import preflightCss from './tailwind-stylesheets/preflight.js';
 import themeCss from './tailwind-stylesheets/theme.js';
 import utilitiesCss from './tailwind-stylesheets/utilities.js';
+import { sanitizeCustomCss } from './sanitize-custom-css.js';
 
 export type TailwindSetup = Awaited<ReturnType<typeof setupTailwind>>;
 
@@ -19,7 +20,7 @@ export async function setupTailwind(config: TailwindConfig, customCSS?: string) 
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
-${customCSS || ''}
+${customCSS ? sanitizeCustomCss(customCSS) : ''}
 @config;
 `;
 	const compiler = await compile(baseCss, {

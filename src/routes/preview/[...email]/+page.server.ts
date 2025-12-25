@@ -24,23 +24,8 @@ const tailwindConfig: TailwindConfig = {
 	presets: [pixelBasedPreset]
 };
 
-// Extract theme CSS variables and @theme inline directives from app CSS
-function extractThemeCSS(css: string): string {
-	const parts: string[] = [];
-
-	// Extract :root block (CSS variables)
-	const rootMatch = css.match(/:root\s*\{[^}]+\}/s);
-	if (rootMatch) parts.push(rootMatch[0]);
-
-	// Extract @theme inline block (Tailwind v4 color mappings)
-	const themeMatch = css.match(/@theme(?:\s+inline)?\s*\{[\s\S]*?\n\}/);
-	if (themeMatch) parts.push(themeMatch[0]);
-
-	return parts.join('\n\n');
-}
-
 // Use real shadcn-svelte theme from theme.css + app.css
-const customCSS = `${themeCSS}\n${extractThemeCSS(appCSS)}`;
+const customCSS = `${themeCSS}\n${appCSS}`;
 
 const renderer = new Renderer({ tailwindConfig, customCSS });
 const { render } = renderer;

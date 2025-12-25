@@ -13,7 +13,9 @@ import { isValidNode } from './utils/html/is-valid-node.js';
 import { removeAttributesFunctions } from './utils/html/remove-attributes-functions.js';
 import { convert } from 'html-to-text';
 
-export type TailwindConfig = Omit<Config, 'content'>;
+export type TailwindConfig = {
+	customCssPaths?: string[];
+} & Omit<Config, 'content'>;
 export type { DefaultTreeAdapterTypes as AST };
 
 /**

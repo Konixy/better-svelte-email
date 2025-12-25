@@ -83,9 +83,27 @@ export default class Renderer {
 	private tailwindConfig: TailwindConfig;
 	private customCSS?: string;
 
-	constructor(options: RendererOptions = {}) {
-		this.tailwindConfig = options.tailwindConfig || {};
-		this.customCSS = options.customCSS;
+	// Backward-compatible overloads:
+	// - new Renderer(tailwindConfig)
+	// - new Renderer({ tailwindConfig, customCSS })
+	constructor(tailwindConfig?: TailwindConfig);
+	constructor(options?: RendererOptions);
+	constructor(optionsOrConfig: TailwindConfig | RendererOptions = {}) {
+		// Detect whether the argument is a bare TailwindConfig (old API)
+		// or a RendererOptions object (new API).
+		if (
+			optionsOrConfig &&
+			(typeof optionsOrConfig === 'object') &&
+			('tailwindConfig' in (optionsOrConfig as any) || 'customCSS' in (optionsOrConfig as any))
+		) {
+			const options = optionsOrConfig as RendererOptions;
+			this.tailwindConfig = options.tailwindConfig || {};
+			this.customCSS = options.customCSS;
+		} else {
+			const config = optionsOrConfig as TailwindConfig | undefined;
+			this.tailwindConfig = config || {};
+			this.customCSS = undefined;
+		}
 	}
 
 	/**

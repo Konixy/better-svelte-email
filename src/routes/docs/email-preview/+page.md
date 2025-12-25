@@ -68,12 +68,20 @@ import { createEmail, sendEmail } from 'better-svelte-email/preview';
 const tailwindConfig = {
 	theme: { extend: { colors: { brand: '#FF3E00' } } }
 };
-const renderer = new Renderer(tailwindConfig);
+const renderer = new Renderer({ tailwindConfig });
 
 export const actions = {
 	...createEmail({ renderer }),
 	...sendEmail({ renderer })
 };
+```
+
+You can also pass your app's CSS (including CSS variables) to the `Renderer` class.
+
+```typescript
+import layoutStyles from 'src/routes/layout.css?raw';
+
+const renderer = new Renderer({ customCSS: layoutStyles });
 ```
 
 ### Custom Email Folder

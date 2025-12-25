@@ -100,7 +100,7 @@ To use a custom tailwind config, you will need to pass an instance of the `Rende
 // src/routes/email-preview/[...email]/+page.server.ts
 import { Renderer } from 'better-svelte-email/render';
 
-const renderer = new Renderer(tailwindConfig);
+const renderer = new Renderer({ tailwindConfig });
 
 export const actions = {
 	...createEmail({ renderer }),

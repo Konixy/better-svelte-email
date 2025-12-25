@@ -134,6 +134,18 @@ const tailwindConfig = {
 const { render } = new Renderer({ tailwindConfig });
 ```
 
+### Custom CSS
+
+You can also pass a custom CSS string to the `Renderer` class.
+This is useful if you want to inject your app's CSS (including CSS variables) into email rendering.
+For example, if you are using shadcn-svelte, you can pass the `layout.css` (previously `app.css`) file to the `Renderer` class.
+
+```js
+import layoutStyles from 'src/routes/layout.css?raw';
+
+const { render } = new Renderer({ customCSS: layoutStyles });
+```
+
 ## Preview your emails
 
 Better Svelte Email provides an `EmailPreview` component that you can use to preview your emails in the browser.

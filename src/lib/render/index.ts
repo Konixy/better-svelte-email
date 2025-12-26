@@ -54,9 +54,13 @@ export type RenderOptions = {
  * @example
  * ```ts
  * import Renderer from 'better-svelte-email/renderer';
- * import EmailComponent from './email.svelte';
+ * import EmailComponent from '$lib/emails/email.svelte';
+ * import layoutStyles from 'src/routes/layout.css?raw';
  *
  * const renderer = new Renderer({
+ *   // Inject custom CSS such as app theme variables
+ *   customCSS: layoutStyles,
+ *   // Or provide a tailwind v3 config to extend the default theme
  *   tailwindConfig: {
  *     theme: {
  *       extend: {
@@ -66,12 +70,6 @@ export type RenderOptions = {
  *       }
  *     }
  *   }
- * });
- *
- * // With custom CSS (e.g., app theme variables)
- * import appStyles from './app.css?raw';
- * const renderer = new Renderer({
- *   customCSS: appStyles
  * });
  *
  * const html = await renderer.render(EmailComponent, {
@@ -93,7 +91,7 @@ export default class Renderer {
 		// or a RendererOptions object (new API).
 		if (
 			optionsOrConfig &&
-			(typeof optionsOrConfig === 'object') &&
+			typeof optionsOrConfig === 'object' &&
 			('tailwindConfig' in (optionsOrConfig as any) || 'customCSS' in (optionsOrConfig as any))
 		) {
 			const options = optionsOrConfig as RendererOptions;

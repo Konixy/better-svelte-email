@@ -61,6 +61,7 @@ For older versions, you can use [`svelte-email-tailwind`](https://github.com/ste
 - Nested components
 - All svelte features such as each blocks (`{#each}`) and if blocks (`{#if}`), and more
 - Custom Tailwind configurations
+- Custom CSS injection (for app theme integration)
 
 ## Author
 

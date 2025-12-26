@@ -17,6 +17,29 @@ export type TailwindConfig = Omit<Config, 'content'>;
 export type { DefaultTreeAdapterTypes as AST };
 
 /**
+ * Options for creating a Renderer instance
+ */
+export type RendererOptions = {
+	/** Tailwind CSS configuration */
+	tailwindConfig?: TailwindConfig;
+	/**
+	 * Custom CSS to inject into email rendering (e.g., app theme variables).
+	 *
+	 * This CSS is injected during Tailwind compilation, making variables and styles
+	 * available for processing. Useful for maintaining consistent styling between
+	 * your app and emails (e.g., shadcn-svelte theme variables).
+	 *
+	 *
+	 * @example
+	 * ```ts
+	 * import appStyles from './app.css?raw';
+	 * const renderer = new Renderer({ customCSS: appStyles });
+	 * ```
+	 */
+	customCSS?: string;
+};
+
+/**
  * Options for rendering a Svelte component
  */
 export type RenderOptions = {
@@ -31,13 +54,19 @@ export type RenderOptions = {
  * @example
  * ```ts
  * import Renderer from 'better-svelte-email/renderer';
- * import EmailComponent from './email.svelte';
+ * import EmailComponent from '$lib/emails/email.svelte';
+ * import layoutStyles from 'src/routes/layout.css?raw';
  *
  * const renderer = new Renderer({
- *   theme: {
- *     extend: {
- *       colors: {
- *         brand: '#FF3E00'
+ *   // Inject custom CSS such as app theme variables
+ *   customCSS: layoutStyles,
+ *   // Or provide a tailwind v3 config to extend the default theme
+ *   tailwindConfig: {
+ *     theme: {
+ *       extend: {
+ *         colors: {
+ *           brand: '#FF3E00'
+ *         }
  *       }
  *     }
  *   }
@@ -50,9 +79,29 @@ export type RenderOptions = {
  */
 export default class Renderer {
 	private tailwindConfig: TailwindConfig;
+	private customCSS?: string;
 
-	constructor(tailwindConfig: TailwindConfig = {}) {
-		this.tailwindConfig = tailwindConfig;
+	// Backward-compatible overloads:
+	// - new Renderer(tailwindConfig)
+	// - new Renderer({ tailwindConfig, customCSS })
+	constructor(tailwindConfig?: TailwindConfig);
+	constructor(options?: RendererOptions);
+	constructor(optionsOrConfig: TailwindConfig | RendererOptions = {}) {
+		// Detect whether the argument is a bare TailwindConfig (old API)
+		// or a RendererOptions object (new API).
+		if (
+			optionsOrConfig &&
+			typeof optionsOrConfig === 'object' &&
+			('tailwindConfig' in (optionsOrConfig as any) || 'customCSS' in (optionsOrConfig as any))
+		) {
+			const options = optionsOrConfig as RendererOptions;
+			this.tailwindConfig = options.tailwindConfig || {};
+			this.customCSS = options.customCSS;
+		} else {
+			const config = optionsOrConfig as TailwindConfig | undefined;
+			this.tailwindConfig = config || {};
+			this.customCSS = undefined;
+		}
 	}
 
 	/**
@@ -82,7 +131,7 @@ export default class Renderer {
 		ast = removeAttributesFunctions(ast);
 
 		let classesUsed: string[] = [];
-		const tailwindSetup = await setupTailwind(this.tailwindConfig);
+		const tailwindSetup = await setupTailwind(this.tailwindConfig, this.customCSS);
 
 		walk(ast, (node) => {
 			if (isValidNode(node)) {

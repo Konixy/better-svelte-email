@@ -1,6 +1,8 @@
 import type { Root, Declaration, Rule, AtRule, Container } from 'postcss';
 import valueParser from 'postcss-value-parser';
 
+const MAX_CSS_VARIABLE_RESOLUTION_ITERATIONS = 10;
+
 interface VariableUse {
 	declaration: Declaration;
 	selector: string;
@@ -15,7 +17,6 @@ export interface VariableDefinition {
 	declaration: Declaration;
 	selector: string;
 	variableName: string;
-	definition: string;
 }
 
 function getSelector(decl: Declaration): string {
@@ -80,11 +81,14 @@ function doSelectorsIntersect(first: string, second: string): boolean {
 }
 
 export function resolveAllCssVariables(root: Root) {
-	const variableDefinitions = new Set<VariableDefinition>();
-	const variableUses: VariableUse[] = [];
+	let iteration = 0;
 
-	// First pass: collect variable definitions and uses
-	root.walkDecls((decl) => {
+	while (iteration < MAX_CSS_VARIABLE_RESOLUTION_ITERATIONS) {
+		const variableDefinitions = new Set<VariableDefinition>();
+		const variableUses: VariableUse[] = [];
+
+		// First pass: collect variable definitions and uses
+		root.walkDecls((decl) => {
 		// Skip @layer (properties) { ... } to avoid variable resolution conflicts
 		if (isInPropertiesLayer(decl)) {
 			return;
@@ -94,10 +98,11 @@ export function resolveAllCssVariables(root: Root) {
 			variableDefinitions.add({
 				declaration: decl,
 				selector: getSelector(decl),
-				variableName: decl.prop,
-				definition: decl.value
+				variableName: decl.prop
 			});
-		} else if (decl.value.includes('var(')) {
+		}
+
+		if (decl.value.includes('var(')) {
 			const parseVariableUses = (value: string) => {
 				const parsed = valueParser(value);
 
@@ -137,8 +142,15 @@ export function resolveAllCssVariables(root: Root) {
 		}
 	});
 
-	// Second pass: resolve variables
-	for (const use of variableUses) {
+		// Early exit: If no variable uses found, we're done
+		if (variableUses.length === 0) {
+			break;
+		}
+
+		// Second pass: resolve variables
+		let replacedInThisIteration = false;
+
+		for (const use of variableUses) {
 		let hasReplaced = false;
 
 		for (const definition of variableDefinitions) {
@@ -152,21 +164,61 @@ export function resolveAllCssVariables(root: Root) {
 				use.atRuleSelector &&
 				doSelectorsIntersect(use.atRuleSelector, definition.selector)
 			) {
-				use.declaration.value = use.declaration.value.replaceAll(use.raw, definition.definition);
+				use.declaration.value = use.declaration.value.replaceAll(
+					use.raw,
+					definition.declaration.value
+				);
 				hasReplaced = true;
+				replacedInThisIteration = true;
+				break;
+			}
+
+			// Check if use is in a top-level at-rule (no atRuleSelector) and definition is in :root or universal
+			if (
+				use.inAtRule &&
+				!use.atRuleSelector &&
+				(definition.selector.includes(':root') || definition.selector === '*')
+			) {
+				use.declaration.value = use.declaration.value.replaceAll(
+					use.raw,
+					definition.declaration.value
+				);
+				hasReplaced = true;
+				replacedInThisIteration = true;
 				break;
 			}
 
 			// Check if both are in rules with matching selectors
 			if (!use.inAtRule && doSelectorsIntersect(use.selector, definition.selector)) {
-				use.declaration.value = use.declaration.value.replaceAll(use.raw, definition.definition);
+				use.declaration.value = use.declaration.value.replaceAll(
+					use.raw,
+					definition.declaration.value
+				);
 				hasReplaced = true;
+				replacedInThisIteration = true;
 				break;
 			}
 		}
 
 		if (!hasReplaced && use.fallback) {
 			use.declaration.value = use.declaration.value.replaceAll(use.raw, use.fallback);
+			replacedInThisIteration = true;
 		}
+	}
+
+		// Early exit: If nothing was replaced, no point continuing
+		if (!replacedInThisIteration) {
+			break;
+		}
+
+		iteration++;
+	}
+
+	// Warning for circular references
+	if (iteration === MAX_CSS_VARIABLE_RESOLUTION_ITERATIONS) {
+		console.warn(
+			`[better-svelte-email] CSS variable resolution hit maximum iterations (${MAX_CSS_VARIABLE_RESOLUTION_ITERATIONS}). ` +
+				`This may indicate circular variable references.`
+		);
 	}
 }

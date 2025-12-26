@@ -262,4 +262,129 @@ div:nth-child(2*n+1) {
 		// .normal should NOT get the --class-color from .universal-with-class-* as selectors don't intersect
 		expect(result).toContain('.normal');
 	});
+
+	it('resolves two-level nested variables (shadcn pattern)', () => {
+		const root = postcss.parse(`:root {
+  --background: oklch(98.5% 0.001 106.423);
+  --foreground: oklch(21.6% 0.006 56.043);
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+.bg-background {
+  background-color: var(--color-background);
+}
+
+.text-foreground {
+  color: var(--color-foreground);
+}`);
+
+		resolveAllCssVariables(root);
+
+		const result = root.toString();
+		expect(result).toContain('background-color: oklch(98.5% 0.001 106.423)');
+		expect(result).toContain('color: oklch(21.6% 0.006 56.043)');
+		expect(result).not.toContain('var(--color-background)');
+		expect(result).not.toContain('var(--color-foreground)');
+		expect(result).not.toContain('var(--background)');
+		expect(result).not.toContain('var(--foreground)');
+	});
+
+	it('resolves three-level nested variables', () => {
+		const root = postcss.parse(`:root {
+  --base: #ff0000;
+}
+
+:root {
+  --level1: var(--base);
+}
+
+:root {
+  --level2: var(--level1);
+}
+
+.test {
+  color: var(--level2);
+}`);
+
+		resolveAllCssVariables(root);
+
+		const result = root.toString();
+		expect(result).toContain('color: #ff0000');
+		expect(result).not.toContain('var(--');
+	});
+
+	it('handles circular variable references gracefully', () => {
+		const root = postcss.parse(`:root {
+  --a: var(--b);
+  --b: var(--a);
+}
+
+.test {
+  color: var(--a);
+}`);
+
+		// Mock console.warn
+		const originalWarn = console.warn;
+		let warnCalled = false;
+		console.warn = (msg: string) => {
+			if (msg.includes('maximum iterations')) {
+				warnCalled = true;
+			}
+		};
+
+		resolveAllCssVariables(root);
+
+		console.warn = originalWarn;
+
+		expect(warnCalled).toBe(true);
+		// Variable should remain unresolved (graceful degradation)
+		const result = root.toString();
+		expect(result).toContain('var(--');
+	});
+
+	it('handles mix of nested and direct variables', () => {
+		const root = postcss.parse(`:root {
+  --primary: blue;
+  --secondary-base: red;
+  --secondary: var(--secondary-base);
+}
+
+.test1 {
+  color: var(--primary);
+}
+
+.test2 {
+  color: var(--secondary);
+}`);
+
+		resolveAllCssVariables(root);
+
+		const result = root.toString();
+		expect(result).toContain('.test1');
+		expect(result).toContain('color: blue');
+		expect(result).toContain('.test2');
+		expect(result).toContain('color: red');
+		expect(result).not.toContain('var(--');
+	});
+
+	it('resolves nested variables in fallback values', () => {
+		const root = postcss.parse(`:root {
+  --fallback-base: green;
+  --fallback: var(--fallback-base);
+}
+
+.test {
+  color: var(--undefined, var(--fallback));
+}`);
+
+		resolveAllCssVariables(root);
+
+		const result = root.toString();
+		expect(result).toContain('color: green');
+		expect(result).not.toContain('var(--');
+	});
 });

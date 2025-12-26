@@ -5,14 +5,22 @@ import indexCss from './tailwind-stylesheets/index.js';
 import preflightCss from './tailwind-stylesheets/preflight.js';
 import themeCss from './tailwind-stylesheets/theme.js';
 import utilitiesCss from './tailwind-stylesheets/utilities.js';
+import { sanitizeCustomCss } from './sanitize-custom-css.js';
 
 export type TailwindSetup = Awaited<ReturnType<typeof setupTailwind>>;
 
-export async function setupTailwind(config: TailwindConfig) {
+/**
+ * Set up Tailwind CSS compiler with optional custom CSS injection
+ * @param config - Tailwind configuration
+ * @param customCSS - Optional custom CSS string to inject (e.g., your theme CSS variables)
+ */
+export async function setupTailwind(config: TailwindConfig, customCSS?: string) {
+	// Inject customCSS after base imports for theme variable resolution during compilation
 	const baseCss = `
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+${customCSS ? sanitizeCustomCss(customCSS) : ''}
 @config;
 `;
 	const compiler = await compile(baseCss, {

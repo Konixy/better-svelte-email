@@ -132,10 +132,12 @@ const getEmailSource = async (emailPath: string, file: string) => {
  * import Renderer from 'better-svelte-email/render';
  *
  * const renderer = new Renderer({
- *   theme: {
- *     extend: {
- *       colors: {
- *         brand: '#FF3E00'
+ *   tailwindConfig: {
+ *     theme: {
+ *       extend: {
+ *         colors: {
+ *           brand: '#FF3E00'
+ *         }
  *       }
  *     }
  *   }
@@ -224,17 +226,19 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
  * import Renderer from 'better-svelte-email/render';
  *
  * const renderer = new Renderer({
- *   theme: {
- *     extend: {
- *       colors: {
- *         brand: '#FF3E00'
+ *   tailwindConfig: {
+ *     theme: {
+ *       extend: {
+ *         colors: {
+ *           brand: '#FF3E00'
+ *         }
  *       }
  *     }
  *   }
  * });
  *
  * export const actions = {
- *   ...createEmail(renderer),
+ *   ...createEmail({ renderer }),
  *   ...sendEmail({ resendApiKey: PRIVATE_RESEND_API_KEY, renderer })
  * };
  * ```

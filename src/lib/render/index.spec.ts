@@ -61,10 +61,12 @@ describe('Renderer', () => {
 		};
 
 		const renderer = new Renderer({
-			theme: {
-				extend: {
-					colors: {
-						'custom-color': '#123456'
+			tailwindConfig: {
+				theme: {
+					extend: {
+						colors: {
+							'custom-color': '#123456'
+						}
 					}
 				}
 			}
@@ -151,6 +153,71 @@ describe('Renderer', () => {
 		expect(html).toContain('Nested');
 		expect(html).toContain('text-align: center');
 		expect(html).toContain('font-weight');
+	});
+
+	describe('Renderer constructor backward compatibility', () => {
+		it('accepts Tailwind config as the only argument (old API)', async () => {
+			const { default: Component } = await import('./__fixtures__/CustomColorComponent.svelte');
+			const renderer = new Renderer({
+				theme: {
+					extend: {
+						colors: {
+							'custom-color': '#112233'
+						}
+					}
+				}
+			});
+			const html = await renderer.render(Component);
+			// Tailwind might convert hex to rgb
+			expect(html).toMatch(/color:\s*(#112233|rgb\(17,\s*34,\s*51\))/);
+		});
+
+		it('accepts options object with tailwindConfig (new API)', async () => {
+			const renderer = new Renderer({
+				tailwindConfig: {
+					theme: {
+						extend: {
+							colors: {
+								'custom-color': '#445566'
+							}
+						}
+					}
+				}
+			});
+			const { default: Component } = await import('./__fixtures__/CustomColorComponent.svelte');
+			const html = await renderer.render(Component);
+			// Tailwind might convert hex to rgb
+			expect(html).toMatch(/color:\s*(#445566|rgb\(68,\s*85,\s*102\))/);
+		});
+
+		it('supports customCSS with @property for variable resolution in tailwind classes', async () => {
+			const renderer = new Renderer({
+				tailwindConfig: {
+					theme: {
+						extend: {
+							colors: {
+								'custom-color': 'var(--my-color)'
+							}
+						}
+					}
+				},
+				customCSS:
+					'@property --my-color { syntax: "<color>"; inherits: false; initial-value: #00ff00; }'
+			});
+			const { default: Component } = await import('./__fixtures__/CustomColorComponent.svelte');
+			const html = await renderer.render(Component);
+
+			// The variable should be resolved in the style attribute because it's used in a tailwind class
+			expect(html).toMatch(/color:\s*(#00ff00|rgb\(0,\s*255,\s*0\))/);
+		});
+
+		it('accepts options object with both tailwindConfig and customCSS', async () => {
+			const renderer = new Renderer({
+				tailwindConfig: { theme: { extend: { colors: { test: '#000' } } } },
+				customCSS: '.test { color: red; }'
+			});
+			expect(renderer).toBeDefined();
+		});
 	});
 
 	it('handles custom properties and CSS variables', async () => {

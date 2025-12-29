@@ -1,5 +1,6 @@
-import type { Root, Declaration, Rule, AtRule, Container } from 'postcss';
+import type { Root, Declaration, Rule, AtRule } from 'postcss';
 import valueParser from 'postcss-value-parser';
+import type { ContainerWithChildren } from 'postcss/lib/container';
 
 const MAX_CSS_VARIABLE_RESOLUTION_ITERATIONS = 10;
 
@@ -40,7 +41,7 @@ function getAtRuleSelector(decl: Declaration): string | undefined {
 		if (parent.type === 'rule') {
 			return (parent as Rule).selector;
 		}
-		parent = parent.parent as Container | undefined;
+		parent = parent.parent as ContainerWithChildren | undefined;
 	}
 	return undefined;
 }
@@ -51,7 +52,7 @@ function isInAtRule(decl: Declaration): boolean {
 		if (parent.type === 'atrule') {
 			return true;
 		}
-		parent = parent.parent as Container | undefined;
+		parent = parent.parent as ContainerWithChildren | undefined;
 	}
 	return false;
 }
@@ -65,7 +66,7 @@ function isInPropertiesLayer(decl: Declaration): boolean {
 				return true;
 			}
 		}
-		parent = parent.parent as Container | undefined;
+		parent = parent.parent as ContainerWithChildren | undefined;
 	}
 	return false;
 }
@@ -89,58 +90,58 @@ export function resolveAllCssVariables(root: Root) {
 
 		// First pass: collect variable definitions and uses
 		root.walkDecls((decl) => {
-		// Skip @layer (properties) { ... } to avoid variable resolution conflicts
-		if (isInPropertiesLayer(decl)) {
-			return;
-		}
+			// Skip @layer (properties) { ... } to avoid variable resolution conflicts
+			if (isInPropertiesLayer(decl)) {
+				return;
+			}
 
-		if (decl.prop.startsWith('--')) {
-			variableDefinitions.add({
-				declaration: decl,
-				selector: getSelector(decl),
-				variableName: decl.prop
-			});
-		}
-
-		if (decl.value.includes('var(')) {
-			const parseVariableUses = (value: string) => {
-				const parsed = valueParser(value);
-
-				parsed.walk((node) => {
-					if (node.type === 'function' && node.value === 'var') {
-						const varNameNode = node.nodes[0];
-						const varName = varNameNode ? valueParser.stringify(varNameNode).trim() : '';
-
-						// Find fallback (after the comma)
-						let fallback: string | undefined;
-						const commaIndex = node.nodes.findIndex((n) => n.type === 'div' && n.value === ',');
-						if (commaIndex !== -1) {
-							fallback = valueParser.stringify(node.nodes.slice(commaIndex + 1)).trim();
-						}
-
-						const raw = valueParser.stringify(node);
-
-						variableUses.push({
-							declaration: decl,
-							selector: getSelector(decl),
-							inAtRule: isInAtRule(decl),
-							atRuleSelector: getAtRuleSelector(decl),
-							fallback,
-							variableName: varName,
-							raw
-						});
-
-						// If fallback contains var(), recursively parse those too
-						if (fallback?.includes('var(')) {
-							parseVariableUses(fallback);
-						}
-					}
+			if (decl.prop.startsWith('--')) {
+				variableDefinitions.add({
+					declaration: decl,
+					selector: getSelector(decl),
+					variableName: decl.prop
 				});
-			};
+			}
 
-			parseVariableUses(decl.value);
-		}
-	});
+			if (decl.value.includes('var(')) {
+				const parseVariableUses = (value: string) => {
+					const parsed = valueParser(value);
+
+					parsed.walk((node) => {
+						if (node.type === 'function' && node.value === 'var') {
+							const varNameNode = node.nodes[0];
+							const varName = varNameNode ? valueParser.stringify(varNameNode).trim() : '';
+
+							// Find fallback (after the comma)
+							let fallback: string | undefined;
+							const commaIndex = node.nodes.findIndex((n) => n.type === 'div' && n.value === ',');
+							if (commaIndex !== -1) {
+								fallback = valueParser.stringify(node.nodes.slice(commaIndex + 1)).trim();
+							}
+
+							const raw = valueParser.stringify(node);
+
+							variableUses.push({
+								declaration: decl,
+								selector: getSelector(decl),
+								inAtRule: isInAtRule(decl),
+								atRuleSelector: getAtRuleSelector(decl),
+								fallback,
+								variableName: varName,
+								raw
+							});
+
+							// If fallback contains var(), recursively parse those too
+							if (fallback?.includes('var(')) {
+								parseVariableUses(fallback);
+							}
+						}
+					});
+				};
+
+				parseVariableUses(decl.value);
+			}
+		});
 
 		// Early exit: If no variable uses found, we're done
 		if (variableUses.length === 0) {
@@ -151,60 +152,60 @@ export function resolveAllCssVariables(root: Root) {
 		let replacedInThisIteration = false;
 
 		for (const use of variableUses) {
-		let hasReplaced = false;
+			let hasReplaced = false;
 
-		for (const definition of variableDefinitions) {
-			if (use.variableName !== definition.variableName) {
-				continue;
+			for (const definition of variableDefinitions) {
+				if (use.variableName !== definition.variableName) {
+					continue;
+				}
+
+				// Check if use is in an at-rule and definition is in a matching rule
+				if (
+					use.inAtRule &&
+					use.atRuleSelector &&
+					doSelectorsIntersect(use.atRuleSelector, definition.selector)
+				) {
+					use.declaration.value = use.declaration.value.replaceAll(
+						use.raw,
+						definition.declaration.value
+					);
+					hasReplaced = true;
+					replacedInThisIteration = true;
+					break;
+				}
+
+				// Check if use is in a top-level at-rule (no atRuleSelector) and definition is in :root or universal
+				if (
+					use.inAtRule &&
+					!use.atRuleSelector &&
+					(definition.selector.includes(':root') || definition.selector === '*')
+				) {
+					use.declaration.value = use.declaration.value.replaceAll(
+						use.raw,
+						definition.declaration.value
+					);
+					hasReplaced = true;
+					replacedInThisIteration = true;
+					break;
+				}
+
+				// Check if both are in rules with matching selectors
+				if (!use.inAtRule && doSelectorsIntersect(use.selector, definition.selector)) {
+					use.declaration.value = use.declaration.value.replaceAll(
+						use.raw,
+						definition.declaration.value
+					);
+					hasReplaced = true;
+					replacedInThisIteration = true;
+					break;
+				}
 			}
 
-			// Check if use is in an at-rule and definition is in a matching rule
-			if (
-				use.inAtRule &&
-				use.atRuleSelector &&
-				doSelectorsIntersect(use.atRuleSelector, definition.selector)
-			) {
-				use.declaration.value = use.declaration.value.replaceAll(
-					use.raw,
-					definition.declaration.value
-				);
-				hasReplaced = true;
+			if (!hasReplaced && use.fallback) {
+				use.declaration.value = use.declaration.value.replaceAll(use.raw, use.fallback);
 				replacedInThisIteration = true;
-				break;
-			}
-
-			// Check if use is in a top-level at-rule (no atRuleSelector) and definition is in :root or universal
-			if (
-				use.inAtRule &&
-				!use.atRuleSelector &&
-				(definition.selector.includes(':root') || definition.selector === '*')
-			) {
-				use.declaration.value = use.declaration.value.replaceAll(
-					use.raw,
-					definition.declaration.value
-				);
-				hasReplaced = true;
-				replacedInThisIteration = true;
-				break;
-			}
-
-			// Check if both are in rules with matching selectors
-			if (!use.inAtRule && doSelectorsIntersect(use.selector, definition.selector)) {
-				use.declaration.value = use.declaration.value.replaceAll(
-					use.raw,
-					definition.declaration.value
-				);
-				hasReplaced = true;
-				replacedInThisIteration = true;
-				break;
 			}
 		}
-
-		if (!hasReplaced && use.fallback) {
-			use.declaration.value = use.declaration.value.replaceAll(use.raw, use.fallback);
-			replacedInThisIteration = true;
-		}
-	}
 
 		// Early exit: If nothing was replaced, no point continuing
 		if (!replacedInThisIteration) {

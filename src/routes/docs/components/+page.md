@@ -31,8 +31,8 @@ Use `Html`, `Head`, and `Body` at the root, then mix layout and content componen
 
 ### Html
 
-- `lang? = 'en'` — language attribute.
-- `dir? = 'ltr'` — text direction.
+- `lang? = 'en'` — Language attribute.
+- `dir? = 'ltr'` — Text direction.
 - Accepts all `<html>` attributes plus a default slot for nested components.
 
 ### Head
@@ -47,19 +47,19 @@ Use `Html`, `Head`, and `Body` at the root, then mix layout and content componen
 
 ### Preview
 
-- `preview: string` (required) — text shown in inbox previews, trimmed to 150 characters.
+- `preview: string` (required) — Text shown in inbox previews, trimmed to 150 characters.
 - Forwards standard `<div>` attributes.
 
 ## Layout
 
 ### Container
 
-- Default slot for inner sections.
+- Default slot for Inner sections.
 - Merges `style` with a max-width of `37.5em`; accepts all `<table>` attributes.
 
 ### Section
 
-- Wrapper around content blocks.
+- A wrapper around content blocks.
 - Accepts all `<table>` attributes and a default slot.
 
 ### Row
@@ -76,13 +76,13 @@ Use `Html`, `Head`, and `Body` at the root, then mix layout and content componen
 
 ### Heading
 
-- `as? = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'` — element to render.
+- `as? = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'` — Element to render.
 - Margin shorthands: `m`, `mx`, `my`, `mt`, `mr`, `mb`, `ml`.
 - Default slot for heading text; forwards remaining `<h*>` attributes.
 
 ### Text
 
-- `as? = string` — element type, defaults to `<p>`.
+- `as? = string` — Element type, defaults to `<p>`.
 - Default slot for body copy and all `<p>` attributes.
 - Merges `style` with default font size/line height.
 
@@ -98,7 +98,7 @@ Use `Html`, `Head`, and `Body` at the root, then mix layout and content componen
 
 - `href? = '#'`.
 - `target? = '_blank'`.
-- `pX? = 0`, `pY? = 0` — horizontal and vertical padding in pixels.
+- `pX? = 0`, `pY? = 0` — Horizontal and vertical padding in pixels.
 - Default slot for button content; forwards remaining `<a>` attributes.
 
 ## Media and dividers

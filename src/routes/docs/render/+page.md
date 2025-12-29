@@ -13,7 +13,7 @@ import Renderer, { toPlainText, type RenderOptions } from 'better-svelte-email/r
 `const renderer = new Renderer(options?)`
 
 - `options?`:
-  - `tailwindConfig?` — Partial Tailwind config. Use it to extend the default theme, using tailwindcss v3 syntax.
+  - `tailwindConfig?` — Partial Tailwind config. Use it to extend the default theme, using Tailwind CSS v3 syntax.
   - `customCSS?` — Custom CSS string to inject into email rendering.
 
 ### renderer.render
@@ -36,7 +36,7 @@ const html = await renderer.render(WelcomeEmail, {
 
 - `props?` — Props forwarded to the Svelte component. Slot and event props are omitted automatically.
 - `context?` — Custom context map that becomes available through Svelte’s `getContext`.
-- `idPrefix?` — Prefix appended to generated element ids to avoid collisions when embedding multiple renders.
+- `idPrefix?` — Prefix appended to generated element IDs to avoid collisions when embedding multiple renders.
 
 ## Plain text output
 

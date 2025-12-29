@@ -39,14 +39,14 @@ export function makeInlineStylesFor(
 							// Check local declarations first
 							const localDef = localVariableDeclarations.get(variableName);
 							if (localDef) {
-								node.type = 'word';
+								(node as any).type = 'word';
 								node.value = localDef.value;
 								node.nodes = [];
 							} else {
 								// Check custom properties (from @property rules)
 								const customProp = customProperties.get(variableName);
 								if (customProp?.initialValue) {
-									node.type = 'word';
+									(node as any).type = 'word';
 									node.value = customProp.initialValue.value;
 									node.nodes = [];
 								}

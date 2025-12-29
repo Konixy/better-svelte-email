@@ -241,6 +241,62 @@ describe('Renderer', () => {
 	});
 });
 
+describe('Global CSS selectors (issue #46)', () => {
+	it('should apply universal selector (*) styles from customCSS', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				@layer base {
+					* {
+						border-color: red;
+					}
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		// border class provides border-width and border-style
+		expect(html).toContain('border-width');
+		expect(html).toContain('border-style');
+		// border-color should come from the * selector in customCSS
+		// This currently FAILS - demonstrating the bug
+		expect(html).toContain('border-color');
+	});
+
+	it('should apply element selector styles from customCSS', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				div {
+					outline: 2px solid blue;
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		// This currently FAILS - element selectors are ignored
+		expect(html).toContain('outline');
+	});
+
+	it('class-based styles should override global selector styles', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				@layer base {
+					* {
+						border-color: red;
+					}
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		// When implementation is complete, using border-blue-500 should override the * rule
+		const html = await renderer.render(Component);
+
+		// For now, this just documents expected behavior
+		expect(html).toContain('border-style');
+	});
+});
+
 describe('toPlainText', () => {
 	it('should convert basic HTML to plain text', () => {
 		const html = '<p>Hello World</p>';

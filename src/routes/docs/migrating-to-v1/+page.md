@@ -72,11 +72,11 @@ In the `+page.server.ts` file, the `createEmail` action is now a function that n
 // src/routes/email-preview/[...email]/+page.server.ts
 export const actions = {
   // Before
-	...createEmail,
+  ...createEmail,
   ...sendEmail()
   // After
   ...createEmail(),
-	...sendEmail()
+  ...sendEmail()
 };
 ```
 

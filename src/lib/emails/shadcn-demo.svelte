@@ -50,14 +50,14 @@
 				</Text>
 				<Button
 					href="#"
-					class="rounded-md border border-border bg-card px-6 py-3 text-sm font-medium text-card-foreground"
+					class="rounded-md border bg-card px-6 py-3 text-sm font-medium text-card-foreground"
 				>
 					Learn More
 				</Button>
 			</Section>
 
 			<!-- Divider -->
-			<Hr class="my-8 border-border" />
+			<Hr class="my-8" />
 
 			<!-- Footer -->
 			<Section class="text-center">

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`sanitizeNonInlinableRules() > handles CSS nesting in hover pseudo styles 1`] = `
-"/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -46,7 +46,7 @@ exports[`sanitizeNonInlinableRules() > handles CSS nesting in hover pseudo style
 `;
 
 exports[`sanitizeNonInlinableRules() > inlines rules that can be inlined 1`] = `
-"/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -72,7 +72,7 @@ exports[`sanitizeNonInlinableRules() > inlines rules that can be inlined 1`] = `
 `;
 
 exports[`sanitizeNonInlinableRules() > supports basic media query rules 1`] = `
-"/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {

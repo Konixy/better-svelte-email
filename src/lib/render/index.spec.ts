@@ -235,8 +235,8 @@ describe('Renderer', () => {
 		const html = await renderer.render(Component);
 
 		expect(html).toContain('<!DOCTYPE html PUBLIC');
-		expect(html).toContain('<head>');
-		expect(html).toContain('<body>');
+		expect(html).toMatch(/<head[^>]*>/); // head may have style attribute from preflight
+		expect(html).toMatch(/<body[^>]*>/); // body may have style attribute from preflight
 		expect(html).toContain('Test Email');
 	});
 });

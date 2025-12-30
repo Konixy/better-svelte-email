@@ -18,6 +18,7 @@ export async function setupTailwind(config: TailwindConfig, customCSS?: string) 
 	// Inject customCSS after base imports for theme variable resolution during compilation
 	const baseCss = `
 @layer theme, base, components, utilities;
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 ${customCSS ? sanitizeCustomCss(customCSS) : ''}

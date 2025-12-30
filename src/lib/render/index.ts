@@ -201,9 +201,10 @@ export default class Renderer {
 
 		if (hasHead && hasNonInlineStylesToApply) {
 			appliedNonInlineStyles = true;
+			// Use regex to handle <head> with or without attributes (e.g., style from preflight)
 			serialized = serialized.replace(
-				'<head>',
-				'<head>' + '<style>' + nonInlineStyles.toString() + '</style>'
+				/<head([^>]*)>/,
+				'<head$1>' + '<style>' + nonInlineStyles.toString() + '</style>'
 			);
 		}
 

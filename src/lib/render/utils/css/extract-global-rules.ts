@@ -1,5 +1,5 @@
-import type { Root, Rule } from 'postcss';
-import { isRuleInlinable } from './is-rule-inlinable.js';
+import type { AtRule, Root, Rule } from 'postcss';
+import { splitSelectorList } from './split-selector-list.js';
 
 export interface GlobalRules {
 	/** Universal (*) rules - apply to all elements */
@@ -11,8 +11,19 @@ export interface GlobalRules {
 }
 
 /**
+ * Checks if a selector string contains pseudo-classes or pseudo-elements.
+ * e.g., :hover, ::before, :nth-child()
+ */
+function hasPseudoSelector(selector: string): boolean {
+	return /::?[\w-]+(\([^)]*\))?/.test(selector);
+}
+
+/**
  * Extracts global CSS rules (non-class selectors) from a PostCSS Root.
  * These include universal (*), element (div, p, etc.), and :root selectors.
+ *
+ * Handles comma-separated selector lists by splitting them and extracting
+ * only the inlinable parts. e.g., "*, ::before, ::after" extracts just "*".
  *
  * Only extracts inlinable rules (not in media queries, no pseudo-classes).
  */
@@ -24,60 +35,76 @@ export function extractGlobalRules(root: Root): GlobalRules {
 	};
 
 	root.walkRules((rule) => {
-		const selector = rule.selector.trim();
+		// Check media query once per rule (applies to all selectors)
+		const inMediaQuery = isRuleInMediaQuery(rule);
 
-		// :root selector is a special case - it's inlinable (just targets html element)
-		// Check this BEFORE isRuleInlinable since that function rejects pseudo-selectors
-		if (selector === ':root') {
-			// Still need to check for media queries, etc.
-			if (isRuleInMediaQuery(rule)) {
-				return;
+		// Split comma-separated selector list
+		const selectors = splitSelectorList(rule.selector);
+
+		for (const rawSelector of selectors) {
+			const selector = rawSelector.trim();
+			if (!selector) continue;
+
+			// :root selector is a special case - it's inlinable (just targets html element)
+			if (selector === ':root') {
+				if (!inMediaQuery) {
+					const cloned = rule.clone();
+					cloned.selector = selector;
+					result.root.push(cloned);
+				}
+				continue;
 			}
-			result.root.push(rule);
-			return;
-		}
 
-		// Skip non-inlinable rules (media queries, pseudo-classes)
-		if (!isRuleInlinable(rule)) {
-			return;
-		}
-
-		// Skip if selector contains a class (handled by extractRulesPerClass)
-		if (selector.includes('.')) {
-			return;
-		}
-
-		// Skip attribute selectors
-		if (selector.includes('[')) {
-			return;
-		}
-
-		// Skip ID selectors
-		if (selector.includes('#')) {
-			return;
-		}
-
-		// Skip complex selectors with combinators (except for universal *)
-		// e.g., "div > p", "div p", "div + p", "div ~ p"
-		if (/[>\s+~]/.test(selector) && selector !== '*') {
-			return;
-		}
-
-		// Universal selector
-		if (selector === '*') {
-			result.universal.push(rule);
-			return;
-		}
-
-		// Element selector (simple tag name only)
-		// Match valid HTML element names (letters, numbers, hyphens)
-		if (/^[a-z][a-z0-9-]*$/i.test(selector)) {
-			const elementName = selector.toLowerCase();
-			if (!result.element.has(elementName)) {
-				result.element.set(elementName, []);
+			// Check pseudo-selectors on THIS specific selector
+			if (hasPseudoSelector(selector)) {
+				continue;
 			}
-			result.element.get(elementName)!.push(rule);
-			return;
+
+			// Skip rules in media queries
+			if (inMediaQuery) {
+				continue;
+			}
+
+			// Skip if selector contains a class (handled by extractRulesPerClass)
+			if (selector.includes('.')) {
+				continue;
+			}
+
+			// Skip attribute selectors
+			if (selector.includes('[')) {
+				continue;
+			}
+
+			// Skip ID selectors
+			if (selector.includes('#')) {
+				continue;
+			}
+
+			// Skip complex selectors with combinators (except for universal *)
+			// e.g., "div > p", "div p", "div + p", "div ~ p"
+			if (/[>\s+~]/.test(selector) && selector !== '*') {
+				continue;
+			}
+
+			// Clone rule with single selector for storage
+			const cloned = rule.clone();
+			cloned.selector = selector;
+
+			// Universal selector
+			if (selector === '*') {
+				result.universal.push(cloned);
+				continue;
+			}
+
+			// Element selector (simple tag name only)
+			// Match valid HTML element names (letters, numbers, hyphens)
+			if (/^[a-z][a-z0-9-]*$/i.test(selector)) {
+				const elementName = selector.toLowerCase();
+				if (!result.element.has(elementName)) {
+					result.element.set(elementName, []);
+				}
+				result.element.get(elementName)!.push(cloned);
+			}
 		}
 	});
 

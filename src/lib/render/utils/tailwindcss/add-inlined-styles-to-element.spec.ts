@@ -58,8 +58,8 @@ describe('addInlinedStylesToElement()', () => {
 
 		const styleAttr = result.attrs?.find((attr) => attr.name === 'style');
 		expect(styleAttr).toBeDefined();
-		expect(styleAttr?.value).toContain('text-align: center');
-		expect(styleAttr?.value).toContain('background-color: #ef4444');
+		expect(styleAttr?.value).toMatch(/text-align:\s*center/);
+		expect(styleAttr?.value).toMatch(/background-color:\s*#ef4444/);
 
 		// Class attribute should be removed since all classes were inlined
 		const classAttr = result.attrs?.find((attr) => attr.name === 'class');
@@ -84,8 +84,8 @@ describe('addInlinedStylesToElement()', () => {
 		);
 
 		const styleAttr = result.attrs?.find((attr) => attr.name === 'style');
-		expect(styleAttr?.value).toContain('font-weight: bold');
-		expect(styleAttr?.value).toContain('text-align: center');
+		expect(styleAttr?.value).toMatch(/font-weight:\s*bold/);
+		expect(styleAttr?.value).toMatch(/text-align:\s*center/);
 	});
 
 	it('keeps non-inlinable classes (like media queries)', () => {
@@ -185,8 +185,8 @@ describe('addInlinedStylesToElement()', () => {
 		);
 
 		const styleAttr = result.attrs?.find((attr) => attr.name === 'style');
-		expect(styleAttr?.value).toContain('text-align: center');
-		expect(styleAttr?.value).toContain('background-color: #ef4444');
+		expect(styleAttr?.value).toMatch(/text-align:\s*center/);
+		expect(styleAttr?.value).toMatch(/background-color:\s*#ef4444/);
 
 		const classAttr = result.attrs?.find((attr) => attr.name === 'class');
 		expect(classAttr).toBeDefined();

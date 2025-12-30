@@ -58,8 +58,8 @@ export function makeInlineStylesFor(
 				value = valueParser.stringify(parsed.nodes);
 			}
 
-			const important = decl.important ? '!important' : '';
-			styles += `${decl.prop}: ${value} ${important};`;
+			const important = decl.important ? ' !important' : '';
+			styles += `${decl.prop}:${value}${important};`;
 		});
 	}
 

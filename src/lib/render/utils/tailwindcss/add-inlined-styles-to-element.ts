@@ -5,6 +5,7 @@ import { makeInlineStylesFor } from '$lib/render/utils/css/make-inline-styles-fo
 import type { GlobalRules } from '$lib/render/utils/css/extract-global-rules.js';
 import type { AST } from '$lib/render/index.js';
 import { combineStyles } from '$lib/utils/index.js';
+import { getMatchingGlobalRulesForElement } from '../css/get-matching-global-rules-for-element.js';
 
 /**
  * Gets global styles for an element based on its tag name.
@@ -18,8 +19,11 @@ function getGlobalStylesForElement(
 	const rules: Rule[] = [];
 	const tagName = element.tagName.toLowerCase();
 
-	// 1. Universal rules (lowest specificity)
-	rules.push(...globalRules.universal);
+	// 1. Universal rules on case-by-case basis
+	const matchingGlobalRules = getMatchingGlobalRulesForElement(globalRules.universal, element);
+	if (matchingGlobalRules.length > 0) {
+		rules.push(...matchingGlobalRules);
+	}
 
 	// 2. Element selector rules
 	const elementRules = globalRules.element.get(tagName);
@@ -73,8 +77,8 @@ export function addInlinedStylesToElement(
 
 		const classStyles = makeInlineStylesFor(rules, customProperties);
 
-		// Combine: global (lowest) -> class styles -> existing inline (highest)
-		const newStyles = combineStyles(globalStyles, classStyles, existingStyles);
+		// Combine: global (lowest) -> existing inline -> class styles (highest)
+		const newStyles = combineStyles(globalStyles, existingStyles, classStyles);
 
 		if (newStyles) {
 			if (styleAttr) {

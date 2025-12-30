@@ -21,9 +21,7 @@
 				<Heading as="h1" class="mb-2 text-3xl font-bold text-foreground">
 					shadcn/ui Email Styles
 				</Heading>
-				<Text class="text-muted-foreground">
-					Beautiful semantic colors for email templates
-				</Text>
+				<Text class="text-muted-foreground">Beautiful semantic colors for email templates</Text>
 			</Section>
 
 			<!-- Primary Action Card -->

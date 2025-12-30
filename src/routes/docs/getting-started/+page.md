@@ -17,7 +17,7 @@ npm install better-svelte-email
 
 ## Write your first email
 
-Create a new file at `src/lib/emails/welcome.svelte`. This example uses tailwind, but bare css works too.
+Create a new file at `src/lib/emails/welcome.svelte`. This example uses Tailwind, but bare CSS works too.
 
 ```svelte
 <!-- src/lib/emails/welcome.svelte -->
@@ -73,7 +73,7 @@ Create a new file at `src/lib/emails/welcome.svelte`. This example uses tailwind
 
 ## Render and send it
 
-Render the email using the `Renderer` class and send it using your preferred email provider (resend in this example).
+Render the email using the `Renderer` class and send it using your preferred email provider (Resend in this example).
 
 ```typescript
 // src/routes/api/send-email/+server.ts
@@ -125,25 +125,22 @@ await resend.emails.send({
 
 ### Tailwind configuration
 
-You can pass a Tailwind configuration object to the `Renderer` class.
+You can pass your main CSS file where your config lives (e.g. `src/routes/layout.css` or `src/app.css`) to the `Renderer` class.
+This is useful if you want to inject your app's CSS (including CSS variables or a shadcn-svelte theme for example) and your tailwind config into email rendering.
+
+```js
+import layoutStyles from 'src/routes/layout.css?raw';
+
+const { render } = new Renderer({ customCSS: layoutStyles });
+```
+
+You can also pass a Tailwind v3 configuration object to the `Renderer` class.
 
 ```js
 const tailwindConfig = {
 	theme: { extend: { colors: { brand: '#FF3E00' } } }
 };
 const { render } = new Renderer({ tailwindConfig });
-```
-
-### Custom CSS
-
-You can also pass a custom CSS string to the `Renderer` class.
-This is useful if you want to inject your app's CSS (including CSS variables) into email rendering.
-For example, if you are using shadcn-svelte, you can pass the `layout.css` (previously `app.css`) file to the `Renderer` class.
-
-```js
-import layoutStyles from 'src/routes/layout.css?raw';
-
-const { render } = new Renderer({ customCSS: layoutStyles });
 ```
 
 ## Preview your emails

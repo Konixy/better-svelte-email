@@ -59,7 +59,7 @@
 	let sendSuccess = $state(false);
 	let sendError = $state<string | null>(null);
 	let recipientEmail = $state('');
-	let viewMode = $state<ViewMode>(parseViewMode(page.url));
+	let viewMode = $derived<ViewMode>(parseViewMode(page.url));
 
 	const FONT_SANS_STYLE = `<style>
 		body {

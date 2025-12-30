@@ -165,7 +165,7 @@ export function resolveCalcExpressions(root: Root) {
 
 				if (result) {
 					// Replace the function with the result
-					node.type = 'word';
+					(node as any).type = 'word';
 					node.value = result;
 					node.nodes = [];
 				}

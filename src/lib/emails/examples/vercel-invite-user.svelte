@@ -45,6 +45,7 @@
 			? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
 			: 'http://localhost:5173';
 
+	// svelte-ignore state_referenced_locally
 	const previewText = `Join ${invitedByUsername} on Vercel`;
 </script>
 

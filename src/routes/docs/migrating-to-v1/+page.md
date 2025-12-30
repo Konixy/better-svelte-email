@@ -8,7 +8,7 @@ If you are using v0.x.x of Better Svelte Email, you can migrate to v1.x.x by fol
 npm install better-svelte-email@latest
 ```
 
-If you are using tailwind:
+If you are using Tailwind CSS:
 
 ```bash
 npm install tailwindcss@latest
@@ -16,21 +16,42 @@ npm install tailwindcss@latest
 
 ## New Renderer class
 
-Previously, you would add the `betterSvelteEmailPreprocessor` to your `svelte.config.js` file, this is now deprecated, you will need to remove it to make the new version work.
+Previously, you would add the `betterSvelteEmailPreprocessor` to your `svelte.config.js` file. This is now deprecated; you will need to remove it to make the new version work.
 
 To render email in v1, you will need to replace the `render` function from `svelte/server` with the new `Renderer` class.
 
 ```typescript
-import { Renderer } from 'better-svelte-email/render';
+import Renderer from 'better-svelte-email/render';
 
 const { renderer } = new Renderer();
 
 const html = await render(emailComponent);
 ```
 
+## Tailwind configuration
+
+To use a custom Tailwind v3 config like in v0.x.x, you can pass it to the `Renderer` class:
+
+```typescript
+import Renderer from 'better-svelte-email/render';
+
+const renderer = new Renderer({ tailwindConfig });
+```
+
+Since v1.2, you can also use a Tailwind v4 config.
+To do so, you will need to pass your main CSS file where your config lives (e.g. `src/routes/layout.css` or `src/app.css`) to the `Renderer` class.
+
+```typescript
+import appStyles from 'src/routes/layout.css?raw';
+
+const renderer = new Renderer({ customCSS: appStyles });
+```
+
+Better Svelte Email will inject the Tailwind config into the email rendering process, so you can use the same config in your app and your emails.
+
 ## Tailwind classes
 
-Since v1 now uses tailwindcss v4, you will need to update all your tailwind classes to the new syntax. See the [tailwindcss v4 migration guide](https://tailwindcss.com/docs/upgrade-guide) for more information.
+Since v1 now uses Tailwind CSS v4, you will need to update all your tailwind classes to the new syntax. See the [tailwindcss v4 migration guide](https://tailwindcss.com/docs/upgrade-guide) for more information.
 
 Another change is that you can now use inline classes in your email templates:
 
@@ -72,11 +93,11 @@ In the `+page.server.ts` file, the `createEmail` action is now a function that n
 // src/routes/email-preview/[...email]/+page.server.ts
 export const actions = {
   // Before
-	...createEmail,
+  ...createEmail,
   ...sendEmail()
   // After
   ...createEmail(),
-	...sendEmail()
+  ...sendEmail()
 };
 ```
 
@@ -92,15 +113,16 @@ You will also need to update the `+page.svelte` like so:
 <EmailPreview {page} />
 ```
 
-### Using a tailwind config
+### Using a Tailwind config
 
-To use a custom tailwind config, you will need to pass an instance of the `Renderer` class to the `createEmail` and `sendEmail` functions:
+To use a custom Tailwind v3 or v4 config, you will need to pass an instance of the `Renderer` class to the `createEmail` and `sendEmail` functions:
 
 ```typescript
 // src/routes/email-preview/[...email]/+page.server.ts
-import { Renderer } from 'better-svelte-email/render';
+import Renderer from 'better-svelte-email/render';
+import appStyles from 'src/routes/layout.css?raw';
 
-const renderer = new Renderer({ tailwindConfig });
+const renderer = new Renderer({ tailwindConfig, customCSS: appStyles });
 
 export const actions = {
 	...createEmail({ renderer }),

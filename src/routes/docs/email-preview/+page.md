@@ -162,7 +162,7 @@ export function load() {
 }
 
 export const actions = {
-	...createEmail,
+	...createEmail(),
 	...sendEmail({
 		customSendEmailFunction: async ({ from, to, subject, html }) => {
 			try {
@@ -177,7 +177,7 @@ export const actions = {
 };
 ```
 
-## Vercel setup
+## Vercel Setup
 
 If you're using Vercel serverless functions, the `createEmail` and `sendEmail` actions will not work out of the box. You will need to create some custom serverless functions to handle the actions.
 
@@ -207,7 +207,7 @@ Ensure:
 
 1. You've created both `+page.svelte` and `+page.server.ts` in your preview route
 2. Your dev server is running
-3. You're navigating to the correct URL (e.g., `http://localhost:5173/preview`)
+3. You're navigating to the correct URL (e.g., `http://localhost:5173/email-preview`)
 
 ## API Reference
 

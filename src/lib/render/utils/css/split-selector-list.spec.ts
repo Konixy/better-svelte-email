@@ -4,11 +4,7 @@ import { splitSelectorList } from './split-selector-list.js';
 describe('splitSelectorList()', () => {
 	describe('basic splitting', () => {
 		it('splits simple comma-separated selectors', () => {
-			expect(splitSelectorList('*, ::before, ::after')).toEqual([
-				'*',
-				'::before',
-				'::after'
-			]);
+			expect(splitSelectorList('*, ::before, ::after')).toEqual(['*', '::before', '::after']);
 		});
 
 		it('returns single selector as array', () => {
@@ -20,13 +16,9 @@ describe('splitSelectorList()', () => {
 		});
 
 		it('handles Tailwind preflight selector pattern', () => {
-			expect(splitSelectorList('*, ::after, ::before, ::backdrop, ::file-selector-button')).toEqual([
-				'*',
-				'::after',
-				'::before',
-				'::backdrop',
-				'::file-selector-button'
-			]);
+			expect(splitSelectorList('*, ::after, ::before, ::backdrop, ::file-selector-button')).toEqual(
+				['*', '::after', '::before', '::backdrop', '::file-selector-button']
+			);
 		});
 
 		it('handles html, :host pattern', () => {
@@ -97,10 +89,7 @@ describe('splitSelectorList()', () => {
 
 		it('handles attribute selectors with commas in values', () => {
 			// This is rare but valid CSS
-			expect(splitSelectorList('[data-value="a,b"], div')).toEqual([
-				'[data-value="a,b"]',
-				'div'
-			]);
+			expect(splitSelectorList('[data-value="a,b"], div')).toEqual(['[data-value="a,b"]', 'div']);
 		});
 	});
 
@@ -127,17 +116,8 @@ describe('splitSelectorList()', () => {
 
 		it('handles complex real-world selector', () => {
 			expect(
-				splitSelectorList(
-					'button, input, optgroup, select, textarea, ::file-selector-button'
-				)
-			).toEqual([
-				'button',
-				'input',
-				'optgroup',
-				'select',
-				'textarea',
-				'::file-selector-button'
-			]);
+				splitSelectorList('button, input, optgroup, select, textarea, ::file-selector-button')
+			).toEqual(['button', 'input', 'optgroup', 'select', 'textarea', '::file-selector-button']);
 		});
 	});
 

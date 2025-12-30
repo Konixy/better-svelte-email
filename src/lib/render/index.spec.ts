@@ -258,8 +258,7 @@ describe('Global CSS selectors (issue #46)', () => {
 		// border class provides border-width and border-style
 		expect(html).toContain('border-width');
 		expect(html).toContain('border-style');
-		// border-color should come from the * selector in customCSS
-		// This currently FAILS - demonstrating the bug
+		// border-color comes from the * selector in customCSS
 		expect(html).toContain('border-color');
 	});
 
@@ -274,7 +273,6 @@ describe('Global CSS selectors (issue #46)', () => {
 		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
 		const html = await renderer.render(Component);
 
-		// This currently FAILS - element selectors are ignored
 		expect(html).toContain('outline');
 	});
 
@@ -289,10 +287,9 @@ describe('Global CSS selectors (issue #46)', () => {
 			`
 		});
 		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
-		// When implementation is complete, using border-blue-500 should override the * rule
 		const html = await renderer.render(Component);
 
-		// For now, this just documents expected behavior
+		// Class-based border styles take precedence over * selector
 		expect(html).toContain('border-style');
 	});
 });

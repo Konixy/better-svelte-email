@@ -2,7 +2,7 @@ import type { AST } from '$lib/render/index.js';
 import { Declaration, type Rule } from 'postcss';
 
 // Properties from * selector that should always be applied (layout-critical)
-const ALWAYS_APPLY_PROPS = ['box-sizing'];
+const ALWAYS_APPLY_PROPS = ['box-sizing', 'margin'];
 
 // Properties from * selector that are conditionally applied based on element classes
 const CONDITIONAL_PROPS_PATTERN = /(border|outline)-color/g;

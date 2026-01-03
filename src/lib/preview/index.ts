@@ -246,7 +246,8 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
 export const sendEmail = ({
 	customSendEmailFunction,
 	resendApiKey,
-	renderer = new Renderer()
+	renderer = new Renderer(),
+	from = 'svelte-email-tailwind <onboarding@resend.dev>'
 }: {
 	customSendEmailFunction?: (email: {
 		from: string;
@@ -259,6 +260,7 @@ export const sendEmail = ({
 	}>;
 	renderer?: Renderer;
 	resendApiKey?: string;
+	from?: string;
 } = {}) => {
 	return {
 		'send-email': async (event: RequestEvent): Promise<{ success: boolean; error: any }> => {
@@ -276,7 +278,7 @@ export const sendEmail = ({
 			const emailComponent = await getEmailComponent(emailPath as string, file as string);
 
 			const email = {
-				from: 'svelte-email-tailwind <onboarding@resend.dev>',
+				from,
 				to: `${data.get('to')}`,
 				subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
 				html: await renderer.render(emailComponent)

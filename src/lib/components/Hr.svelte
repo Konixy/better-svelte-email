@@ -7,7 +7,9 @@
 	const defaultStyles = styleToString({
 		width: '100%',
 		border: 'none',
-		borderTop: '1px solid #eaeaea'
+		borderTopWidth: '1px',
+		borderTopStyle: 'solid',
+		borderColor: '#eaeaea'
 	});
 </script>
 

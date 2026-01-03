@@ -42,4 +42,21 @@ describe('sanitizeCustomCss', () => {
 	test('should handle empty input', () => {
 		expect(sanitizeCustomCss('')).toBe('');
 	});
+
+	test('should remove @plugin rules', () => {
+		const css = '@plugin "my-plugin"; .test { color: red; }';
+		const result = sanitizeCustomCss(css);
+		expect(result).not.toContain('@plugin');
+		expect(result).toContain('.test { color: red; }');
+	});
+
+	test('should remove @source rules (Tailwind v4)', () => {
+		const css = `
+			@source "../node_modules/some-lib/**/*";
+			.test { color: red; }
+		`;
+		const result = sanitizeCustomCss(css);
+		expect(result).not.toContain('@source');
+		expect(result).toContain('.test { color: red; }');
+	});
 });

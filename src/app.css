@@ -25,7 +25,12 @@
 	--color-svelte: var(--svelte);
 }
 
-html {
-	background-color: var(--color-background);
-	color: var(--color-foreground);
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	html,
+	body {
+		@apply bg-background text-foreground;
+	}
 }

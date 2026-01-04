@@ -38,6 +38,16 @@ export type RendererOptions = {
 	 * ```
 	 */
 	customCSS?: string;
+	/**
+	 * Base font size in pixels for converting relative units (rem, em) to absolute pixels.
+	 * Used when resolving calc() expressions with mixed units.
+	 *
+	 * Note: `em` is treated as `rem` (relative to this base) since parent element
+	 * context is not available during email rendering.
+	 *
+	 * @default 16
+	 */
+	baseFontSize?: number;
 };
 
 /**
@@ -78,30 +88,35 @@ export type RenderOptions = {
  * });
  * ```
  */
+function isRendererOptions(obj: unknown): obj is RendererOptions {
+	return (
+		typeof obj === 'object' &&
+		obj !== null &&
+		('tailwindConfig' in obj || 'customCSS' in obj || 'baseFontSize' in obj)
+	);
+}
+
 export default class Renderer {
 	private tailwindConfig: TailwindConfig;
 	private customCSS?: string;
+	private baseFontSize: number;
 
 	// Backward-compatible overloads:
 	// - new Renderer(tailwindConfig)
-	// - new Renderer({ tailwindConfig, customCSS })
+	// - new Renderer({ tailwindConfig, customCSS, baseFontSize })
 	constructor(tailwindConfig?: TailwindConfig);
 	constructor(options?: RendererOptions);
 	constructor(optionsOrConfig: TailwindConfig | RendererOptions = {}) {
 		// Detect whether the argument is a bare TailwindConfig (old API)
 		// or a RendererOptions object (new API).
-		if (
-			optionsOrConfig &&
-			typeof optionsOrConfig === 'object' &&
-			('tailwindConfig' in (optionsOrConfig as any) || 'customCSS' in (optionsOrConfig as any))
-		) {
-			const options = optionsOrConfig as RendererOptions;
-			this.tailwindConfig = options.tailwindConfig || {};
-			this.customCSS = options.customCSS;
+		if (isRendererOptions(optionsOrConfig)) {
+			this.tailwindConfig = optionsOrConfig.tailwindConfig || {};
+			this.customCSS = optionsOrConfig.customCSS;
+			this.baseFontSize = optionsOrConfig.baseFontSize ?? 16;
 		} else {
-			const config = optionsOrConfig as TailwindConfig | undefined;
-			this.tailwindConfig = config || {};
+			this.tailwindConfig = optionsOrConfig || {};
 			this.customCSS = undefined;
+			this.baseFontSize = 16;
 		}
 	}
 
@@ -149,7 +164,7 @@ export default class Renderer {
 		});
 
 		const styleSheet = tailwindSetup.getStyleSheet();
-		sanitizeStyleSheet(styleSheet);
+		sanitizeStyleSheet(styleSheet, { baseFontSize: this.baseFontSize });
 
 		// Extract global rules (*, element selectors, :root) for application to all elements
 		const globalRules = extractGlobalRules(styleSheet);

@@ -23,6 +23,11 @@
 	--color-input: var(--input);
 	--color-ring: var(--ring);
 	--color-svelte: var(--svelte);
+
+	--radius: 0.25rem;
+	--radius-md: calc(var(--radius) + 2px);
+	--radius-lg: calc(var(--radius) * 2);
+	--radius-xl: calc(var(--radius) * 3);
 }
 
 @layer base {

@@ -476,7 +476,7 @@
 						title="Email Preview"
 						srcdoc={iframeContent}
 						class="preview-iframe"
-						sandbox="allow-same-origin allow-scripts"
+						sandbox="allow-same-origin allow-scripts allow-popups"
 					></iframe>
 				</div>
 			{:else if viewMode === 'code'}

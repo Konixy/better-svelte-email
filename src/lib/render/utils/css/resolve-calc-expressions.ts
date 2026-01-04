@@ -123,7 +123,7 @@ function tokenizeCalcExpression(expr: string): string[] {
  *
  * Limitations:
  * - Parenthesized sub-expressions like `calc((10px + 5px) * 2)` are not supported.
- * - em units are converted to rem using the baseFontSize.
+ * - em units are treated as rem and converted to pixels using baseFontSize.
  * - Non-convertible units (%, vw, vh, etc.) will leave the calc() unresolved.
  */
 function evaluateCalcExpression(expr: string, baseFontSize: number): string | null {

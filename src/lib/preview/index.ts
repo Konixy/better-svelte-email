@@ -218,6 +218,7 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
  * @param options.resendApiKey - Your Resend API key (keep this server-side only)
  * @param options.customSendEmailFunction - Optional custom function to send emails
  * @param options.renderer - Optional renderer to use for rendering the email component (use this if you want to use a custom tailwind config)
+ * @param options.from - Optional sender email address (defaults to 'better-svelte-email <onboarding@resend.dev>')
  *
  * @example
  * ```ts

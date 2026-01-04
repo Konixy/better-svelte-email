@@ -196,7 +196,7 @@ function evaluateCalcExpression(expr: string, baseFontSize: number): string | nu
 	i = 0;
 	while (i < tokens.length) {
 		const token = tokens[i];
-		if (token === '+' || token === '-') {
+		if ((token === '+' || token === '-') && i > 0 && i < tokens.length - 1) {
 			const left = parseValue(tokens[i - 1]);
 			const right = parseValue(tokens[i + 1]);
 

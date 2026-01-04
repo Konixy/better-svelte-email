@@ -128,8 +128,8 @@ exports[`sanitizeDeclarations > separates padding-block and padding-inline 2`] =
 
 exports[`sanitizeDeclarations > separates padding-block and padding-inline 3`] = `
 ".box {
-  padding-left: 99rem;
-  padding-right: 99rem;
+  padding-left: 1584px;
+  padding-right: 1584px;
 }
 "
 `;
@@ -160,8 +160,8 @@ exports[`sanitizeDeclarations > should do separation of margin-block and margin-
 
 exports[`sanitizeDeclarations > should do separation of margin-block and margin-inline 3`] = `
 ".box {
-  margin-left: 99rem;
-  margin-right: 99rem;
+  margin-left: 1584px;
+  margin-right: 1584px;
 }
 "
 `;

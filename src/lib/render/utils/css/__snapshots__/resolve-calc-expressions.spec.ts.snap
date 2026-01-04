@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`resolveCalcExpressions() > does not modify complex calc expressions 1`] = `
+exports[`resolveCalcExpressions() > does not modify complex calc expressions with nested parentheses 1`] = `
 "
 .px-3{padding-inline:calc(0.25rem*(3 + 1px))}
 .py-2{padding-block:calc(0.25rem*(2 + 1px))}

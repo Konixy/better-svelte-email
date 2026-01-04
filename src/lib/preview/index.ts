@@ -259,8 +259,8 @@ export const sendEmail = ({
 		success: boolean;
 		error?: any;
 	}>;
-	renderer?: Renderer;
 	resendApiKey?: string;
+	renderer?: Renderer;
 	from?: string;
 } = {}) => {
 	return {

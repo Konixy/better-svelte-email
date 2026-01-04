@@ -10,5 +10,5 @@ export interface SanitizeConfig {
 export function sanitizeStyleSheet(root: Root, config?: SanitizeConfig) {
 	resolveAllCssVariables(root);
 	resolveCalcExpressions(root, config);
-	sanitizeDeclarations(root);
+	sanitizeDeclarations(root, config);
 }

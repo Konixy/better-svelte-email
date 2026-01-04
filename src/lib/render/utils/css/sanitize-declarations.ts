@@ -1,6 +1,36 @@
 import type { Root } from 'postcss';
 import valueParser, { type Node, type FunctionNode } from 'postcss-value-parser';
 
+export interface SanitizeDeclarationsConfig {
+	baseFontSize?: number;
+}
+
+/**
+ * Converts a CSS length value to pixels.
+ * Returns null for units that cannot be converted (%, vw, vh, ch, ex, etc.)
+ */
+function toPixels(value: number, unit: string, baseFontSize: number): number | null {
+	switch (unit.toLowerCase()) {
+		case 'px':
+			return value;
+		case 'rem':
+		case 'em':
+			return value * baseFontSize;
+		case 'pt':
+			return value * (96 / 72);
+		case 'pc':
+			return value * 16;
+		case 'in':
+			return value * 96;
+		case 'cm':
+			return value * (96 / 2.54);
+		case 'mm':
+			return value * (96 / 25.4);
+		default:
+			return null;
+	}
+}
+
 // Color conversion constants
 const LAB_TO_LMS = {
 	l: [0.3963377773761749, 0.2158037573099136],
@@ -236,6 +266,7 @@ function transformColorMix(node: FunctionNode): string | null {
  * support possible.
  *
  * Here's the transformations it does so far:
+ * - convert relative units (rem, em, pt, pc, in, cm, mm) to px for better email client support;
  * - convert all `rgb` with space-based syntax into a comma based one;
  * - convert all `oklch` values into `rgb`;
  * - convert all hex values into `rgb`;
@@ -244,7 +275,9 @@ function transformColorMix(node: FunctionNode): string | null {
  * - convert `margin-inline` into `margin-left` and `margin-right`;
  * - convert `margin-block` into `margin-top` and `margin-bottom`.
  */
-export function sanitizeDeclarations(root: Root) {
+export function sanitizeDeclarations(root: Root, config?: SanitizeDeclarationsConfig) {
+	const baseFontSize = config?.baseFontSize ?? 16;
+
 	root.walkDecls((decl) => {
 		// Handle infinity calc for border-radius
 		if (decl.prop === 'border-radius' && /calc\s*\(\s*infinity\s*\*\s*1px\s*\)/i.test(decl.value)) {
@@ -275,6 +308,33 @@ export function sanitizeDeclarations(root: Root) {
 			decl.prop = 'margin-top';
 			decl.value = values[0];
 			decl.cloneAfter({ prop: 'margin-bottom', value: values[1] || values[0] });
+		}
+
+		// Convert relative units to px for better email client support
+		// Check if value contains any convertible units (excluding px which is already fine)
+		const hasConvertibleUnits = /\d+(rem|em|pt|pc|in|cm|mm)\b/i.test(decl.value);
+		if (hasConvertibleUnits) {
+			const parsed = valueParser(decl.value);
+
+			parsed.walk((node) => {
+				if (node.type === 'word') {
+					const match = node.value.match(/^(-?[\d.]+)(rem|em|pt|pc|in|cm|mm)$/i);
+					if (match) {
+						const numValue = parseFloat(match[1]);
+						const unit = match[2];
+						const pxValue = toPixels(numValue, unit, baseFontSize);
+
+						if (pxValue !== null) {
+							// Round to avoid floating point precision issues
+							// Use up to 3 decimal places for precision, then trim trailing zeros
+							const rounded = Math.round(pxValue * 1000) / 1000;
+							node.value = `${rounded}px`;
+						}
+					}
+				}
+			});
+
+			decl.value = valueParser.stringify(parsed.nodes);
 		}
 
 		// Parse and transform color values

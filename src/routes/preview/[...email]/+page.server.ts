@@ -147,7 +147,7 @@ const sendEmailVercel = {
 		const html = await render(emailComponent);
 
 		const email = {
-			from: 'svelte-email-tailwind <onboarding@resend.dev>',
+			from: 'better-svelte-email <onboarding@resend.dev>',
 			to: `${data.get('to')}`,
 			subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
 			html

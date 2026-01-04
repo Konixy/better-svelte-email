@@ -247,7 +247,7 @@ export const sendEmail = ({
 	customSendEmailFunction,
 	resendApiKey,
 	renderer = new Renderer(),
-	from = 'svelte-email-tailwind <onboarding@resend.dev>'
+	from = 'better-svelte-email <onboarding@resend.dev>'
 }: {
 	customSendEmailFunction?: (email: {
 		from: string;

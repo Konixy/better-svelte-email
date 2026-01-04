@@ -4,7 +4,7 @@ import postcss from 'postcss';
 import { walk } from './utils/html/walk.js';
 import { setupTailwind } from './utils/tailwindcss/setup-tailwind.js';
 import type { Config } from 'tailwindcss';
-import { sanitizeStyleSheet, type SanitizeConfig } from './utils/css/sanitize-stylesheet.js';
+import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet.js';
 import { extractRulesPerClass } from './utils/css/extract-rules-per-class.js';
 import { getCustomProperties } from './utils/css/get-custom-properties.js';
 import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules.js';

@@ -218,6 +218,7 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
  * @param options.resendApiKey - Your Resend API key (keep this server-side only)
  * @param options.customSendEmailFunction - Optional custom function to send emails
  * @param options.renderer - Optional renderer to use for rendering the email component (use this if you want to use a custom tailwind config)
+ * @param options.from - Optional sender email address (defaults to 'better-svelte-email <onboarding@resend.dev>')
  *
  * @example
  * ```ts
@@ -246,7 +247,8 @@ const defaultSendEmailFunction: typeof SendEmailFunction = async (
 export const sendEmail = ({
 	customSendEmailFunction,
 	resendApiKey,
-	renderer = new Renderer()
+	renderer = new Renderer(),
+	from = 'better-svelte-email <onboarding@resend.dev>'
 }: {
 	customSendEmailFunction?: (email: {
 		from: string;
@@ -257,8 +259,9 @@ export const sendEmail = ({
 		success: boolean;
 		error?: any;
 	}>;
-	renderer?: Renderer;
 	resendApiKey?: string;
+	renderer?: Renderer;
+	from?: string;
 } = {}) => {
 	return {
 		'send-email': async (event: RequestEvent): Promise<{ success: boolean; error: any }> => {
@@ -276,7 +279,7 @@ export const sendEmail = ({
 			const emailComponent = await getEmailComponent(emailPath as string, file as string);
 
 			const email = {
-				from: 'svelte-email-tailwind <onboarding@resend.dev>',
+				from,
 				to: `${data.get('to')}`,
 				subject: `${data.get('component')} ${data.get('note') ? '| ' + data.get('note') : ''}`,
 				html: await renderer.render(emailComponent)

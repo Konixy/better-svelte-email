@@ -39,7 +39,7 @@ export function load() {
 
 export const actions = {
 	...createEmail(),
-	...sendEmail({ resendApiKey: env.RESEND_API_KEY })
+	...sendEmail({ resendApiKey: env.RESEND_API_KEY, from: 'onboarding@resend.dev' })
 };
 ```
 
@@ -237,3 +237,4 @@ Returns a SvelteKit form action that sends test emails.
 
 - `options.resendApiKey` (string, optional) - Your Resend API key
 - `options.customSendEmailFunction` (function, optional) - Custom email sending function
+- `options.from` (string, optional) - Sender email address (defaults to 'better-svelte-email <onboarding@resend.dev>')

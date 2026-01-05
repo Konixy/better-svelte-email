@@ -6,6 +6,7 @@ import { setupTailwind } from './utils/tailwindcss/setup-tailwind.js';
 import type { Config } from 'tailwindcss';
 import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet.js';
 import { extractRulesPerClass } from './utils/css/extract-rules-per-class.js';
+import { extractGlobalRules } from './utils/css/extract-global-rules.js';
 import { getCustomProperties } from './utils/css/get-custom-properties.js';
 import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules.js';
 import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element.js';
@@ -165,6 +166,9 @@ export default class Renderer {
 		const styleSheet = tailwindSetup.getStyleSheet();
 		sanitizeStyleSheet(styleSheet, { baseFontSize: this.baseFontSize });
 
+		// Extract global rules (*, element selectors, :root) for application to all elements
+		const globalRules = extractGlobalRules(styleSheet);
+
 		const { inlinable: inlinableRules, nonInlinable: nonInlinableRules } = extractRulesPerClass(
 			styleSheet,
 			classesUsed
@@ -191,7 +195,8 @@ export default class Renderer {
 					inlinableRules,
 					nonInlinableRules,
 					customProperties,
-					unknownClasses
+					unknownClasses,
+					globalRules
 				);
 				if (node.nodeName === 'head') {
 					hasHead = true;
@@ -211,9 +216,10 @@ export default class Renderer {
 
 		if (hasHead && hasNonInlineStylesToApply) {
 			appliedNonInlineStyles = true;
+			// Use regex to handle <head> with or without attributes (e.g., style from preflight)
 			serialized = serialized.replace(
-				'<head>',
-				'<head>' + '<style>' + nonInlineStyles.toString() + '</style>'
+				/<head([^>]*)>/,
+				'<head$1>' + '<style>' + nonInlineStyles.toString() + '</style>'
 			);
 		}
 

@@ -11,7 +11,7 @@ describe('Renderer', () => {
 		const html = await renderer.render(BasicComponent);
 
 		expect(html).toContain('<!DOCTYPE html PUBLIC');
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 		expect(html).toContain('background-color');
 		expect(html).toContain('Hello World');
 		// Classes should be inlined, not kept in class attribute
@@ -23,7 +23,7 @@ describe('Renderer', () => {
 		const html = await renderer.render(ResponsiveComponent);
 
 		// Should have inline styles for base class
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 		// Should have a style tag with media query
 		expect(html).toContain('<style>');
 		expect(html).toContain('@media');
@@ -46,8 +46,8 @@ describe('Renderer', () => {
 		const renderer = new Renderer();
 		const html = await renderer.render(Component);
 
-		expect(html).toContain('font-weight: bold');
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/font-weight:\s*bold/);
+		expect(html).toMatch(/text-align:\s*center/);
 	});
 
 	it('accepts Tailwind config options', async () => {
@@ -85,7 +85,7 @@ describe('Renderer', () => {
 		const html = await renderer.render(PropsComponent, { props: { name: 'Svelte' } });
 
 		expect(html).toContain('Hello Svelte');
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 	});
 
 	it('removes comments from output', async () => {
@@ -103,7 +103,7 @@ describe('Renderer', () => {
 		const renderer = new Renderer();
 		const html = await renderer.render(Component);
 
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 		expect(html).toContain('background-color');
 		expect(html).toContain('padding');
 		expect(html).toContain('font-weight');
@@ -151,7 +151,7 @@ describe('Renderer', () => {
 		const html = await renderer.render(Component);
 
 		expect(html).toContain('Nested');
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 		expect(html).toContain('font-weight');
 	});
 
@@ -226,7 +226,7 @@ describe('Renderer', () => {
 		const html = await renderer.render(Component);
 
 		expect(html).toContain('Variable Color');
-		expect(html).toContain('text-align: center');
+		expect(html).toMatch(/text-align:\s*center/);
 	});
 
 	it('handles components using library email components', async () => {
@@ -235,9 +235,63 @@ describe('Renderer', () => {
 		const html = await renderer.render(Component);
 
 		expect(html).toContain('<!DOCTYPE html PUBLIC');
-		expect(html).toContain('<head>');
-		expect(html).toContain('<body>');
+		expect(html).toMatch(/<head[^>]*>/); // head may have style attribute from preflight
+		expect(html).toMatch(/<body[^>]*>/); // body may have style attribute from preflight
 		expect(html).toContain('Test Email');
+	});
+});
+
+describe('Global CSS selectors (issue #46)', () => {
+	it('should apply universal selector (*) styles from customCSS', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				@layer base {
+					* {
+						border-color: red;
+					}
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		// border class provides border-width and border-style
+		expect(html).toContain('border-width');
+		expect(html).toContain('border-style');
+		// border-color comes from the * selector in customCSS
+		const matches = html.match(/border-color:\s*red/g);
+		expect(matches).toHaveLength(1);
+	});
+
+	it('should apply element selector styles from customCSS', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				div {
+					outline: 2px solid blue;
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		expect(html).toContain('outline');
+	});
+
+	it('class-based styles should override global selector styles', async () => {
+		const renderer = new Renderer({
+			customCSS: `
+				@layer base {
+					* {
+						border-color: red;
+					}
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		// Class-based border styles take precedence over * selector
+		expect(html).toContain('border-style');
 	});
 });
 

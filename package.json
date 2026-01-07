@@ -38,7 +38,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/html-to-text": "^9.0.4",
-		"@types/node": "22.19.3",
+		"@types/node": "24",
 		"@vitest/coverage-v8": "^4.0.16",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",

@@ -43,7 +43,7 @@
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.13.1",
-		"globals": "^16.5.0",
+		"globals": "^17.0.0",
 		"mdsvex": "^0.12.6",
 		"mode-watcher": "^1.1.0",
 		"prettier-plugin-svelte": "^3.4.1",

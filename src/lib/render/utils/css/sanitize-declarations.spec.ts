@@ -257,6 +257,32 @@ describe('sanitizeDeclarations', () => {
 		expect(result).toMatchSnapshot();
 	});
 
+	it('handles color-mix with hex colors', () => {
+		const stylesheet = postcss.parse(`
+     .bg-red-50 {
+        background-color: color-mix(in oklab, #ff0000 50%, transparent);
+      }
+    `);
+		sanitizeDeclarations(stylesheet);
+		const result = stylesheet.toString();
+		// Red at 50% blended with white: rgb(255, 128, 128)
+		expect(result).toContain('rgb(255, 128, 128)');
+		expect(result).not.toContain('rgb(255, 0, 0, 0.5)');
+	});
+
+	it('handles color-mix with rgb colors', () => {
+		const stylesheet = postcss.parse(`
+     .bg-green-50 {
+        background-color: color-mix(in oklab, rgb(0 255 0) 75%, transparent);
+      }
+    `);
+		sanitizeDeclarations(stylesheet);
+		const result = stylesheet.toString();
+		// Green at 75% blended with white: rgb(64, 255, 64)
+		expect(result).toContain('rgb(64, 255, 64)');
+		expect(result).not.toContain('rgb(0, 255, 0, 0.75)');
+	});
+
 	describe('unit conversion to px', () => {
 		it('converts rem to px using default baseFontSize (16)', () => {
 			const stylesheet = postcss.parse('div { font-size: 1rem; }');

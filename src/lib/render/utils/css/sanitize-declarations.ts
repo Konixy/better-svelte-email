@@ -230,7 +230,7 @@ function parseRgbValues(nodes: Node[]): ParsedRgb {
 
 function transformColorMix(node: FunctionNode): string | null {
 	// We're expecting the structure to be something like:
-	// color-mix(in oklab, rgb(...) X%, transparent)
+	// color-mix(in oklab, <color> X%, transparent)
 
 	// Check if it ends with transparent
 	const lastNode = node.nodes[node.nodes.length - 1];
@@ -238,24 +238,70 @@ function transformColorMix(node: FunctionNode): string | null {
 		return null;
 	}
 
-	// Find the rgb function and percentage
-	let rgbFunc: FunctionNode | null = null;
+	// Find the color (rgb, oklch function, or hex) and percentage
+	let colorFunc: FunctionNode | null = null;
+	let colorHex: string | null = null;
 	let percentage: number | null = null;
 
 	for (const child of node.nodes) {
-		if (child.type === 'function' && child.value === 'rgb') {
-			rgbFunc = child;
+		if (child.type === 'function' && (child.value === 'rgb' || child.value === 'oklch')) {
+			colorFunc = child;
+		}
+		if (child.type === 'word' && child.value.startsWith('#')) {
+			colorHex = child.value;
 		}
 		if (child.type === 'word' && child.value.endsWith('%')) {
 			percentage = parseFloat(child.value) / 100;
 		}
 	}
 
-	if (rgbFunc && percentage !== null) {
-		const rgbValues = parseRgbValues(rgbFunc.nodes);
-		if (rgbValues.r !== undefined && rgbValues.g !== undefined && rgbValues.b !== undefined) {
-			return formatRgb(rgbValues.r, rgbValues.g, rgbValues.b, percentage);
+	// Convert color to RGB
+	let rgb: { r: number; g: number; b: number; a?: number } | null = null;
+
+	if (colorFunc) {
+		if (colorFunc.value === 'rgb') {
+			const rgbValues = parseRgbValues(colorFunc.nodes);
+			if (rgbValues.r !== undefined && rgbValues.g !== undefined && rgbValues.b !== undefined) {
+				rgb = {
+					r: rgbValues.r,
+					g: rgbValues.g,
+					b: rgbValues.b,
+					a: rgbValues.a
+				};
+			}
+		} else if (colorFunc.value === 'oklch') {
+			const oklchValues = parseOklchValues(colorFunc.nodes);
+			if (
+				oklchValues.l !== undefined &&
+				oklchValues.c !== undefined &&
+				oklchValues.h !== undefined
+			) {
+				const convertedRgb = oklchToRgb({
+					l: oklchValues.l,
+					c: oklchValues.c,
+					h: oklchValues.h
+				});
+				rgb = {
+					r: convertedRgb.r,
+					g: convertedRgb.g,
+					b: convertedRgb.b,
+					a: oklchValues.a
+				};
+			}
 		}
+	} else if (colorHex) {
+		rgb = hexToRgb(colorHex);
+	}
+
+	if (rgb && percentage !== null) {
+		// Blend color with white background (transparent in email context = white)
+		// Formula: final = color * percentage + white * (1 - percentage)
+		const blendedR = rgb.r * percentage + 255 * (1 - percentage);
+		const blendedG = rgb.g * percentage + 255 * (1 - percentage);
+		const blendedB = rgb.b * percentage + 255 * (1 - percentage);
+
+		// Return solid RGB without alpha (email clients don't support alpha)
+		return formatRgb(blendedR, blendedG, blendedB);
 	}
 
 	return null;

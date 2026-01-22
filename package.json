@@ -25,8 +25,8 @@
 		"tailwindcss": "^4.1.18"
 	},
 	"optionalDependencies": {
-		"prettier": "^3.8.0",
-		"resend": "^6.7.0",
+		"prettier": "^3.8.1",
+		"resend": "^6.8.0",
 		"shiki": "^3.21.0"
 	},
 	"devDependencies": {
@@ -39,7 +39,7 @@
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/html-to-text": "^9.0.4",
 		"@types/node": "24.10.9",
-		"@vitest/coverage-v8": "^4.0.17",
+		"@vitest/coverage-v8": "^4.0.18",
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.14.0",
@@ -48,16 +48,16 @@
 		"mode-watcher": "^1.1.0",
 		"prettier-plugin-svelte": "^3.4.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
-		"publint": "^0.3.16",
+		"publint": "^0.3.17",
 		"rehype-autolink-headings": "^7.1.0",
 		"rehype-slug": "^6.0.0",
-		"svelte": "5.46.4",
+		"svelte": "5.48.0",
 		"svelte-check": "^4.3.5",
 		"tailwindcss-motion": "^1.1.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.53.0",
+		"typescript-eslint": "^8.53.1",
 		"vite": "^7.3.1",
-		"vitest": "^4.0.17"
+		"vitest": "^4.0.18"
 	},
 	"exports": {
 		".": {

@@ -74,8 +74,7 @@
 				'Noto Sans',
 				sans-serif;
 			margin: 0;
-		}
-	</style>`;
+		}</style>`;
 
 	function withFontSans(html: string) {
 		if (!html) return '';

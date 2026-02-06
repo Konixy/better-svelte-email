@@ -26,7 +26,7 @@
 	},
 	"optionalDependencies": {
 		"prettier": "^3.8.1",
-		"resend": "^6.9.1",
+		"resend": "^6.8.0",
 		"shiki": "^3.22.0"
 	},
 	"devDependencies": {

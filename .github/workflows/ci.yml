@@ -26,21 +26,11 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build project
+      - name: Build workspace
         run: bun run build
 
       - name: Run linter
-        run: bun run lint || echo "Linter not configured, skipping..."
+        run: bun run lint
 
       - name: Run tests
         run: bun run test
-
-      - name: Test summary
-        if: always()
-        run: |
-          if [ $? -eq 0 ]; then
-            echo "✅ All tests passed!"
-          else
-            echo "❌ Tests failed!"
-            exit 1
-          fi

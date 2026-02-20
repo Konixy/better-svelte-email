@@ -1,0 +1,38 @@
+{
+	"name": "@better-svelte-email/server",
+	"version": "1.4.0",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"dependencies": {
+		"html-to-text": "^9.0.5",
+		"parse5": "^8.0.0",
+		"postcss": "^8.5.6",
+		"postcss-value-parser": "^4.2.0",
+		"tailwindcss": "^4.1.18"
+	},
+	"peerDependencies": {
+		"svelte": ">=5.14.3"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"description": "Server-side renderer for better-svelte-email",
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*",
+		"!dist/**/__fixtures__"
+	],
+	"license": "MIT",
+	"scripts": {
+		"build": "tsdown",
+		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint",
+		"test": "vitest run"
+	},
+	"type": "module",
+	"types": "./dist/index.d.cts"
+}

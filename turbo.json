@@ -3,7 +3,9 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["dist/**", "build/**", ".svelte-kit/output/**"]
+			"env": ["RESEND_API_KEY", "FROM_EMAIL"],
+			"outputs": ["dist/**", "build/**", ".svelte-kit/output/**", ".vercel/**"],
+			"inputs": ["$TURBO_DEFAULT$", ".env"]
 		},
 		"package": {
 			"dependsOn": ["^package"],
@@ -23,5 +25,6 @@
 			"cache": false,
 			"persistent": true
 		}
-	}
+	},
+	"globalDependencies": ["tsconfig.json"]
 }

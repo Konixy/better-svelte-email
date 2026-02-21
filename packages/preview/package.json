@@ -1,0 +1,47 @@
+{
+	"name": "@better-svelte-email/preview",
+	"version": "1.4.0",
+	"main": "./dist/index.js",
+	"module": "./dist/index.js",
+	"dependencies": {
+		"@better-svelte-email/server": "workspace:*",
+		"prettier": "^3.8.1",
+		"resend": "^6.8.0"
+	},
+	"peerDependencies": {
+		"svelte": ">=5.14.3",
+		"@sveltejs/kit": ">=2"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js"
+		},
+		"./package.json": "./package.json",
+		"./EmailPreview.svelte": {
+			"types": "./dist/EmailPreview.svelte.d.ts",
+			"svelte": "./dist/EmailPreview.svelte",
+			"default": "./dist/EmailPreview.svelte"
+		}
+	},
+	"description": "Preview component for better-svelte-email",
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"license": "MIT",
+	"peerDependenciesMeta": {
+		"@sveltejs/kit": {
+			"optional": true
+		}
+	},
+	"scripts": {
+		"build": "svelte-package -i src && publint",
+		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
+		"test": "vitest run"
+	},
+	"svelte": "./dist/index.js",
+	"type": "module",
+	"types": "./dist/index.d.ts"
+}

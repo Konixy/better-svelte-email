@@ -10,3 +10,8 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vercel
+.turbo
+apps/*/.svelte-kit
+apps/*/build
+packages/*/.svelte-kit
+packages/*/dist

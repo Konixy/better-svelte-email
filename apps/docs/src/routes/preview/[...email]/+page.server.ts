@@ -40,11 +40,11 @@ const emailModules = import.meta.glob('/src/lib/emails/**/*.svelte', { eager: tr
  */
 function emailListVercel(): PreviewData {
 	const files = Object.keys(emailModules)
-		.map((path) => {
+		.map((p) => {
 			// Extract filename without extension from the full path
 			// e.g., '/src/lib/emails/apple-receipt.svelte' -> 'apple-receipt'
-			const match = path.match(/\/src\/lib\/emails\/(.+)\.svelte$/);
-			return match ? match[1] : null;
+			const match = p.split('lib/emails/').pop()?.split('.')[0];
+			return match ?? null;
 		})
 		.filter((name): name is string => name !== null);
 
@@ -90,10 +90,14 @@ const createEmailVercel = {
 			// Render the component to HTML
 			const html = await render(emailComponent);
 
-			const source = fs.readFileSync(
-				path.resolve(process.cwd(), path.relative('/', fullPath)),
-				'utf8'
-			);
+			let cwd = process.cwd();
+
+			// Required for Vercel to work
+			if (!cwd.endsWith('apps/docs')) {
+				cwd = path.resolve(cwd, 'apps/docs');
+			}
+
+			const source = fs.readFileSync(path.resolve(cwd, path.relative('/', fullPath)), 'utf8');
 
 			// Remove all HTML comments from the body before formatting
 			const formattedHtml = await prettier.format(html, {

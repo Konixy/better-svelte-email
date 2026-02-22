@@ -1,9 +1,9 @@
 # Renderer API
 
-Render Svelte email templates to production-ready HTML and plain text using the utilities in `better-svelte-email/render`.
+Render Svelte email templates to production-ready HTML and plain text using the utilities in `@better-svelte-email/server`.
 
 ```ts
-import Renderer, { toPlainText, type RenderOptions } from 'better-svelte-email/render';
+import { Renderer, toPlainText, type RenderOptions } from '@better-svelte-email/server';
 ```
 
 ## Renderer

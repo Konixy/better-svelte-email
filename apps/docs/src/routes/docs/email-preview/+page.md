@@ -13,7 +13,7 @@ Create a new route under `src/routes/email-preview/[...email]` in your SvelteKit
 ```svelte
 <!-- src/routes/email-preview/[...email]/+page.svelte -->
 <script lang="ts">
-	import { EmailPreview } from 'better-svelte-email/preview';
+	import { EmailPreview } from '@better-svelte-email/preview';
 	import { page } from '$app/state';
 </script>
 
@@ -26,7 +26,7 @@ Create a `+page.server.ts` file in the same route to load your email templates a
 
 ```typescript
 // src/routes/email-preview/[...email]/+page.server.ts
-import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
+import { emailList, createEmail, sendEmail } from '@better-svelte-email/preview';
 import { env } from '$env/dynamic/private';
 
 export function load() {
@@ -62,8 +62,8 @@ Get your API key from [Resend](https://resend.com/docs/dashboard/api-keys/introd
 To use Tailwind in your email templates, you need to pass a renderer instance to the `createEmail` and `sendEmail` actions.
 
 ```typescript
-import Renderer from 'better-svelte-email/render';
-import { createEmail, sendEmail } from 'better-svelte-email/preview';
+import { Renderer } from '@better-svelte-email/server';
+import { createEmail, sendEmail } from '@better-svelte-email/preview';
 
 const tailwindConfig = {
 	theme: { extend: { colors: { brand: '#FF3E00' } } }
@@ -151,7 +151,7 @@ And return an object with:
 ## Example Setup with SendGrid
 
 ```typescript
-import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
+import { emailList, createEmail, sendEmail } from '@better-svelte-email/preview';
 import sgMail from '@sendgrid/mail';
 import { env } from '$env/dynamic/private';
 
@@ -181,7 +181,7 @@ export const actions = {
 
 If you're using Vercel serverless functions, the `createEmail` and `sendEmail` actions will not work out of the box. You will need to create some custom serverless functions to handle the actions.
 
-You can see an example implementation in [this file](https://github.com/Konixy/better-svelte-email/blob/main/src/routes/preview/%5B...email%5D/%2Bpage.server.ts).
+You can see an example implementation in [this file](https://github.com/Konixy/better-svelte-email/blob/main/apps/docs/src/routes/preview/%5B...email%5D/%2Bpage.server.ts).
 
 ## Troubleshooting
 

@@ -21,7 +21,7 @@ Better Svelte Email provides Svelte components with sensible defaults for buildi
 		Link,
 		Img,
 		Hr
-	} from 'better-svelte-email';
+	} from '@better-svelte-email/components';
 </script>
 ```
 

@@ -9,10 +9,16 @@ Welcome to **Better Svelte Email**! This guide walks you through installation, c
 
 ## Installation
 
-Install the package:
+Install the packages you need:
 
 ```bash
-npm install better-svelte-email
+npm install @better-svelte-email/components @better-svelte-email/server
+```
+
+If you also want the browser preview UI:
+
+```bash
+npm install @better-svelte-email/preview
 ```
 
 ## Write your first email
@@ -32,7 +38,7 @@ Create a new file at `src/lib/emails/welcome.svelte`. This example uses Tailwind
 		Text,
 		Button,
 		Row
-	} from 'better-svelte-email';
+	} from '@better-svelte-email/components';
 
 	let { name = 'there' } = $props();
 </script>
@@ -77,7 +83,7 @@ Render the email using the `Renderer` class and send it using your preferred ema
 
 ```typescript
 // src/routes/api/send-email/+server.ts
-import Renderer from 'better-svelte-email/render';
+import { Renderer } from '@better-svelte-email/server';
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 import WelcomeEmail from '$lib/emails/welcome.svelte';
@@ -107,7 +113,7 @@ export async function POST({ request }) {
 You can also render the email as plain text using the `toPlainText` function for better accessibility.
 
 ```typescript
-import { toPlainText } from 'better-svelte-email/render';
+import { toPlainText } from '@better-svelte-email/server';
 
 const plainText = toPlainText(html);
 

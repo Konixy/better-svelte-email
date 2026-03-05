@@ -1,0 +1,22 @@
+{
+	"name": "@better-svelte-email/preview-server",
+	"private": true,
+	"version": "1.4.0",
+	"description": "Preview server for @better-svelte-email/cli",
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"build:watch": "vite build --watch"
+	},
+	"author": "Konixy",
+	"license": "MIT",
+	"dependencies": {
+		"@tailwindcss/vite": "^4.2.0",
+		"sv-router": "^0.14.0",
+		"tailwindcss": "^4.2.0"
+	}
+}

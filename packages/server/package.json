@@ -27,12 +27,17 @@
 		"!dist/**/*.spec.*",
 		"!dist/**/__fixtures__"
 	],
-	"license": "MIT",
 	"scripts": {
 		"build": "tsdown",
 		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint",
 		"test": "vitest run"
 	},
 	"type": "module",
-	"types": "./dist/index.d.cts"
+	"types": "./dist/index.d.cts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/server"
+	}
 }

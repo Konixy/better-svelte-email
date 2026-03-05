@@ -30,7 +30,6 @@
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
 	],
-	"license": "MIT",
 	"peerDependenciesMeta": {
 		"@sveltejs/kit": {
 			"optional": true
@@ -43,5 +42,11 @@
 	},
 	"svelte": "./dist/index.js",
 	"type": "module",
-	"types": "./dist/index.d.ts"
+	"types": "./dist/index.d.ts",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/preview"
+	}
 }

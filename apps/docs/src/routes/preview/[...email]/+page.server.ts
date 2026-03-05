@@ -8,24 +8,13 @@ import { pixelBasedPreset } from '@better-svelte-email/server';
 import fs from 'fs';
 import path from 'path';
 import { Resend } from 'resend';
-import themeCSS from '../../../theme.css?raw';
-import appCSS from '../../../app.css?raw';
+import customCSS from '../../../app.css?raw';
 
 const resend = new Resend(env.RESEND_API_KEY ?? 're_1234');
 
 const tailwindConfig: TailwindConfig = {
-	theme: {
-		extend: {
-			colors: {
-				brand: '#FF3E00'
-			}
-		}
-	},
 	presets: [pixelBasedPreset]
 };
-
-// Use real shadcn-svelte theme from theme.css + app.css
-const customCSS = `${themeCSS}\n${appCSS}`;
 
 const renderer = new Renderer({ tailwindConfig, customCSS });
 const { render } = renderer;

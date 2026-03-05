@@ -54,7 +54,7 @@
 
 		<Container class="w-full max-w-[520px] rounded-2xl border border-stone-200 bg-white px-6 py-10">
 			<Section>
-				<Text class="text-brand m-0 text-xs tracking-widest uppercase">Better Svelte Email</Text>
+				<Text class="m-0 text-xs tracking-widest text-svelte uppercase">Better Svelte Email</Text>
 				<Heading as="h1" class="mt-3 mb-5 text-3xl leading-8 font-semibold text-slate-900">
 					Welcome, {name}! 👋
 				</Heading>
@@ -72,7 +72,7 @@
 				{#each features as feature, index}
 					<Row>
 						<Column valign="top" class="w-7">
-							<Text as="span" class="text-brand m-0 text-lg leading-6">✓</Text>
+							<Text as="span" class="m-0 text-lg leading-6 text-svelte">✓</Text>
 						</Column>
 						<Column align="left" class={index < features.length - 1 ? 'pb-4' : undefined}>
 							<Heading as="h3" class="m-0 text-base leading-snug font-semibold text-gray-900">
@@ -91,7 +91,7 @@
 					href="https://better-svelte-email.konixy.fr/docs/getting-started"
 					pX={24}
 					pY={14}
-					class="bg-brand rounded-lg text-center text-sm font-semibold text-white no-underline"
+					class="rounded-lg bg-svelte text-center text-sm font-semibold text-white no-underline"
 				>
 					Get Started
 				</Button>
@@ -104,14 +104,14 @@
 					Check out the
 					<Link
 						href="https://better-svelte-email.konixy.fr/docs"
-						class="text-brand font-semibold no-underline"
+						class="font-semibold text-svelte no-underline"
 					>
 						documentation
 					</Link>
 					to learn more,<br />or star on
 					<Link
 						href="https://github.com/Konixy/better-svelte-email"
-						class="text-brand font-semibold no-underline"
+						class="font-semibold text-svelte no-underline"
 					>
 						GitHub
 					</Link>

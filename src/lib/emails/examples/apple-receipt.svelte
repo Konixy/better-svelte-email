@@ -42,7 +42,6 @@
 				>
 					Save 3% on all your Apple purchases with Apple Card.
 					<sup style="font-weight: 300;">1</sup>
-					{' '}
 					<Link href="https://www.apple.com/apple-card/">Apply and use in minutes</Link>
 					<sup style="font-weight: 300;">2</sup>
 				</Text>

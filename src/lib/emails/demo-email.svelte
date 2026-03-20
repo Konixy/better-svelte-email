@@ -22,7 +22,6 @@
 
 	interface Props {
 		name?: string;
-		preview?: string;
 	}
 
 	let { name = 'there' }: Props = $props();
@@ -69,7 +68,7 @@
 				<Heading as="h2" class="m-0 mb-4 text-xl leading-7 font-semibold text-gray-900">
 					Why Better Svelte Email?
 				</Heading>
-				{#each features as feature, index}
+				{#each features as feature, index (feature.title)}
 					<Row>
 						<Column valign="top" class="w-7">
 							<Text as="span" class="text-brand m-0 text-lg leading-6">✓</Text>

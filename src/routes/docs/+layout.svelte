@@ -68,7 +68,7 @@
 		<nav class="flex flex-col gap-4">
 			<div class="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">Docs</div>
 			<ul class="flex list-none flex-col gap-1">
-				{#each sections as section}
+				{#each sections as section (section.slug)}
 					<li>
 						<a
 							href={`/docs/${section.slug}`}

@@ -25,7 +25,13 @@ export default defineConfig(
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
 			'no-undef': 'off',
-			'@typescript-eslint/no-explicit-any': 'off'
+			'@typescript-eslint/no-explicit-any': 'off',
+			// Email templates use literal <html>/<head>/<body>; svelte:* equivalents are not valid inside the document tree.
+			'svelte/no-raw-special-elements': 'off',
+			// Rendered email and preview intentionally inject HTML from trusted sources.
+			'svelte/no-at-html-tags': 'off',
+			// Docs and mail components use string hrefs (external URLs, mailto:, dynamic props).
+			'svelte/no-navigation-without-resolve': 'off'
 		}
 	},
 	{

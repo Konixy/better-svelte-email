@@ -53,7 +53,8 @@ export const emailList = ({
 		} catch (err) {
 			throw new Error(
 				'Could not determine the root path of your project. Please pass in the root param manually using process.cwd() or an absolute path.\nOriginal error: ' +
-					err
+					err,
+				{ cause: err }
 			);
 		}
 	}
@@ -87,7 +88,8 @@ export const getEmailComponent = async (emailPath: string, file: string) => {
 		return (await import(/* @vite-ignore */ importPath)).default;
 	} catch (err) {
 		throw new Error(
-			`Failed to import email component '${fileName}'. Make sure the file exists and includes the <Head /> component.\nOriginal error: ${err}`
+			`Failed to import email component '${fileName}'. Make sure the file exists and includes the <Head /> component.\nOriginal error: ${err}`,
+			{ cause: err }
 		);
 	}
 };

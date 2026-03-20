@@ -18,7 +18,6 @@
 	import Nested from './nested/nested.svelte';
 
 	const padding = 'px-4 py-2';
-	const fontSemibold = 'font-semibold';
 	const paddingStyle = 'padding: 2rem;';
 </script>
 

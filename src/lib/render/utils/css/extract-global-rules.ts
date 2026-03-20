@@ -1,4 +1,4 @@
-import type { AtRule, Root, Rule } from 'postcss';
+import type { Root, Rule } from 'postcss';
 import { splitSelectorList } from './split-selector-list.js';
 
 export interface GlobalRules {

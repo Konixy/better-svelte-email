@@ -1,4 +1,5 @@
 import { render as svelteRender } from 'svelte/server';
+import type { Component, ComponentProps, SvelteComponent } from 'svelte';
 import { parse, serialize, type DefaultTreeAdapterTypes } from 'parse5';
 import postcss from 'postcss';
 import { walk } from './utils/html/walk.js';
@@ -57,6 +58,28 @@ export type RenderOptions = {
 	props?: Omit<Record<string, any>, '$$slots' | '$$events'> | undefined;
 	context?: Map<any, any>;
 	idPrefix?: string;
+};
+
+export type RenderableComponent = SvelteComponent<any> | Component<any>;
+
+export type RenderComponentInput<Comp extends RenderableComponent> = Comp extends SvelteComponent<any>
+	? Component<Comp>
+	: Comp;
+
+export type RenderComponentProps<Comp extends RenderableComponent> = [ComponentProps<Comp>] extends [never]
+	? Record<string, any>
+	: ComponentProps<Comp>;
+
+export type TypedRenderOptions<Comp extends RenderableComponent> = Omit<RenderOptions, 'props'> & {
+	props?: Omit<RenderComponentProps<Comp>, '$$slots' | '$$events'> & Record<string, any>;
+};
+
+export type RenderFunction = {
+	<Comp extends RenderableComponent>(
+		component: RenderComponentInput<Comp>,
+		options?: TypedRenderOptions<Comp>
+	): Promise<string>;
+	(component: any, options?: RenderOptions | undefined): Promise<string>;
 };
 
 /**
@@ -140,7 +163,7 @@ export default class Renderer {
 	 * });
 	 * ```
 	 */
-	render = async (component: any, options?: RenderOptions | undefined) => {
+	render: RenderFunction = async (component: any, options?: RenderOptions | undefined) => {
 		const { body } = svelteRender(component, options);
 
 		let ast = parse(body);

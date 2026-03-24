@@ -55,7 +55,7 @@ Create a new file at `src/lib/emails/welcome.svelte`. This example uses Tailwind
 				</Text>
 				<Row class="mt-6">
 					<Button
-						href="https://better-svelte-email.konixy.fr/docs"
+						href="https://better-svelte-email.konixy.dev/docs"
 						pX={24}
 						pY={14}
 						class="mr-2 rounded-lg bg-orange-600 text-white"

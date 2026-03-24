@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
+import { format } from 'prettier';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { createServer, normalizePath, type ViteDevServer } from 'vite';
 import type { RendererOptions } from '@better-svelte-email/server';
@@ -27,8 +28,18 @@ type RendererModule = {
 	Renderer: new (options?: RendererOptions) => RendererInstance;
 };
 
-let viteServerPromise: Promise<ViteDevServer> | null = null;
-let rendererPromise: Promise<RendererInstance> | null = null;
+export type PreviewApiBundle = {
+	handlePreviewApi: (
+		requestUrl: URL,
+		req: IncomingMessage,
+		res: ServerResponse
+	) => Promise<boolean>;
+	/** Close Vite, drop renderer, reload custom CSS promise (call after email/CSS file changes). */
+	invalidateCaches: () => Promise<void>;
+	getEmailsRoot: () => string;
+	/** Absolute paths to pass to the file watcher (CSS files that affect render). */
+	getCssWatchPaths: () => string[];
+};
 
 function sendJson(res: ServerResponse, statusCode: number, body: unknown) {
 	res.writeHead(statusCode, { 'Content-Type': JSON_CONTENT_TYPE });
@@ -63,7 +74,7 @@ function sanitizeFileInput(file: unknown) {
 	return cleaned;
 }
 
-function resolveEmailsRoot(emailsDir: string) {
+export function resolveEmailsRoot(emailsDir: string) {
 	if (path.isAbsolute(emailsDir)) {
 		return path.normalize(emailsDir);
 	}
@@ -183,57 +194,6 @@ async function readJsonBody(req: IncomingMessage): Promise<RenderBody> {
 	}
 }
 
-async function getViteServer(projectRoot: string) {
-	if (!viteServerPromise) {
-		viteServerPromise = createServer({
-			appType: 'custom',
-			clearScreen: false,
-			configFile: false,
-			root: projectRoot,
-			plugins: [
-				svelte({
-					configFile: false
-				})
-			],
-			server: {
-				middlewareMode: true
-			}
-		});
-	}
-
-	return viteServerPromise;
-}
-
-async function getRenderer(viteServer: ViteDevServer, customCSS?: string) {
-	if (!rendererPromise) {
-		rendererPromise = viteServer.ssrLoadModule('@better-svelte-email/server').then((module) => {
-			const rendererOptions = customCSS ? { customCSS } : undefined;
-			return new (module as RendererModule).Renderer(rendererOptions);
-		});
-	}
-
-	return rendererPromise;
-}
-
-async function renderEmailComponent(
-	projectRoot: string,
-	emailFilePath: string,
-	props: Record<string, unknown>,
-	customCSS?: string
-) {
-	const viteServer = await getViteServer(projectRoot);
-	const viteModulePath = `/@fs/${normalizePath(emailFilePath)}`;
-	const module = await viteServer.ssrLoadModule(viteModulePath);
-	const component = module.default;
-
-	if (!component) {
-		throw createError('Email module does not have a default Svelte export.', 500);
-	}
-
-	const renderer = await getRenderer(viteServer, customCSS);
-	return renderer.render(component, { props });
-}
-
 function isMissingFileError(error: unknown) {
 	if (!(error instanceof Error)) {
 		return false;
@@ -242,16 +202,94 @@ function isMissingFileError(error: unknown) {
 	return 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT';
 }
 
-export function createPreviewApiHandler(options: PreviewApiOptions) {
+export function createPreviewApiHandler(options: PreviewApiOptions): PreviewApiBundle {
 	const projectRoot = process.cwd();
 	const emailsRoot = resolveEmailsRoot(options.emailsDir);
-	const customCssPromise = loadCustomCss(options.customCssPath);
 
-	return async function handlePreviewApi(
-		requestUrl: URL,
-		req: IncomingMessage,
-		res: ServerResponse
+	function getCssWatchPaths(): string[] {
+		const resolved = resolveCustomCssPath(options.customCssPath);
+		if (resolved) {
+			return [resolved];
+		}
+		return [
+			path.resolve(process.cwd(), 'src/app.css'),
+			path.resolve(process.cwd(), 'src/routes/layout.css')
+		];
+	}
+
+	let viteServerPromise: Promise<ViteDevServer> | null = null;
+	let rendererPromise: Promise<RendererInstance> | null = null;
+	let customCssPromise: Promise<string | undefined> = loadCustomCss(options.customCssPath);
+
+	async function invalidateCaches() {
+		rendererPromise = null;
+		const pending = viteServerPromise;
+		viteServerPromise = null;
+		if (pending) {
+			try {
+				const server = await pending;
+				await server.close();
+			} catch {
+				// Ignore shutdown errors (e.g. server failed to start).
+			}
+		}
+		customCssPromise = loadCustomCss(options.customCssPath);
+	}
+
+	async function getViteServer() {
+		if (!viteServerPromise) {
+			viteServerPromise = createServer({
+				appType: 'custom',
+				clearScreen: false,
+				configFile: false,
+				root: projectRoot,
+				plugins: [
+					svelte({
+						configFile: false
+					})
+				],
+				server: {
+					middlewareMode: true
+				}
+			});
+		}
+
+		return viteServerPromise;
+	}
+
+	async function getRenderer(viteServer: ViteDevServer, customCSS?: string) {
+		if (!rendererPromise) {
+			rendererPromise = viteServer.ssrLoadModule('@better-svelte-email/server').then((module) => {
+				const rendererOptions = customCSS ? { customCSS } : undefined;
+				return new (module as RendererModule).Renderer(rendererOptions);
+			});
+		}
+
+		return rendererPromise;
+	}
+
+	async function renderEmailComponent(
+		emailFilePath: string,
+		props: Record<string, unknown>,
+		customCSS?: string
 	) {
+		const viteServer = await getViteServer();
+		const viteModulePath = `/@fs/${normalizePath(emailFilePath)}`;
+		const module = await viteServer.ssrLoadModule(viteModulePath);
+		const component = module.default;
+
+		if (!component) {
+			throw createError('Email module does not have a default Svelte export.', 500);
+		}
+
+		const renderer = await getRenderer(viteServer, customCSS);
+		const renderStart = performance.now();
+		const html = await renderer.render(component, { props });
+		const renderTimeMs = performance.now() - renderStart;
+		return { html, renderTimeMs };
+	}
+
+	async function handlePreviewApi(requestUrl: URL, req: IncomingMessage, res: ServerResponse) {
 		if (!requestUrl.pathname.startsWith('/api/')) {
 			return false;
 		}
@@ -317,8 +355,23 @@ export function createPreviewApiHandler(options: PreviewApiOptions) {
 				}
 
 				const customCSS = await customCssPromise;
-				const html = await renderEmailComponent(projectRoot, filePath, props, customCSS);
-				const payload: { html: string; source?: string | null } = { html };
+				const { html: renderedHtml, renderTimeMs } = await renderEmailComponent(
+					filePath,
+					props,
+					customCSS
+				);
+				let html = renderedHtml;
+
+				try {
+					html = await format(html, { parser: 'html', printWidth: 100 });
+				} catch {
+					// Keep unformatted HTML if Prettier fails
+				}
+
+				const payload: { html: string; renderTimeMs: number; source?: string | null } = {
+					html,
+					renderTimeMs
+				};
 
 				if (includeSource) {
 					try {
@@ -347,5 +400,12 @@ export function createPreviewApiHandler(options: PreviewApiOptions) {
 			sendJson(res, statusCode, { error: { message } });
 			return true;
 		}
+	}
+
+	return {
+		handlePreviewApi,
+		invalidateCaches,
+		getEmailsRoot: () => emailsRoot,
+		getCssWatchPaths
 	};
 }

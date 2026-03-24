@@ -88,7 +88,7 @@
 
 			<Section class="mt-8 mb-6 text-center">
 				<Button
-					href="https://better-svelte-email.konixy.fr/docs/getting-started"
+					href="https://better-svelte-email.konixy.dev/docs/getting-started"
 					pX={24}
 					pY={14}
 					class="rounded-lg bg-svelte text-center text-sm font-semibold text-white no-underline"
@@ -103,7 +103,7 @@
 				<Text class="m-0 text-xs leading-5 text-gray-600">
 					Check out the
 					<Link
-						href="https://better-svelte-email.konixy.fr/docs"
+						href="https://better-svelte-email.konixy.dev/docs"
 						class="font-semibold text-svelte no-underline"
 					>
 						documentation

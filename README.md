@@ -5,7 +5,7 @@
 		Create beautiful emails in Svelte with first-class Tailwind support
 	</p>
 	<p align="center">
-		<a href="https://better-svelte-email.konixy.fr">Website</a>
+		<a href="https://better-svelte-email.konixy.dev">Website</a>
 		 · 
 		<a href="https://github.com/Konixy/better-svelte-email">GitHub</a>
 	</p>
@@ -24,7 +24,7 @@
 
 ## Usage
 
-See the [documentation](https://better-svelte-email.konixy.fr/docs) for a complete guide on how to use Better Svelte Email.
+See the [documentation](https://better-svelte-email.konixy.dev/docs) for a complete guide on how to use Better Svelte Email.
 
 ## Features
 

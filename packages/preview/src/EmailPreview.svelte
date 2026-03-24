@@ -286,7 +286,7 @@
 			<div class="sidebar-header-right">
 				<a
 					class="sidebar-header-docs-link"
-					href="https://better-svelte-email.konixy.fr/docs"
+					href="https://better-svelte-email.konixy.dev/docs"
 					title="Documentation"
 					target="_blank"
 					rel="noopener noreferrer"

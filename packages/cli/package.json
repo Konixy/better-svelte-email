@@ -3,11 +3,11 @@
 	"description": "CLI for better-svelte-email",
 	"version": "1.4.0",
 	"scripts": {
-		"dev": "bun run build:assets && bun --watch src/index.ts dev -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
-		"build:preview": "bun run --cwd ../preview-server build",
+		"dev": "bun --watch src/index.ts dev --preview-dev --preview-port 3001 -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
+		"build:preview": "bun run --cwd ../preview-server build && bun run build:copy-preview-runtime",
 		"build:cli": "tsdown",
-		"build:assets": "bun run ./scripts/copy-preview-assets.ts",
-		"build": "bun run build:preview && bun run build:cli && bun run build:assets",
+		"build:copy-preview-runtime": "bun run ./scripts/copy-preview-runtime.ts",
+		"build": "bun run build:preview && bun run build:cli",
 		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
 		"test": "vitest run"
 	},
@@ -39,6 +39,7 @@
 	"dependencies": {
 		"@better-svelte-email/server": "workspace:*",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"chokidar": "^4.0.3",
 		"commander": "^14.0.3",
 		"svelte": "^5.53.7",
 		"vite": "^7.3.1"

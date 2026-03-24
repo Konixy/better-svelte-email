@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 @import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
+	--font-sans: 'Bricolage Grotesque', sans-serif;
+	--font-mono: 'IBM Plex Mono', monospace;
+
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
@@ -21,51 +28,77 @@
 	--color-ring: var(--ring);
 	--color-svelte: var(--svelte);
 
-	--radius: 0.25rem;
-	--radius-md: calc(var(--radius) + 2px);
-	--radius-lg: calc(var(--radius) * 2);
-	--radius-xl: calc(var(--radius) * 3);
+	--radius: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
 }
 
 :root {
-	--background: oklch(98.5% 0.001 106.423);
-	--foreground: oklch(21.6% 0.006 56.043);
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.147 0.004 49.25);
+	--card-foreground: oklch(0.145 0 0);
 	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.147 0.004 49.25);
-	--primary: oklch(0.216 0.006 56.043);
-	--primary-foreground: oklch(0.985 0.001 106.423);
-	--secondary: oklch(0.958 0.003 48.717);
-	--secondary-foreground: oklch(0.454 0.01 67.558);
-	--muted: oklch(0.9483 0.0061 67.75);
-	--muted-foreground: oklch(0.4761 0.021783 55.8952);
-	--accent: oklch(0.97 0.001 106.424);
-	--accent-foreground: oklch(0.216 0.006 56.043);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.923 0.003 48.717);
-	--input: oklch(0.923 0.003 48.717);
-	--ring: oklch(0.709 0.01 56.259);
-	--svelte: #f73b01;
+	--popover-foreground: oklch(0.145 0 0);
+	--primary: oklch(0.145 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.968 0.002 264);
+	--secondary-foreground: oklch(0.145 0 0);
+	--muted: oklch(0.968 0.002 264);
+	--muted-foreground: oklch(0.454 0.01 67.5);
+	--accent: oklch(0.968 0.002 264);
+	--accent-foreground: oklch(0.145 0 0);
+	--destructive: oklch(0.577 0.245 27.3);
+	--border: oklch(0.906 0.005 264);
+	--input: oklch(0.906 0.005 264);
+	--ring: oklch(0.145 0 0);
+	--svelte: oklch(0.62 0.22 35);
 }
 
 .dark {
-	--background: oklch(14.7% 0.004 49.25);
-	--foreground: oklch(97% 0.001 106.424);
-	--card: oklch(0.216 0.006 56.043);
-	--card-foreground: oklch(0.985 0.001 106.423);
-	--popover: oklch(0.216 0.006 56.043);
-	--popover-foreground: oklch(0.985 0.001 106.423);
-	--primary: oklch(0.923 0.003 48.717);
-	--primary-foreground: oklch(0.216 0.006 56.043);
-	--secondary: oklch(0.216 0.006 56.043);
-	--secondary-foreground: oklch(0.709 0.01 56.259);
-	--muted: oklch(0.268 0.007 34.298);
-	--muted-foreground: oklch(0.7348 0.0326 67.28);
-	--accent: oklch(0.268 0.007 34.298);
-	--accent-foreground: oklch(0.985 0.001 106.423);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.553 0.013 58.071);
+	--background: oklch(0.145 0 0);
+	--foreground: oklch(0.985 0 0);
+	--card: oklch(0.145 0 0);
+	--card-foreground: oklch(0.985 0 0);
+	--popover: oklch(0.145 0 0);
+	--popover-foreground: oklch(0.985 0 0);
+	--primary: oklch(0.985 0 0);
+	--primary-foreground: oklch(0.145 0 0);
+	--secondary: oklch(0.22 0 0);
+	--secondary-foreground: oklch(0.985 0 0);
+	--muted: oklch(0.22 0 0);
+	--muted-foreground: oklch(0.65 0.01 264);
+	--accent: oklch(0.22 0 0);
+	--accent-foreground: oklch(0.985 0 0);
+	--destructive: oklch(0.577 0.245 27.3);
+	--border: oklch(0.22 0 0);
+	--input: oklch(0.22 0 0);
+	--ring: oklch(0.985 0 0);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+
+	body {
+		@apply bg-background font-sans text-foreground antialiased;
+	}
+}
+
+/* Custom scrollbar for a sleeker look */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--muted-foreground);
 }

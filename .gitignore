@@ -15,3 +15,4 @@ apps/*/.svelte-kit
 apps/*/build
 packages/*/.svelte-kit
 packages/*/dist
+packages/*/build

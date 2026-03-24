@@ -11,7 +11,8 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"build:watch": "vite build --watch",
-		"start": "node build"
+		"start": "node build",
+		"test": "vitest run"
 	},
 	"author": "Konixy",
 	"license": "MIT",

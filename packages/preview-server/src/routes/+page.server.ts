@@ -1,7 +1,7 @@
-import { load_emails } from '$lib/server/preview-api';
+import { loadEmails } from '$lib/server/preview-api';
 
 export async function load() {
-	const emails = await load_emails();
+	const emails = await loadEmails();
 
 	return {
 		files: emails.files,

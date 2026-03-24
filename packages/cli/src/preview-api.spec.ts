@@ -4,7 +4,11 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createPreviewApiHandler, resolveEmailsRoot } from './preview-api.js';
+import {
+	createPreviewApiHandler,
+	resolveEmailsRoot,
+	tryResolveSvelteKitRuntimeApp
+} from './preview-api.js';
 
 function makeRequest(options: { method: string; url: string; body?: string }): IncomingMessage {
 	const stream = new PassThrough();
@@ -50,6 +54,14 @@ function collectResponse(): {
 		raw: () => body
 	};
 }
+
+describe('tryResolveSvelteKitRuntimeApp()', () => {
+	it('returns the kit runtime app directory when @sveltejs/kit is resolvable from cwd', () => {
+		const dir = tryResolveSvelteKitRuntimeApp(process.cwd());
+		expect(dir).not.toBeNull();
+		expect(dir).toMatch(/[/\\]src[/\\]runtime[/\\]app$/);
+	});
+});
 
 describe('resolveEmailsRoot()', () => {
 	it('normalizes absolute paths', () => {

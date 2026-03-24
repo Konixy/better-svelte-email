@@ -1,10 +1,190 @@
 import fs from 'node:fs/promises';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { format } from 'prettier';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { createServer, normalizePath, type ViteDevServer } from 'vite';
-import type { RendererOptions } from '@better-svelte-email/server';
+import { createServer, normalizePath, type Plugin, type ViteDevServer } from 'vite';
+import type { RendererOptions, TailwindConfig } from '@better-svelte-email/server';
+
+const PREVIEW_SK_VIRTUAL = '\0preview-sk:';
+
+/**
+ * Vite `define` map expected by `@sveltejs/kit` runtime modules (see `kit` `exports/vite/index.js`).
+ * Without these, imports like `$app/paths` pull in `paths/internal/server.js`, which reads
+ * `__SVELTEKIT_PATHS_BASE__` etc. at module init.
+ */
+function svelteKitRuntimeDefine(): Record<string, string> {
+	const s = JSON.stringify;
+	return {
+		__SVELTEKIT_ADAPTER_NAME__: s('preview'),
+		__SVELTEKIT_APP_DIR__: s('_app'),
+		__SVELTEKIT_APP_VERSION_FILE__: s('_app/version.json'),
+		__SVELTEKIT_APP_VERSION_POLL_INTERVAL__: '0',
+		__SVELTEKIT_CLIENT_ROUTING__: s(true),
+		__SVELTEKIT_EMBEDDED__: s(false),
+		__SVELTEKIT_EXPERIMENTAL__REMOTE_FUNCTIONS__: s(false),
+		__SVELTEKIT_FORK_PRELOADS__: s(false),
+		__SVELTEKIT_HASH_ROUTING__: s(false),
+		__SVELTEKIT_HAS_SERVER_LOAD__: 'true',
+		__SVELTEKIT_HAS_UNIVERSAL_LOAD__: 'true',
+		__SVELTEKIT_PATHS_ASSETS__: s(''),
+		__SVELTEKIT_PATHS_BASE__: s(''),
+		__SVELTEKIT_PATHS_RELATIVE__: s(false),
+		__SVELTEKIT_PAYLOAD__: 'globalThis.__sveltekit_dev',
+		__SVELTEKIT_SERVER_TRACING_ENABLED__: s(false),
+		// esbuild `define` only allows JSON literals or simple identifiers — not `(() => {})`.
+		__SVELTEKIT_TRACK__: 'Boolean'
+	};
+}
+
+/** Same layout as SvelteKit: `$app/*` → `node_modules/@sveltejs/kit/src/runtime/app/*`. */
+export function tryResolveSvelteKitRuntimeApp(projectRoot: string): string | null {
+	try {
+		const requireFromProject = createRequire(path.join(projectRoot, 'package.json'));
+		const kitPkgJson = requireFromProject.resolve('@sveltejs/kit/package.json');
+		return path.join(path.dirname(kitPkgJson), 'src/runtime/app');
+	} catch {
+		return null;
+	}
+}
+
+function staticEnvModuleFromProcessEnv(kind: 'public' | 'private'): string {
+	const lines: string[] = [];
+	for (const [key, value] of Object.entries(process.env)) {
+		if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key)) {
+			continue;
+		}
+		if (kind === 'public' && !key.startsWith('PUBLIC_')) {
+			continue;
+		}
+		if (kind === 'private' && key.startsWith('PUBLIC_')) {
+			continue;
+		}
+		lines.push(`export const ${key} = ${JSON.stringify(value ?? '')};`);
+	}
+	return lines.length > 0 ? lines.join('\n') : 'export {};';
+}
+
+function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
+	const kitRuntimeApp = tryResolveSvelteKitRuntimeApp(projectRoot);
+
+	return {
+		name: 'better-svelte-email-preview-sveltekit',
+		enforce: 'pre',
+		config() {
+			const alias: { find: string; replacement: string }[] = [
+				{ find: '$lib', replacement: path.join(projectRoot, 'src/lib') }
+			];
+			if (kitRuntimeApp) {
+				alias.push({ find: '$app', replacement: kitRuntimeApp });
+			}
+			return {
+				resolve: { alias },
+				...(kitRuntimeApp
+					? {
+							ssr: {
+								noExternal: ['@sveltejs/kit', '@sveltejs/kit/src/runtime']
+							}
+						}
+					: {})
+			};
+		},
+		resolveId(id) {
+			// Newer Kit: `$app/paths` server entry imports `get_hooks` from generated `__SERVER__/internal.js`
+			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output — serve a stub.
+			if (id === '__SERVER__/internal.js') {
+				return `${PREVIEW_SK_VIRTUAL}server-internal`;
+			}
+			if (id === '__sveltekit/environment') {
+				return `${PREVIEW_SK_VIRTUAL}environment`;
+			}
+			if (id === '__sveltekit/server') {
+				return `${PREVIEW_SK_VIRTUAL}server`;
+			}
+			if (id === '$env/static/public') {
+				return `${PREVIEW_SK_VIRTUAL}env-static-public`;
+			}
+			if (id === '$env/static/private') {
+				return `${PREVIEW_SK_VIRTUAL}env-static-private`;
+			}
+			if (id === '$env/dynamic/public') {
+				return `${PREVIEW_SK_VIRTUAL}env-dynamic-public`;
+			}
+			if (id === '$env/dynamic/private') {
+				return `${PREVIEW_SK_VIRTUAL}env-dynamic-private`;
+			}
+		},
+		load(id, options) {
+			const browser = options?.ssr === false;
+
+			switch (id) {
+				case `${PREVIEW_SK_VIRTUAL}environment`:
+					return [
+						'export const version = "preview";',
+						'export let building = false;',
+						'export let prerendering = false;',
+						'export function set_building() { building = true; }',
+						'export function set_prerendering() { prerendering = true; }'
+					].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}server`:
+					return [
+						'export let read_implementation = null;',
+						// Kit ≥2.51 `$app/paths` `match()` reads `manifest._.matchers()` / `routes` (see kit `paths/server.js`).
+						'export let manifest = { _: { matchers: async () => ({}), routes: [] } };',
+						'export function set_read_implementation(fn) { read_implementation = fn; }',
+						'export function set_manifest(m) { manifest = m; }'
+					].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}server-internal`:
+					return [
+						'export async function get_hooks() {',
+						'	return {',
+						'		handle: undefined,',
+						'		handleFetch: undefined,',
+						'		handleError: undefined,',
+						'		handleValidationError: undefined,',
+						'		init: undefined,',
+						'		reroute: undefined,',
+						'		transport: undefined',
+						'	};',
+						'}',
+						// Shape mirrors generated `internal.js` (`write_server.js`) so `runtime/server` can load if pulled in.
+						'export const options = {',
+						'	app_template_contains_nonce: false,',
+						'	async: false,',
+						'	csp: { mode: "auto", directives: {}, reportOnly: {} },',
+						'	csrf_check_origin: false,',
+						'	csrf_trusted_origins: [],',
+						'	embedded: false,',
+						'	env_public_prefix: "PUBLIC_",',
+						'	env_private_prefix: "",',
+						'	hash_routing: false,',
+						'	hooks: null,',
+						'	preload_strategy: "modulepreload",',
+						'	root: null,',
+						'	service_worker: false,',
+						'	service_worker_options: null,',
+						'	templates: { app: () => "", error: () => "" },',
+						'	version_hash: ""',
+						'};'
+					].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}env-static-public`:
+					return staticEnvModuleFromProcessEnv('public');
+				case `${PREVIEW_SK_VIRTUAL}env-static-private`:
+					return staticEnvModuleFromProcessEnv('private');
+				case `${PREVIEW_SK_VIRTUAL}env-dynamic-private`:
+					return `export const env = /** @type {Record<string, string>} */ ({ ...process.env });`;
+				case `${PREVIEW_SK_VIRTUAL}env-dynamic-public`:
+					if (browser) {
+						return `export const env = /** @type {Record<string, string>} */ (typeof globalThis !== 'undefined' && globalThis.__BSE_PREVIEW_PUBLIC_ENV__ ? globalThis.__BSE_PREVIEW_PUBLIC_ENV__ : {});`;
+					}
+					return `export const env = /** @type {Record<string, string>} */ (Object.fromEntries(Object.entries(process.env).filter(([k]) => k.startsWith('PUBLIC_'))));`;
+				default:
+					return;
+			}
+		}
+	};
+}
 
 type PreviewApiOptions = {
 	emailsDir: string;
@@ -26,6 +206,7 @@ type RendererInstance = {
 
 type RendererModule = {
 	Renderer: new (options?: RendererOptions) => RendererInstance;
+	pixelBasedPreset: TailwindConfig;
 };
 
 export type PreviewApiBundle = {
@@ -238,12 +419,17 @@ export function createPreviewApiHandler(options: PreviewApiOptions): PreviewApiB
 
 	async function getViteServer() {
 		if (!viteServerPromise) {
+			const globalKit = globalThis as typeof globalThis & { __sveltekit_dev?: object };
+			globalKit.__sveltekit_dev ??= {};
+
 			viteServerPromise = createServer({
 				appType: 'custom',
 				clearScreen: false,
 				configFile: false,
 				root: projectRoot,
+				define: svelteKitRuntimeDefine(),
 				plugins: [
+					previewSvelteKitShimPlugin(projectRoot),
 					svelte({
 						configFile: false
 					})
@@ -260,8 +446,15 @@ export function createPreviewApiHandler(options: PreviewApiOptions): PreviewApiB
 	async function getRenderer(viteServer: ViteDevServer, customCSS?: string) {
 		if (!rendererPromise) {
 			rendererPromise = viteServer.ssrLoadModule('@better-svelte-email/server').then((module) => {
-				const rendererOptions = customCSS ? { customCSS } : undefined;
-				return new (module as RendererModule).Renderer(rendererOptions);
+				const m = module as RendererModule;
+				// Match typical `Renderer({ tailwindConfig, customCSS })` usage (e.g. docs preview):
+				// default config must include `pixelBasedPreset` so `@apply` and utilities resolve like
+				// the standalone server path, not an empty Tailwind config.
+				const rendererOptions: RendererOptions = {
+					tailwindConfig: { presets: [m.pixelBasedPreset] },
+					...(customCSS ? { customCSS } : {})
+				};
+				return new m.Renderer(rendererOptions);
 			});
 		}
 
@@ -397,7 +590,8 @@ export function createPreviewApiHandler(options: PreviewApiOptions): PreviewApiB
 					? error.statusCode
 					: 500;
 			const message = error instanceof Error ? error.message : 'Unexpected API error.';
-			sendJson(res, statusCode, { error: { message } });
+			const stack = error instanceof Error ? error.stack : undefined;
+			sendJson(res, statusCode, { error: { message, stack: stack ?? new Error().stack } });
 			return true;
 		}
 	}

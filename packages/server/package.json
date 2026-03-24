@@ -39,5 +39,8 @@
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git",
 		"directory": "packages/server"
+	},
+	"devDependencies": {
+		"@types/html-to-text": "^9.0.4"
 	}
 }

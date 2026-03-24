@@ -13,27 +13,27 @@ type RenderResponse = {
 	error?: { message?: string };
 };
 
-export async function load_emails() {
-	const response = await fetch_preview_api('/api/emails');
+export async function loadEmails() {
+	const response = await fetchPreviewApi('/api/emails');
 	const payload = (await response.json()) as EmailsResponse;
 
 	if (!response.ok) {
 		return {
 			files: [] as string[],
 			path: '',
-			error: payload.error?.message ?? 'Failed to load email list.'
+			error: payload.error ?? new Error('Failed to load email list.')
 		};
 	}
 
 	return {
 		files: payload.files ?? [],
 		path: payload.path ?? '',
-		error: null as string | null
+		error: null as { message?: string; stack?: string } | null
 	};
 }
 
-export async function render_email(file: string) {
-	const response = await fetch_preview_api('/api/render', {
+export async function renderEmail(file: string) {
+	const response = await fetchPreviewApi('/api/render', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ export async function render_email(file: string) {
 			html: '',
 			source: '',
 			renderTimeMs: null as number | null,
-			error: payload.error?.message ?? 'Failed to render email.'
+			error: payload.error ?? new Error('Failed to render email.')
 		};
 	}
 
@@ -58,11 +58,11 @@ export async function render_email(file: string) {
 		html: payload.html ?? '',
 		source: payload.source ?? '',
 		renderTimeMs: typeof payload.renderTimeMs === 'number' ? payload.renderTimeMs : null,
-		error: null as string | null
+		error: null as { message?: string; stack?: string } | null
 	};
 }
 
-function get_preview_api_origin() {
+function getPreviewApiOrigin() {
 	const origin = env.PREVIEW_API_ORIGIN?.trim();
 	if (!origin) {
 		throw new Error('PREVIEW_API_ORIGIN is not configured for the preview server.');
@@ -71,6 +71,6 @@ function get_preview_api_origin() {
 	return origin.replace(/\/+$/, '');
 }
 
-function fetch_preview_api(pathname: string, init?: RequestInit) {
-	return fetch(`${get_preview_api_origin()}${pathname}`, init);
+function fetchPreviewApi(pathname: string, init?: RequestInit) {
+	return fetch(`${getPreviewApiOrigin()}${pathname}`, init);
 }

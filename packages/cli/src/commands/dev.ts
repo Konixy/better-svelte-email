@@ -47,6 +47,7 @@ function allowPreviewCors(req: http.IncomingMessage, res: http.ServerResponse) {
 async function resolvePreviewServerEntry() {
 	const currentDir = path.dirname(fileURLToPath(import.meta.url));
 	const candidates = [
+		path.resolve(currentDir, './preview-server/index.js'),
 		path.resolve(currentDir, '../preview-server/index.js'),
 		path.resolve(currentDir, '../../preview-server/index.js'),
 		path.resolve(currentDir, '../../dist/preview-server/index.js'),

@@ -1,16 +1,16 @@
-import { load_emails, render_email } from '$lib/server/preview-api';
+import { loadEmails, renderEmail } from '$lib/server/preview-api';
 
 export async function load({ params }: { params: { email?: string } }) {
 	const selectedFile = params.email ?? '';
 	const [emails, preview] = await Promise.all([
-		load_emails(),
+		loadEmails(),
 		selectedFile
-			? render_email(selectedFile)
+			? renderEmail(selectedFile)
 			: Promise.resolve({
 					html: '',
 					source: '',
 					renderTimeMs: null as number | null,
-					error: null as string | null
+					error: null as { message?: string; stack?: string } | null
 				})
 	]);
 

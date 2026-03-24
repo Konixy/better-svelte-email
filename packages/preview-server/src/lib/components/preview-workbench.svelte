@@ -19,19 +19,19 @@
 	import ShikiCode from '$lib/components/shiki-code.svelte';
 	import { buildEmailTree, filterEmailTree, type EmailTreeEntry } from '$lib/email-tree';
 	import { cn } from '$lib/utils';
-	import { Check, CodeIcon, PanelLeftClose } from '@lucide/svelte';
+	import { Check, CodeIcon, MailWarningIcon, PanelLeftClose } from '@lucide/svelte';
 	import SvelteIcon from '$lib/svelte-icon.svelte';
 	import * as Tooltip from './ui/tooltip';
 
 	type Props = {
 		files: string[];
 		emailPath: string;
-		emailsError: string | null;
+		emailsError: { message?: string; stack?: string } | null;
 		selectedFile: string | null;
 		html: string;
 		source: string;
 		renderTimeMs: number | null;
-		renderError: string | null;
+		renderError: { message?: string; stack?: string } | null;
 	};
 
 	type ViewMode = 'render' | 'html' | 'source';
@@ -698,14 +698,15 @@
 			{:else if renderError}
 				<div class="flex h-full items-center justify-center p-8">
 					<div
-						class="max-w-2xl border border-destructive bg-background p-8 text-destructive shadow-[8px_8px_0px_0px_var(--destructive)]"
+						class="max-w-2xl border border-destructive/20 bg-destructive/10 p-4 text-destructive"
 					>
 						<div class="mb-4 flex items-center gap-3">
-							<WandSparkles class="size-6" />
+							<MailWarningIcon />
 							<h3 class="font-sans text-xl font-bold">Render Error</h3>
 						</div>
 						<pre
-							class="overflow-auto border border-destructive/20 bg-destructive/10 p-4 text-xs whitespace-pre-wrap">{renderError}</pre>
+							class="overflow-auto border border-muted bg-background p-4 text-xs whitespace-pre-wrap text-foreground">{renderError.stack ||
+								renderError.message}</pre>
 					</div>
 				</div>
 			{:else}

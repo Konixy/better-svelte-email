@@ -62,6 +62,9 @@ export type RenderOptions = {
 
 export type RenderableComponent = SvelteComponent<any> | Component<any>;
 
+/** Component constructor or function accepted by the typed `render` overload. */
+export type RenderComponentInput<Comp extends RenderableComponent> = Comp;
+
 export type RenderComponentProps<Comp extends RenderableComponent> = [ComponentProps<Comp>] extends [never]
 	? Record<string, any>
 	: ComponentProps<Comp>;
@@ -72,7 +75,7 @@ export type TypedRenderOptions<Comp extends RenderableComponent> = Omit<RenderOp
 
 export type RenderFunction = {
 	<Comp extends RenderableComponent>(
-		component: Comp,
+		component: RenderComponentInput<Comp>,
 		options?: TypedRenderOptions<Comp>
 	): Promise<string>;
 	(component: any, options?: RenderOptions | undefined): Promise<string>;

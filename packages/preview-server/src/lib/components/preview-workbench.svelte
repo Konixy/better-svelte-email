@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import EllipsisVertical from '@lucide/svelte/icons/ellipsis-vertical';
@@ -22,6 +23,7 @@
 	import { Check, CodeIcon, MailWarningIcon, PanelLeftClose } from '@lucide/svelte';
 	import SvelteIcon from '$lib/svelte-icon.svelte';
 	import * as Tooltip from './ui/tooltip';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	type Props = {
 		files: string[];
@@ -432,10 +434,23 @@
 	const docsUrl = 'https://better-svelte-email.konixy.dev/docs';
 
 	function toEmailHref(path: string) {
-		return `/${path
+		const encodedPath = `/${path
 			.split('/')
 			.map((segment) => encodeURIComponent(segment))
 			.join('/')}`;
+		const schemaQs = params.toURLSearchParams();
+		const schemaKeys = new Set(schemaQs.keys());
+		const merged = new SvelteURLSearchParams();
+		for (const [k, v] of page.url.searchParams) {
+			if (!schemaKeys.has(k)) {
+				merged.append(k, v);
+			}
+		}
+		for (const [k, v] of schemaQs.entries()) {
+			merged.set(k, v);
+		}
+		const q = merged.toString();
+		return q ? `${encodedPath}?${q}` : encodedPath;
 	}
 
 	function toggleTheme() {

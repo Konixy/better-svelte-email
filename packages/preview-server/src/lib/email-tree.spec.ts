@@ -15,7 +15,11 @@ describe('buildEmailTree()', () => {
 		expect(dirA?.type).toBe('directory');
 		if (dirA?.type === 'directory') {
 			expect(dirA.items).toHaveLength(1);
-			expect(dirA.items[0]).toMatchObject({ type: 'file', name: 'File.svelte', path: 'a/File.svelte' });
+			expect(dirA.items[0]).toMatchObject({
+				type: 'file',
+				name: 'File.svelte',
+				path: 'a/File.svelte'
+			});
 		}
 	});
 

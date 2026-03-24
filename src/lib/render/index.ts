@@ -62,21 +62,17 @@ export type RenderOptions = {
 
 export type RenderableComponent = SvelteComponent<any> | Component<any>;
 
-export type RenderComponentInput<Comp extends RenderableComponent> = Comp extends SvelteComponent<any>
-	? Component<Comp>
-	: Comp;
-
 export type RenderComponentProps<Comp extends RenderableComponent> = [ComponentProps<Comp>] extends [never]
 	? Record<string, any>
 	: ComponentProps<Comp>;
 
 export type TypedRenderOptions<Comp extends RenderableComponent> = Omit<RenderOptions, 'props'> & {
-	props?: Omit<RenderComponentProps<Comp>, '$$slots' | '$$events'> & Record<string, any>;
+	props?: Omit<RenderComponentProps<Comp>, '$$slots' | '$$events'>;
 };
 
 export type RenderFunction = {
 	<Comp extends RenderableComponent>(
-		component: RenderComponentInput<Comp>,
+		component: Comp,
 		options?: TypedRenderOptions<Comp>
 	): Promise<string>;
 	(component: any, options?: RenderOptions | undefined): Promise<string>;

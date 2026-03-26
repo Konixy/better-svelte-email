@@ -15,9 +15,11 @@
 	let highlightedHtml = $state<string | null>(null);
 	let highlighter = $state<Awaited<ReturnType<typeof createHighlighter>> | null>(null);
 
+	const theme = 'vesper';
+
 	onMount(async () => {
 		highlighter = await createHighlighter({
-			themes: ['github-dark', 'github-light'],
+			themes: [theme],
 			langs: ['html', 'svelte']
 		});
 	});
@@ -26,7 +28,6 @@
 		const h = highlighter;
 		const c = code;
 		const l = lang;
-		const t = isDark ? 'github-dark' : 'github-light';
 
 		if (!h) {
 			highlightedHtml = null;
@@ -39,9 +40,9 @@
 		}
 
 		try {
-			highlightedHtml = h.codeToHtml(c, { lang: l, theme: t });
+			highlightedHtml = h.codeToHtml(c, { lang: l, theme });
 		} catch {
-			highlightedHtml = h.codeToHtml(c, { lang: 'text', theme: t });
+			highlightedHtml = h.codeToHtml(c, { lang: 'text', theme });
 		}
 	});
 </script>

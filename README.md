@@ -1,14 +1,7 @@
 <p align="center">
-	<img src="apps/docs/static/favicon.svg" alt="Better Svelte Email" width="128" height="128">
-  <h3 align="center">Better Svelte Email</h3>
-	<p align="center">
-		Create beautiful emails in Svelte with first-class Tailwind support
-	</p>
-	<p align="center">
-		<a href="https://better-svelte-email.konixy.dev">Website</a>
-		 · 
-		<a href="https://github.com/Konixy/better-svelte-email">GitHub</a>
-	</p>
+  <a href="https://better-svelte-email.konixy.dev">
+    <img src="/banner.png" alt="Better Svelte Email, the only way to build emails in Svelte" width="1280" height="640">
+  </a>
   <p align="center">
     <a href="https://www.npmjs.com/package/better-svelte-email">
       <img src="https://img.shields.io/npm/v/better-svelte-email.svg?logo=npm" alt="npm version">
@@ -20,6 +13,11 @@
       <img src="https://img.shields.io/npm/dw/better-svelte-email" alt="npm downloads">
     </a>
   </p>
+  <p align="center">
+		<a href="https://better-svelte-email.konixy.dev">Website</a>
+		 · 
+		<a href="https://github.com/Konixy/better-svelte-email">GitHub</a>
+	</p>
 </p>
 
 ## Usage

@@ -1,5 +1,5 @@
 {
-	"extends": "./.svelte-kit/tsconfig.json",
+	"extends": ["./.svelte-kit/tsconfig.json", "../../tsconfig.base.json"],
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
@@ -8,8 +8,6 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"strict": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext"
+		"strict": true
 	}
 }

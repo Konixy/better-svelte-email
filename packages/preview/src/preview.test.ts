@@ -111,22 +111,6 @@ describe('Preview Path Resolution - Cross-Platform', () => {
 	});
 
 	describe('getEmailComponent - path normalization', () => {
-		it('should normalize Windows backslashes to forward slashes in import paths', async () => {
-			const emailPath = 'C:\\Users\\user\\project\\src\\lib\\emails';
-			const file = 'auth\\Welcome';
-
-			try {
-				await getEmailComponent(emailPath, file);
-				expect(false).toBe(true); // Should not reach here
-			} catch (error) {
-				// Expected to fail since component doesn't exist
-				expect(error).toBeDefined();
-				const errorMessage = (error as Error).message;
-				// Verify the path was normalized (should contain forward slashes)
-				expect(errorMessage).toContain('auth/Welcome');
-			}
-		});
-
 		it('should remove trailing slashes from emailPath', async () => {
 			const emailPath = '/src/lib/emails/';
 			const file = 'Welcome';

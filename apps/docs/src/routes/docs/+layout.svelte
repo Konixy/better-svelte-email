@@ -39,7 +39,7 @@
 <div class="flex min-h-dvh flex-col">
 	<!-- Top bar -->
 	<header
-		class="sticky top-0 z-50 mx-auto flex w-full max-w-6xl shrink-0 flex-col items-center justify-between gap-2 border-b border-solid bg-background/50 px-6 py-3 backdrop-blur-lg not-lg:transition-colors sm:h-14 sm:flex-row {scrollY >
+		class="sticky top-0 z-50 mx-auto flex w-full max-w-6xl shrink-0 flex-col items-center justify-between gap-4 border-b border-solid bg-background/50 px-6 py-3 backdrop-blur-lg not-lg:transition-colors sm:h-14 sm:flex-row {scrollY >
 		50
 			? 'border-border lg:[border-image:linear-gradient(to_right,transparent_0%,var(--color-border)_30%,var(--color-border)_70%,transparent_100%)_1]'
 			: 'border-transparent'}"
@@ -123,7 +123,7 @@
 
 	:global(.heading-link)::before {
 		content: '#';
-		@apply absolute left-[-1em] font-mono text-svelte opacity-0 transition-opacity duration-200 ease-in-out;
+		@apply absolute left-[-1em] font-sans text-svelte opacity-0 transition-opacity duration-200 ease-in-out;
 	}
 
 	:global(:has(.heading-link):hover > .heading-link::before) {

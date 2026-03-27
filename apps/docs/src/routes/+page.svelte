@@ -1,21 +1,12 @@
 <script lang="ts">
-	import { toggleMode, mode } from 'mode-watcher';
+	import { toggleMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import Github from '$lib/components/github.svelte';
 	import { MoonIcon, SunIcon } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
-
-<svelte:head>
-	{#if mode.current === 'dark'}
-		<meta name="theme-color" content="#252525" />
-	{:else}
-		<meta name="theme-color" content="#ffffff" />
-	{/if}
-</svelte:head>
 
 <div class="relative mr-2 flex min-h-dvh flex-col">
 	<div
@@ -85,7 +76,7 @@
 			<div
 				class="flex motion-preset-slide-up-sm flex-wrap items-center justify-center gap-3 motion-delay-300"
 			>
-				<Button href="/docs" class="group gap-2 px-6 font-mono text-sm">
+				<Button href="/docs" class="group gap-2 font-mono text-sm">
 					Get Started
 					<svg
 						class="size-3.5 transition-transform group-hover:translate-x-0.5"
@@ -101,9 +92,7 @@
 						/>
 					</svg>
 				</Button>
-				<Button variant="outline" href="/preview" class="px-6 font-mono text-sm">
-					Try the Preview
-				</Button>
+				<Button variant="outline" href="/preview" class="font-mono text-sm">Try the Preview</Button>
 			</div>
 
 			<div class="mt-10 flex motion-preset-fade items-center justify-center motion-delay-500">

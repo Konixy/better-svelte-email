@@ -9,7 +9,7 @@
 	],
 	"scripts": {
 		"dev": "turbo run dev --filter=docs",
-		"build": "turbo run build",
+		"build": "turbo run build --filter=!@better-svelte-email/preview-server",
 		"test": "turbo run test",
 		"lint": "turbo run lint",
 		"check": "turbo run check",

@@ -1,13 +1,15 @@
 {
-	"mode": "pre",
-	"tag": "beta",
-	"initialVersions": {
-		"better-svelte-email": "1.4.0",
-		"@better-svelte-email/cli": "1.4.0",
-		"@better-svelte-email/components": "1.4.0",
-		"@better-svelte-email/preview": "1.4.0",
-		"@better-svelte-email/preview-server": "1.4.0",
-		"@better-svelte-email/server": "1.4.0"
-	},
-	"changesets": []
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "better-svelte-email": "1.4.0",
+    "@better-svelte-email/cli": "1.4.0",
+    "@better-svelte-email/components": "1.4.0",
+    "@better-svelte-email/preview": "1.4.0",
+    "@better-svelte-email/preview-server": "1.4.0",
+    "@better-svelte-email/server": "1.4.0"
+  },
+  "changesets": [
+    "twenty-cats-exist"
+  ]
 }

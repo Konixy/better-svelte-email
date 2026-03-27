@@ -1,0 +1,58 @@
+{
+	"name": "@better-svelte-email/cli",
+	"description": "CLI for better-svelte-email",
+	"version": "1.4.0",
+	"scripts": {
+		"dev": "bun --watch src/index.ts dev --preview-dev --preview-port 3001 -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
+		"build:preview": "bun run --cwd ../preview-server build && bun run build:copy-preview-runtime",
+		"build:cli": "tsdown",
+		"build:copy-preview-runtime": "bun run ./scripts/copy-preview-runtime.ts",
+		"build": "bun run build:cli && bun run build:preview",
+		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
+		"test": "vitest run"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/cli"
+	},
+	"module": "./dist/index.mjs",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"bin": {
+		"bse": "./dist/index.cjs"
+	},
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"dependencies": {
+		"@better-svelte-email/server": "workspace:*",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"chokidar": "^5.0.0",
+		"commander": "^14.0.3",
+		"svelte": "^5.53.7",
+		"vite": "^8.0.3"
+	},
+	"peerDependencies": {
+		"@sveltejs/kit": "^2.0.0"
+	},
+	"peerDependenciesMeta": {
+		"@sveltejs/kit": {
+			"optional": true
+		}
+	},
+	"inlinedDependencies": {
+		"prettier": "3.8.1"
+	}
+}

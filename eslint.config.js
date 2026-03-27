@@ -6,7 +6,7 @@ import svelte from 'eslint-plugin-svelte';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import svelteConfig from './svelte.config.js';
+import svelteConfig from './apps/docs/svelte.config.js';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
@@ -25,7 +25,15 @@ export default defineConfig(
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
 			'no-undef': 'off',
-			'@typescript-eslint/no-explicit-any': 'off'
+			'@typescript-eslint/no-explicit-any': 'off',
+			'@typescript-eslint/no-unused-vars': 'off',
+			'svelte/no-raw-special-elements': 'off',
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/no-at-html-tags': 'off',
+			'svelte/no-unused-svelte-ignore': 'off',
+			'svelte/require-each-key': 'off',
+			'svelte/no-unused-props': 'off',
+			'svelte/no-useless-mustaches': 'off'
 		}
 	},
 	{

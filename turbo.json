@@ -1,0 +1,30 @@
+{
+	"$schema": "https://turborepo.org/schema.json",
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"env": ["RESEND_API_KEY", "FROM_EMAIL"],
+			"outputs": ["dist/**", "build/**", ".svelte-kit/output/**", ".vercel/**"],
+			"inputs": ["$TURBO_DEFAULT$", ".env"]
+		},
+		"package": {
+			"dependsOn": ["^package"],
+			"outputs": ["dist/**"]
+		},
+		"test": {
+			"dependsOn": ["build", "^build"],
+			"outputs": []
+		},
+		"lint": {
+			"outputs": []
+		},
+		"check": {
+			"outputs": []
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		}
+	},
+	"globalDependencies": ["tsconfig.json"]
+}

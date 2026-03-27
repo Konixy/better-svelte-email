@@ -7,3 +7,9 @@ bun.lockb
 
 # Miscellaneous
 /static/
+**/.svelte-kit/
+**/dist/
+**/build/
+.turbo/
+**/.turbo/
+**/.vercel/

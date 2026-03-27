@@ -8,7 +8,7 @@
 		"packages/*"
 	],
 	"scripts": {
-		"dev": "turbo run dev --filter=docs",
+		"dev": "bun run --cwd apps/docs dev",
 		"build": "turbo run build --filter=!@better-svelte-email/preview-server",
 		"test": "turbo run test",
 		"lint": "turbo run lint",

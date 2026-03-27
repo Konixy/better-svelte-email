@@ -38,11 +38,11 @@
 	},
 	"dependencies": {
 		"@better-svelte-email/server": "workspace:*",
-		"@sveltejs/vite-plugin-svelte": "^6.2.4",
-		"chokidar": "^4.0.3",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"chokidar": "^5.0.0",
 		"commander": "^14.0.3",
 		"svelte": "^5.53.7",
-		"vite": "^7.3.1"
+		"vite": "^8.0.3"
 	},
 	"peerDependencies": {
 		"@sveltejs/kit": "^2.0.0"
@@ -51,5 +51,8 @@
 		"@sveltejs/kit": {
 			"optional": true
 		}
+	},
+	"inlinedDependencies": {
+		"prettier": "3.8.1"
 	}
 }

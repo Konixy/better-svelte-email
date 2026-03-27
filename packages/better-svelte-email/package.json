@@ -19,6 +19,7 @@
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs"
 		},
+		"./chunk-D1SwGrFN": "./dist/chunk-D1SwGrFN.mjs",
 		"./*": "./*"
 	},
 	"description": "Svelte email renderer with Tailwind support",

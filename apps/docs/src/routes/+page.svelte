@@ -58,19 +58,21 @@
 			<h1
 				class="mb-6 motion-preset-slide-up-md text-5xl leading-[1.08] font-bold tracking-tight text-foreground sm:text-7xl"
 			>
-				Better
-				<span class="italic">Emails</span>,
-				<br class="hidden sm:block" />
-				for
+				The
 				<span class="underline decoration-svelte decoration-[5px] underline-offset-[6px]">
-					Svelte
+					only way
 				</span>
+				to build emails in
+				<span class="underline decoration-svelte decoration-[5px] underline-offset-[6px]"
+					>Svelte</span
+				>
 			</h1>
 
 			<p
 				class="mx-auto mb-14 max-w-lg motion-preset-slide-up-md font-mono text-sm leading-relaxed text-muted-foreground motion-delay-200 sm:text-[15px]"
 			>
-				Don't reinvent the wheel. Email-ready components with first-class Tailwind CSS support.
+				Don't lose anymore time reinventing the wheel. Email-ready components with first-class
+				Tailwind CSS support and an email preview CLI.
 			</p>
 
 			<div

@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-import { resolveAllCssVariables } from './resolve-all-css-variables.js';
+import { resolveAllCssVariables } from './resolve-all-css-variables';
 import { expect, describe, it } from 'vitest';
 
 describe('resolveAllCSSVariables', () => {

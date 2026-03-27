@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { combineStyles, styleToString } from '../utils/index.js';
+	import { combineStyles, styleToString } from '../utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	let { style, ...restProps }: HTMLAttributes<HTMLHRElement> = $props();

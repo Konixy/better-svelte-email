@@ -10,7 +10,7 @@ vi.mock('prettier/standalone');
 vi.mock('prettier/parser-html');
 
 // Import from preview-fs so tests do not load EmailPreview / SvelteKit graph
-import { emailList, getFiles, getEmailComponent } from './preview-fs.js';
+import { emailList, getFiles, getEmailComponent } from './preview-fs';
 
 describe('Preview Path Resolution - Cross-Platform', () => {
 	beforeEach(() => {
@@ -270,7 +270,7 @@ describe('Preview Path Resolution - Cross-Platform', () => {
 			vi.mocked(fs.readdirSync).mockReturnValue([
 				'Email.svelte',
 				'Email.ts',
-				'Email.js',
+				'Email',
 				'README.md',
 				'Another.svelte'
 			] as any);

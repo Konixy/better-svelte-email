@@ -5,7 +5,7 @@ import path from 'node:path';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import chokidar, { type FSWatcher } from 'chokidar';
-import { createPreviewApiHandler } from '../preview-api.js';
+import { createPreviewApiHandler } from '../preview-api';
 
 type DevOptions = {
 	port: number | string;
@@ -47,11 +47,11 @@ function allowPreviewCors(req: http.IncomingMessage, res: http.ServerResponse) {
 async function resolvePreviewServerEntry() {
 	const currentDir = path.dirname(fileURLToPath(import.meta.url));
 	const candidates = [
-		path.resolve(currentDir, './preview-server/index.js'),
-		path.resolve(currentDir, '../preview-server/index.js'),
-		path.resolve(currentDir, '../../preview-server/index.js'),
-		path.resolve(currentDir, '../../dist/preview-server/index.js'),
-		path.resolve(currentDir, '../../../preview-server/build/index.js')
+		path.resolve(currentDir, './preview-server/index'),
+		path.resolve(currentDir, '../preview-server/index'),
+		path.resolve(currentDir, '../../preview-server/index'),
+		path.resolve(currentDir, '../../dist/preview-server/index'),
+		path.resolve(currentDir, '../../../preview-server/build/index')
 	];
 
 	for (const candidate of candidates) {

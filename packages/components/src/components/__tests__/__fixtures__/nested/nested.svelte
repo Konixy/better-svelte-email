@@ -1,5 +1,5 @@
 <script>
-	import { Container, Heading } from '../../../index.js';
+	import { Container, Heading } from '../../..';
 </script>
 
 <Container>

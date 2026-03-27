@@ -8,7 +8,7 @@ import {
 	createPreviewApiHandler,
 	resolveEmailsRoot,
 	tryResolveSvelteKitRuntimeApp
-} from './preview-api.js';
+} from './preview-api';
 
 function makeRequest(options: { method: string; url: string; body?: string }): IncomingMessage {
 	const stream = new PassThrough();

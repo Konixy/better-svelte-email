@@ -1,6 +1,6 @@
 import type { Rule } from 'postcss';
-import { setupTailwind } from '../tailwindcss/setup-tailwind.js';
-import { extractRulesPerClass } from './extract-rules-per-class.js';
+import { setupTailwind } from '../tailwindcss/setup-tailwind';
+import { extractRulesPerClass } from './extract-rules-per-class';
 import { expect, describe, it } from 'vitest';
 
 describe('extractRulesPerClass()', async () => {

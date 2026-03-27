@@ -1,4 +1,4 @@
-import type { AST } from '../../index.js';
+import type { AST } from '../..';
 import { Declaration, type Rule } from 'postcss';
 
 // Properties from * selector that should always be applied (layout-critical)

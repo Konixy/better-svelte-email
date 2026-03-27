@@ -1,5 +1,5 @@
-import { setupTailwind } from '../tailwindcss/setup-tailwind.js';
-import { sanitizeNonInlinableRules } from './sanitize-non-inlinable-rules.js';
+import { setupTailwind } from '../tailwindcss/setup-tailwind';
+import { sanitizeNonInlinableRules } from './sanitize-non-inlinable-rules';
 import { expect, describe, it } from 'vitest';
 
 describe('sanitizeNonInlinableRules()', () => {

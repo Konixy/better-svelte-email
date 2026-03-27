@@ -93,7 +93,7 @@ function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 		resolveId(id) {
 			// Newer Kit: `$app/paths` server entry imports `get_hooks` from generated `__SERVER__/internal.js`
 			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output — serve a stub.
-			if (id === '__SERVER__/internal.js') {
+			if (id === '__SERVER__/internal') {
 				return `${PREVIEW_SK_VIRTUAL}server-internal`;
 			}
 			if (id === '__sveltekit/environment') {

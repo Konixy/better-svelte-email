@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-import { sanitizeDeclarations } from './sanitize-declarations.js';
+import { sanitizeDeclarations } from './sanitize-declarations';
 import { expect, describe, it, test } from 'vitest';
 
 describe('sanitizeDeclarations', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitSelectorList } from './split-selector-list.js';
+import { splitSelectorList } from './split-selector-list';
 
 describe('splitSelectorList()', () => {
 	describe('basic splitting', () => {

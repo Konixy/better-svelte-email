@@ -1,6 +1,6 @@
 import postcss, { type Rule } from 'postcss';
-import { addInlinedStylesToElement } from './add-inlined-styles-to-element.js';
-import type { CustomProperties } from '../css/get-custom-properties.js';
+import { addInlinedStylesToElement } from './add-inlined-styles-to-element';
+import type { CustomProperties } from '../css/get-custom-properties';
 import { expect, describe, it } from 'vitest';
 import type { DefaultTreeAdapterTypes as AST } from 'parse5';
 

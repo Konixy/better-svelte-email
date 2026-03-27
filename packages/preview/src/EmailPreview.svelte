@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { PreviewData } from './index.js';
+	import type { PreviewData } from '.';
 	import type { ActionResult } from '@sveltejs/kit';
 	import { deserialize } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { codeToHtml } from 'shiki';
 	import './theme.css';
 	import EmailTreeNode from './EmailTreeNode.svelte';
-	import { buildEmailTree } from './email-tree.js';
+	import { buildEmailTree } from './email-tree';
 	import { onMount } from 'svelte';
 	import Favicon from './Favicon.svelte';
 

@@ -1,6 +1,6 @@
 import type { Root } from 'postcss';
-import { sanitizeClassName } from '../compatibility/sanitize-class-name.js';
-import { isRuleInlinable } from './is-rule-inlinable.js';
+import { sanitizeClassName } from '../compatibility/sanitize-class-name';
+import { isRuleInlinable } from './is-rule-inlinable';
 
 /**
  * This function goes through a few steps to ensure the best email client support and

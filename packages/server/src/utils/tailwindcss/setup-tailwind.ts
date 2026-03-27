@@ -1,11 +1,11 @@
 import postcss, { type Root } from 'postcss';
 import { compile } from 'tailwindcss';
-import type { TailwindConfig } from '../../index.js';
-import indexCss from './tailwind-stylesheets/index.js';
-import preflightCss from './tailwind-stylesheets/preflight.js';
-import themeCss from './tailwind-stylesheets/theme.js';
-import utilitiesCss from './tailwind-stylesheets/utilities.js';
-import { sanitizeCustomCss } from './sanitize-custom-css.js';
+import type { TailwindConfig } from '../..';
+import indexCss from './tailwind-stylesheets';
+import preflightCss from './tailwind-stylesheets/preflight';
+import themeCss from './tailwind-stylesheets/theme';
+import utilitiesCss from './tailwind-stylesheets/utilities';
+import { sanitizeCustomCss } from './sanitize-custom-css';
 
 export type TailwindSetup = Awaited<ReturnType<typeof setupTailwind>>;
 

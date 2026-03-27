@@ -1,4 +1,4 @@
-import type { TailwindConfig } from '../../index.js';
+import type { TailwindConfig } from '../..';
 
 export const pixelBasedPreset: TailwindConfig = {
 	theme: {

@@ -1,5 +1,5 @@
 import { expect, test, describe } from 'vitest';
-import { sanitizeCustomCss } from './sanitize-custom-css.js';
+import { sanitizeCustomCss } from './sanitize-custom-css';
 
 describe('sanitizeCustomCss', () => {
 	test('should remove @import rules', () => {

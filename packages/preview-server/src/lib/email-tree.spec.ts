@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildEmailTree, filterEmailTree } from './email-tree.js';
+import { buildEmailTree, filterEmailTree } from './email-tree';
 
 describe('buildEmailTree()', () => {
 	it('returns an empty array for null, undefined, or empty input', () => {

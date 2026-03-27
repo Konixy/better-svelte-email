@@ -1,6 +1,6 @@
-import type { AST } from '../../index.js';
-import { isValidNode } from './is-valid-node.js';
-import { walk } from './walk.js';
+import type { AST } from '../..';
+import { isValidNode } from './is-valid-node';
+import { walk } from './walk';
 
 export function removeAttributesFunctions(ast: AST.Document): AST.Document {
 	return walk(ast, (node) => {

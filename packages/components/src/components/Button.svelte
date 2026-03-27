@@ -1,6 +1,6 @@
 <!-- svelte-ignore state_referenced_locally -->
 <script lang="ts">
-	import { styleToString, pxToPt, combineStyles } from '../utils/index.js';
+	import { styleToString, pxToPt, combineStyles } from '../utils';
 	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
 	let {

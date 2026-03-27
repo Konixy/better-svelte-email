@@ -1,6 +1,6 @@
 import type { Rule, Declaration } from 'postcss';
 import valueParser from 'postcss-value-parser';
-import type { CustomProperties } from './get-custom-properties.js';
+import type { CustomProperties } from './get-custom-properties';
 
 export function makeInlineStylesFor(
 	inlinableRules: Rule[],

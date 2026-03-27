@@ -3,18 +3,18 @@ import { Resend } from 'resend';
 import prettier from 'prettier/standalone';
 import parserHtml from 'prettier/parser-html';
 import { Renderer } from '@better-svelte-email/server';
-import { getEmailComponent, getEmailSource } from './preview-fs.js';
+import { getEmailComponent, getEmailSource } from './preview-fs';
 
 export { default as EmailPreview } from './EmailPreview.svelte';
 
-export type { PreviewData } from './preview-fs.js';
+export type { PreviewData } from './preview-fs';
 
 /**
  * Import all Svelte email components file paths.
  * Create a list containing all Svelte email component file names.
  * Return this list to the client.
  */
-export { emailList, getEmailComponent, getFiles } from './preview-fs.js';
+export { emailList, getEmailComponent, getFiles } from './preview-fs';
 
 /**
  * SvelteKit form action to render an email component.

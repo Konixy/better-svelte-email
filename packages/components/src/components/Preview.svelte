@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { styleToString } from '../utils/index.js';
+	import { styleToString } from '../utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	const PREVIEW_MAX_LENGTH = 150;

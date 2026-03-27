@@ -1,6 +1,6 @@
 <script lang="ts">
 	import EmailTreeNodeComponent from './EmailTreeNode.svelte';
-	import type { DirectoryEntry, EmailTreeEntry } from './email-tree.js';
+	import type { DirectoryEntry, EmailTreeEntry } from './email-tree';
 
 	type Props = {
 		node: EmailTreeEntry;

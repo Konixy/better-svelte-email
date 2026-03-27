@@ -1,4 +1,4 @@
-import { sanitizeClassName } from './sanitize-class-name.js';
+import { sanitizeClassName } from './sanitize-class-name';
 import { expect, test } from 'vitest';
 
 test('sanitizeClassName', () => {

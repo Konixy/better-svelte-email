@@ -1,5 +1,5 @@
 import type { AtRule, Root, Rule } from 'postcss';
-import { splitSelectorList } from './split-selector-list.js';
+import { splitSelectorList } from './split-selector-list';
 
 export interface GlobalRules {
 	/** Universal (*) rules - apply to all elements */

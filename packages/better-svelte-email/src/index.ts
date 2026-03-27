@@ -1,4 +1,4 @@
-export * from './components/index.js';
+export * from './components';
 
 export {
 	default as Renderer,
@@ -7,4 +7,4 @@ export {
 	type RendererOptions,
 	type RenderOptions,
 	type AST
-} from './render/index.js';
+} from './render';

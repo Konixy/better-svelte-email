@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import packageJson from '../package.json' with { type: 'json' };
-import { dev } from './commands/dev.js';
+import { dev } from './commands/dev';
 
 const program = new Command();
 

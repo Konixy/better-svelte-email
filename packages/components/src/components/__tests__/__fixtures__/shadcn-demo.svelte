@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Body, Button, Container, Head, Heading, Hr, Html, Section, Text } from '../../index.js';
+	import { Body, Button, Container, Head, Heading, Hr, Html, Section, Text } from '../..';
 </script>
 
 <Html>

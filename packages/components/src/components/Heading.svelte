@@ -1,6 +1,6 @@
 <!-- svelte-ignore state_referenced_locally -->
 <script lang="ts">
-	import { combineStyles, styleToString, withMargin } from '../utils/index.js';
+	import { combineStyles, styleToString, withMargin } from '../utils';
 	import type { HTMLAttributes } from 'svelte/elements';
 
 	type Props = HTMLAttributes<HTMLHeadingElement> & {

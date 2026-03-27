@@ -1,5 +1,5 @@
 import type { Root, Rule } from 'postcss';
-import { isRuleInlinable } from './is-rule-inlinable.js';
+import { isRuleInlinable } from './is-rule-inlinable';
 
 function unescapeClassName(name: string): string {
 	return name.replace(/\\(.)/g, '$1');

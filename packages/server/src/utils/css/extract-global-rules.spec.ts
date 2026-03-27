@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import postcss from 'postcss';
-import { extractGlobalRules } from './extract-global-rules.js';
+import { extractGlobalRules } from './extract-global-rules';
 
 describe('extractGlobalRules()', () => {
 	it('extracts universal selector rules', () => {

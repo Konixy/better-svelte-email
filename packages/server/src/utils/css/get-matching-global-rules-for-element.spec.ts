@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import postcss, { type Rule } from 'postcss';
 import type { DefaultTreeAdapterTypes as AST } from 'parse5';
-import { getMatchingGlobalRulesForElement } from './get-matching-global-rules-for-element.js';
+import { getMatchingGlobalRulesForElement } from './get-matching-global-rules-for-element';
 
 describe('getMatchingGlobalRulesForElement()', () => {
 	function createMockElement(classValue?: string): AST.Element {

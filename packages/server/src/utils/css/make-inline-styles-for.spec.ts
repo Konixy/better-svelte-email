@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-import { makeInlineStylesFor } from './make-inline-styles-for.js';
+import { makeInlineStylesFor } from './make-inline-styles-for';
 import { expect, describe, it } from 'vitest';
 
 describe('makeInlineStylesFor()', async () => {

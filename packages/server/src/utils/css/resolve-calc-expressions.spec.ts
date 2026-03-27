@@ -1,5 +1,5 @@
 import postcss from 'postcss';
-import { resolveCalcExpressions } from './resolve-calc-expressions.js';
+import { resolveCalcExpressions } from './resolve-calc-expressions';
 import { expect, describe, it } from 'vitest';
 
 describe('resolveCalcExpressions()', () => {

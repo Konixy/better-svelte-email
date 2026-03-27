@@ -14,7 +14,7 @@
 		Row,
 		Column,
 		Img
-	} from '../../index.js';
+	} from '../..';
 	import Nested from './nested/nested.svelte';
 
 	const padding = 'px-4 py-2';

@@ -1,4 +1,4 @@
-import { Renderer, toPlainText } from './index.js';
+import { Renderer, toPlainText } from '.';
 import { expect, describe, it } from 'vitest';
 import BasicComponent from './__fixtures__/BasicComponent.svelte';
 import ResponsiveComponent from './__fixtures__/ResponsiveComponent.svelte';

@@ -1,4 +1,4 @@
-import { setupTailwind } from './setup-tailwind.js';
+import { setupTailwind } from './setup-tailwind';
 import { expect, test } from 'vitest';
 
 test('setupTailwind() and addUtilities()', async () => {

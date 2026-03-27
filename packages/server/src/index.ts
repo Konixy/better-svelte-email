@@ -1,22 +1,22 @@
 import { render as svelteRender } from 'svelte/server';
 import { parse, serialize, type DefaultTreeAdapterTypes } from 'parse5';
 import postcss from 'postcss';
-import { walk } from './utils/html/walk.js';
-import { setupTailwind } from './utils/tailwindcss/setup-tailwind.js';
+import { walk } from './utils/html/walk';
+import { setupTailwind } from './utils/tailwindcss/setup-tailwind';
 import type { Config } from 'tailwindcss';
-import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet.js';
-import { extractRulesPerClass } from './utils/css/extract-rules-per-class.js';
-import { extractGlobalRules } from './utils/css/extract-global-rules.js';
-import { getCustomProperties } from './utils/css/get-custom-properties.js';
-import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules.js';
-import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element.js';
-import { isValidNode } from './utils/html/is-valid-node.js';
-import { removeAttributesFunctions } from './utils/html/remove-attributes-functions.js';
+import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet';
+import { extractRulesPerClass } from './utils/css/extract-rules-per-class';
+import { extractGlobalRules } from './utils/css/extract-global-rules';
+import { getCustomProperties } from './utils/css/get-custom-properties';
+import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules';
+import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element';
+import { isValidNode } from './utils/html/is-valid-node';
+import { removeAttributesFunctions } from './utils/html/remove-attributes-functions';
 import { convert } from 'html-to-text';
 
 export type TailwindConfig = Omit<Config, 'content'>;
 export type { DefaultTreeAdapterTypes as AST };
-export { pixelBasedPreset } from './utils/tailwindcss/pixel-based-preset.js';
+export { pixelBasedPreset } from './utils/tailwindcss/pixel-based-preset';
 
 /**
  * Options for creating a Renderer instance

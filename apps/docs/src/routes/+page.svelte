@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { toggleMode } from 'mode-watcher';
-	import { Button } from '$lib/components/ui/button/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Button } from '$lib/components/ui/button';
+	import { Separator } from '$lib/components/ui/separator';
 	import Github from '$lib/components/github.svelte';
 	import { MoonIcon, SunIcon } from '@lucide/svelte';
 

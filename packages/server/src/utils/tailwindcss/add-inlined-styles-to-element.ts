@@ -1,10 +1,10 @@
 import type { Rule } from 'postcss';
-import { sanitizeClassName } from '../compatibility/sanitize-class-name.js';
-import type { CustomProperties } from '../css/get-custom-properties.js';
-import { makeInlineStylesFor } from '../css/make-inline-styles-for.js';
-import type { GlobalRules } from '../css/extract-global-rules.js';
-import type { AST } from '../../index.js';
-import { getMatchingGlobalRulesForElement } from '../css/get-matching-global-rules-for-element.js';
+import { sanitizeClassName } from '../compatibility/sanitize-class-name';
+import type { CustomProperties } from '../css/get-custom-properties';
+import { makeInlineStylesFor } from '../css/make-inline-styles-for';
+import type { GlobalRules } from '../css/extract-global-rules';
+import type { AST } from '../..';
+import { getMatchingGlobalRulesForElement } from '../css/get-matching-global-rules-for-element';
 
 /**
  * Gets global styles for an element based on its tag name.

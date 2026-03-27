@@ -1,4 +1,4 @@
-import type { AST } from '../../index.js';
+import type { AST } from '../..';
 
 export function isValidNode(node: AST.ChildNode): node is AST.Element {
 	return !node.nodeName.startsWith('#');

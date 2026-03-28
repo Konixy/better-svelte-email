@@ -1,10 +1,16 @@
 # @better-svelte-email/preview-server
 
+## 2.0.0-beta.2
+
+### Patch Changes
+
+- c13aeaa: Fix unresolved "workspace:\*" dependencies
+
 ## 2.0.0-beta.1
 
 ### Patch Changes
 
-- Added README.md for each packages
+- Added README.md for each package
 
 ## 2.0.0-beta.0
 
@@ -14,7 +20,7 @@
 
   A CLI (`npx @better-svelte-email/cli`) has been added to preview your emails locally. It replaces the old preview system.
 
-  I also have migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
+  I've also migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
 
   ## Migration Guide
 

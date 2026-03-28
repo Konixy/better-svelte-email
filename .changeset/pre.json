@@ -10,6 +10,7 @@
     "@better-svelte-email/server": "1.4.0"
   },
   "changesets": [
+    "neat-deer-fold",
     "twenty-cats-exist",
     "witty-spies-raise"
   ]

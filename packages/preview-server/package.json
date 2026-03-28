@@ -1,7 +1,7 @@
 {
 	"name": "@better-svelte-email/preview-server",
 	"private": true,
-	"version": "2.0.0-beta.0",
+	"version": "2.0.0-beta.1",
 	"description": "Preview server for @better-svelte-email/cli",
 	"type": "module",
 	"files": [

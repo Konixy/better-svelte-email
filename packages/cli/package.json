@@ -1,7 +1,7 @@
 {
 	"name": "@better-svelte-email/cli",
 	"description": "CLI for better-svelte-email",
-	"version": "2.0.0-beta.0",
+	"version": "2.0.0-beta.1",
 	"scripts": {
 		"dev": "bun --watch src/index.ts dev --preview-dev --preview-port 3001 -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
 		"build:preview": "bun run --cwd ../preview-server build && bun run build:copy-preview-runtime",

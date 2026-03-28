@@ -1,5 +1,13 @@
 # @better-svelte-email/preview
 
+## 2.0.0-beta.1
+
+### Patch Changes
+
+- Added README.md for each packages
+- Updated dependencies
+  - @better-svelte-email/server@2.0.0-beta.1
+
 ## 2.0.0-beta.0
 
 ### Major Changes

@@ -1,5 +1,13 @@
 # @better-svelte-email/cli
 
+## 2.0.0-beta.2
+
+### Patch Changes
+
+- c13aeaa: Fix unresolved "workspace:\*" depencencies
+- Updated dependencies [c13aeaa]
+  - @better-svelte-email/server@2.0.0-beta.2
+
 ## 2.0.0-beta.1
 
 ### Patch Changes

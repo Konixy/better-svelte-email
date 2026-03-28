@@ -1,7 +1,7 @@
 {
 	"name": "@better-svelte-email/components",
 	"description": "Email components for better-svelte-email",
-	"version": "2.0.0-beta.1",
+	"version": "2.0.0-beta.2",
 	"type": "module",
 	"peerDependencies": {
 		"svelte": ">=5.14.3",

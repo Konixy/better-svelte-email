@@ -70,7 +70,7 @@ jobs:
       - name: Create Release Pull Request or Publish
         uses: changesets/action@v1
         with:
-          version: bun run version
+          version: bun run ci:version
           # changesets/action splits publish on whitespace (first token = executable); use a script.
           publish: bun run ci:publish
           commit: "chore: version packages"

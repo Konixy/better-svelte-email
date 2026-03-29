@@ -15,7 +15,8 @@
 		"check": "turbo run check",
 		"package": "turbo run package",
 		"format": "prettier --write .",
-		"version": "changeset version"
+		"ci:version": "changeset version",
+		"ci:publish": "bash ./scripts/ci-publish.sh"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",

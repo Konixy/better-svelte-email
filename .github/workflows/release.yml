@@ -71,16 +71,8 @@ jobs:
         uses: changesets/action@v1
         with:
           version: bun run version
-          publish: |
-            TAG=$(bun -e 'const main=async()=>{try{const f=Bun.file(".changeset/pre.json");if(!await f.exists())return;const p=await f.json();if(p.mode==="pre"&&typeof p.tag==="string")console.log(p.tag)}catch{}};await main()')
-            for dir in packages/*; do
-              if [ -n "$TAG" ]; then
-                (cd "$dir" && bun publish --tolerate-republish --tag "$TAG")
-              else
-                (cd "$dir" && bun publish --tolerate-republish)
-              fi
-            done
-            bunx changeset tag
+          # changesets/action splits publish on whitespace (first token = executable); use a script.
+          publish: bun run ci:publish
           commit: "chore: version packages"
           title: "chore: version packages"
           createGithubReleases: true

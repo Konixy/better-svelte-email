@@ -1,5 +1,5 @@
 export {
-	default,
+	Renderer as default,
 	toPlainText,
 	type TailwindConfig,
 	type RendererOptions,

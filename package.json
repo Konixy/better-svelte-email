@@ -15,8 +15,7 @@
 		"check": "turbo run check",
 		"package": "turbo run package",
 		"format": "prettier --write .",
-		"ci:version": "changeset version",
-		"ci:publish": "for dir in packages/*; do (cd \"$dir\" && bun publish || true); done && changeset tag"
+		"version": "changeset version"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.30.0",

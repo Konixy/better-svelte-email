@@ -36,7 +36,7 @@
 		"prettier-plugin-tailwindcss": "^0.7.2",
 		"publint": "^0.3.18",
 		"shiki": "^4.0.2",
-		"svelte": "^5.55.0",
+		"svelte": "^5.55.1",
 		"svelte-check": "^4.4.5",
 		"svelte-themes": "^2.0.10",
 		"tsdown": "^0.21.6",

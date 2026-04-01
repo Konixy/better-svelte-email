@@ -1,5 +1,15 @@
 # better-svelte-email
 
+## 2.0.0-beta.3
+
+### Patch Changes
+
+- b52268f: fixed the export of 'better-svelte-email/render' and fixed the cli not working at all
+- Updated dependencies [b52268f]
+  - @better-svelte-email/components@2.0.0-beta.3
+  - @better-svelte-email/preview@2.0.0-beta.3
+  - @better-svelte-email/server@2.0.0-beta.3
+
 ## 2.0.0-beta.2
 
 ### Patch Changes

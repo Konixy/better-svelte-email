@@ -1,5 +1,11 @@
 # @better-svelte-email/preview-server
 
+## 2.0.0-beta.3
+
+### Patch Changes
+
+- b52268f: fixed the export of 'better-svelte-email/render' and fixed the cli not working at all
+
 ## 2.0.0-beta.2
 
 ### Patch Changes

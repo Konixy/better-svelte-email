@@ -1,5 +1,13 @@
 # @better-svelte-email/cli
 
+## 2.0.0-beta.4
+
+### Patch Changes
+
+- 0173ede: fixed missing dependencies in cli
+- Updated dependencies [0173ede]
+  - @better-svelte-email/server@2.0.0-beta.4
+
 ## 2.0.0-beta.3
 
 ### Patch Changes

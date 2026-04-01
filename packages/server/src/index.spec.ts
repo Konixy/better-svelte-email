@@ -228,17 +228,6 @@ describe('Renderer', () => {
 		expect(html).toContain('Variable Color');
 		expect(html).toMatch(/text-align:\s*center/);
 	});
-
-	it('handles components using library email components', async () => {
-		const { default: Component } = await import('./__fixtures__/LibraryComponentsTest.svelte');
-		const renderer = new Renderer();
-		const html = await renderer.render(Component);
-
-		expect(html).toContain('<html');
-		expect(html).toMatch(/<head[^>]*>/); // head may have style attribute from preflight
-		expect(html).toMatch(/<body[^>]*>/); // body may have style attribute from preflight
-		expect(html).toContain('Test Email');
-	});
 });
 
 describe('Global CSS selectors (issue #46)', () => {

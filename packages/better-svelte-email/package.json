@@ -7,8 +7,6 @@
 		"url": "git+https://github.com/Konixy/better-svelte-email.git",
 		"directory": "packages/better-svelte-email"
 	},
-	"main": "./dist/index.cjs",
-	"module": "./dist/index.mjs",
 	"dependencies": {
 		"@better-svelte-email/components": "workspace:*",
 		"@better-svelte-email/preview": "workspace:*",
@@ -58,7 +56,7 @@
 	],
 	"license": "MIT",
 	"scripts": {
-		"build": "tsdown src/index.ts",
+		"build": "tsdown --config tsdown.config.ts",
 		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
 		"test": "vitest run"
 	},
@@ -66,5 +64,7 @@
 		"**/*.css"
 	],
 	"type": "module",
-	"types": "./dist/index.d.cts"
+	"types": "./dist/index.d.cts",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs"
 }

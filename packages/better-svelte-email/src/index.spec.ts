@@ -17,7 +17,7 @@ describe('better-svelte-email exports', () => {
 
 			vi.doMock('@better-svelte-email/components', () => mockedComponentPackage);
 
-			const componentsExports = await import('./components/index.js');
+			const componentsExports = await import('./components');
 
 			expect(getExportKeys(componentsExports)).toEqual(getExportKeys(mockedComponentPackage));
 			expect(componentsExports.Body).toBe(componentA);
@@ -38,12 +38,12 @@ describe('better-svelte-email exports', () => {
 			const mockedToPlainText = vi.fn();
 
 			vi.doMock('@better-svelte-email/server', () => ({
-				default: MockedRenderer,
+				Renderer: MockedRenderer,
 				toPlainText: mockedToPlainText,
 				pixelBasedPreset: { test: true }
 			}));
 
-			const renderExports = await import('./render/index.js');
+			const renderExports = await import('./render');
 
 			expect(getExportKeys(renderExports)).toEqual(['default', 'toPlainText']);
 			expect(renderExports.default).toBe(MockedRenderer);
@@ -58,7 +58,7 @@ describe('better-svelte-email exports', () => {
 
 			vi.doMock('@better-svelte-email/components/utils', () => mockedUtilsPackage);
 
-			const utilsExports = await import('./utils/index.js');
+			const utilsExports = await import('./utils');
 
 			expect(getExportKeys(utilsExports)).toEqual(getExportKeys(mockedUtilsPackage));
 			expect(utilsExports.styleToString).toBe(styleToString);
@@ -73,18 +73,20 @@ describe('better-svelte-email exports', () => {
 			class MockedRenderer {}
 			const mockedToPlainText = vi.fn();
 
-			vi.doMock('./components/index.js', () => ({
+			vi.doMock('./preview', () => ({}));
+			vi.doMock('./utils', () => ({}));
+			vi.doMock('./components', () => ({
 				Body: body,
 				Button: button
 			}));
-			vi.doMock('./render/index.js', () => ({
+			vi.doMock('./render', () => ({
 				default: MockedRenderer,
 				toPlainText: mockedToPlainText
 			}));
 
-			const rootExports = await import('./index.js');
-			const componentsExports = await import('./components/index.js');
-			const renderExports = await import('./render/index.js');
+			const rootExports = await import('./index');
+			const componentsExports = await import('./components');
+			const renderExports = await import('./render');
 
 			const expectedRootKeys = [
 				...getExportKeys(componentsExports),

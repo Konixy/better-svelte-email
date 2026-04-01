@@ -1,10 +1,11 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-	exports: true,
-	format: ['cjs', 'esm'],
-	deps: {
-		onlyBundle: false
+	exports: {
+		customExports: {
+			'./preview-entry': './dist/preview-server/index.js'
+		}
 	},
-	publint: true
+	format: ['cjs', 'esm'],
+	publint: false
 });

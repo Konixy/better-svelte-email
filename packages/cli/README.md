@@ -20,14 +20,14 @@ bse dev [options]
 
 Common options:
 
-| Option | Description |
-|--------|-------------|
-| `-p, --port <port>` | Main server port (default `3000`) |
-| `-d, --dir <directory>` | Directory of email templates to watch (default `src/lib/emails`) |
-| `-c, --custom-css-path <path>` | Raw CSS path for `customCSS` / theme parity |
-| `--preview-dev` | Use the local [`preview-server`](../preview-server) Vite dev server instead of the bundled preview bundle |
-| `--preview-port <port>` | Port for preview-dev (default `3001`) |
-| `--no-hmr` | Disable live reload |
+| Option                         | Description                                                                                               |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `-p, --port <port>`            | Main server port (default `3000`)                                                                         |
+| `-d, --dir <directory>`        | Directory of email templates to watch (default `src/lib/emails`)                                          |
+| `-c, --custom-css-path <path>` | Raw CSS path for `customCSS` / theme parity                                                               |
+| `--preview-dev`                | Use the local [`preview-server`](../preview-server) Vite dev server instead of the bundled preview bundle |
+| `--preview-port <port>`        | Port for preview-dev (default `3001`)                                                                     |
+| `--no-hmr`                     | Disable live reload                                                                                       |
 
 ## Build note (maintainers)
 

@@ -6,6 +6,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
 	createPreviewApiHandler,
+	previewSvelteKitShimPlugin,
 	resolveEmailsRoot,
 	tryResolveSvelteKitRuntimeApp
 } from './preview-api';
@@ -60,6 +61,16 @@ describe('tryResolveSvelteKitRuntimeApp()', () => {
 		const dir = tryResolveSvelteKitRuntimeApp(process.cwd());
 		expect(dir).not.toBeNull();
 		expect(dir).toMatch(/[/\\]src[/\\]runtime[/\\]app$/);
+	});
+});
+
+describe('previewSvelteKitShimPlugin()', () => {
+	it('stubs generated __SERVER__/internal imports with or without the js suffix', async () => {
+		const plugin = previewSvelteKitShimPlugin(process.cwd());
+		expect(await plugin.resolveId?.('__SERVER__/internal')).toBe('\0preview-sk:server-internal');
+		expect(await plugin.resolveId?.('__SERVER__/internal.js')).toBe(
+			'\0preview-sk:server-internal'
+		);
 	});
 });
 

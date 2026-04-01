@@ -34,25 +34,27 @@
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs"
 		},
-		"./package.json": "./package.json"
+		"./package.json": "./package.json",
+		"./preview-entry": "./dist/preview-server/index.js"
 	},
 	"dependencies": {
 		"@better-svelte-email/server": "workspace:*",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"chokidar": "^5.0.0",
+		"clsx": "^2.1.1",
 		"commander": "^14.0.3",
-		"svelte": "^5.53.7",
+		"prettier": "^3.8.1",
+		"svelte": "^5.55.1",
+		"tailwind-merge": "^3.5.0",
 		"vite": "^8.0.3"
 	},
 	"peerDependencies": {
-		"@sveltejs/kit": "^2.0.0"
+		"@sveltejs/kit": "^2.55.0"
 	},
 	"peerDependenciesMeta": {
 		"@sveltejs/kit": {
 			"optional": true
 		}
 	},
-	"inlinedDependencies": {
-		"prettier": "3.8.1"
-	}
+	"types": "./dist/index.d.cts"
 }

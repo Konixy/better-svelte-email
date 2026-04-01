@@ -66,7 +66,7 @@ function staticEnvModuleFromProcessEnv(kind: 'public' | 'private'): string {
 	return lines.length > 0 ? lines.join('\n') : 'export {};';
 }
 
-function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
+export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 	const kitRuntimeApp = tryResolveSvelteKitRuntimeApp(projectRoot);
 
 	return {
@@ -92,8 +92,9 @@ function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 		},
 		resolveId(id) {
 			// Newer Kit: `$app/paths` server entry imports `get_hooks` from generated `__SERVER__/internal.js`
-			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output — serve a stub.
-			if (id === '__SERVER__/internal') {
+			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output, and Vite can
+			// surface the import with or without the `.js` suffix depending on the resolver path.
+			if (id === '__SERVER__/internal' || id === '__SERVER__/internal.js') {
 				return `${PREVIEW_SK_VIRTUAL}server-internal`;
 			}
 			if (id === '__sveltekit/environment') {

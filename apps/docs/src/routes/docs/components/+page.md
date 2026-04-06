@@ -2,6 +2,8 @@
 
 Better Svelte Email provides Svelte components with sensible defaults for building email layouts. They all forward regular HTML attributes, merge inline styles, and take props tuned for email-friendly rendering.
 
+Import from **`better-svelte-email`**. For **`@better-svelte-email/components`**, see [Components (beta)](./components-beta).
+
 ## Quick start
 
 ```svelte
@@ -21,7 +23,7 @@ Better Svelte Email provides Svelte components with sensible defaults for buildi
 		Link,
 		Img,
 		Hr
-	} from '@better-svelte-email/components';
+	} from 'better-svelte-email';
 </script>
 ```
 

@@ -1,5 +1,8 @@
 # @better-svelte-email/cli
 
+> [!WARNING]
+> This package is still in **beta**; APIs, CLI behavior, and defaults may change before a stable release.
+
 Command-line tool for Better Svelte Email: run a **local email preview** with file watching, Tailwind-aware rendering (via [`@better-svelte-email/server`](../server)), and an embedded or dev preview app.
 
 ## Install

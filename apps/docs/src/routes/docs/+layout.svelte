@@ -23,12 +23,27 @@
 		};
 	});
 
-	const sections = [
-		{ title: 'Getting started', slug: 'getting-started' },
-		{ title: 'Migrating to v2', slug: 'migrating-to-v2' },
-		{ title: 'Renderer API', slug: 'render' },
-		{ title: 'Components', slug: 'components' },
-		{ title: 'Email Preview', slug: 'email-preview' }
+	const navGroups = [
+		{
+			label: 'v1',
+			items: [
+				{ title: 'Getting started', slug: 'getting-started' },
+				{ title: 'Migrating to v1', slug: 'migrating-to-v1' },
+				{ title: 'Renderer API', slug: 'render' },
+				{ title: 'Components', slug: 'components' },
+				{ title: 'Email Preview', slug: 'email-preview' }
+			]
+		},
+		{
+			label: 'v2',
+			items: [
+				{ title: 'Getting started', slug: 'getting-started-beta', beta: true },
+				{ title: 'Migrating to v2', slug: 'migrating-to-v2', beta: true },
+				{ title: 'Renderer API', slug: 'render-beta', beta: true },
+				{ title: 'Components', slug: 'components-beta', beta: true },
+				{ title: 'Email dev server', slug: 'email-preview-beta', beta: true }
+			]
+		}
 	];
 </script>
 
@@ -82,22 +97,32 @@
 		<aside
 			class="flex flex-col gap-6 lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
 		>
-			<nav class="flex flex-col gap-1">
-				<div
-					class="mb-2 font-mono text-[10px] font-semibold tracking-[0.2em] text-muted-foreground uppercase"
-				>
-					Documentation
-				</div>
-				{#each sections as section}
-					{@const isActive = page.url.pathname === `/docs/${section.slug}`}
-					<a
-						href={`/docs/${section.slug}`}
-						class="flex items-center border-l-2 px-3 py-1.5 font-mono text-sm transition-colors {isActive
-							? 'border-svelte bg-muted/50 font-medium text-foreground'
-							: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
-					>
-						{section.title}
-					</a>
+			<nav class="flex flex-col gap-6">
+				{#each navGroups as group}
+					<div class="flex flex-col gap-1">
+						<div
+							class="mb-1 px-3 font-mono text-[10px] font-semibold tracking-wide text-foreground uppercase"
+						>
+							{group.label}
+						</div>
+						{#each group.items as section}
+							{@const isActive = page.url.pathname === `/docs/${section.slug}`}
+							<a
+								href={`/docs/${section.slug}`}
+								class="flex items-center gap-2 border-l-2 px-3 py-1.5 font-mono text-sm transition-colors {isActive
+									? 'border-svelte bg-muted/50 font-medium text-foreground'
+									: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
+							>
+								<span>{section.title}</span>
+								{#if 'beta' in section && section.beta}
+									<span
+										class="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
+										>Beta</span
+									>
+								{/if}
+							</a>
+						{/each}
+					</div>
 				{/each}
 			</nav>
 		</aside>
@@ -188,5 +213,21 @@
 
 	:global(.md blockquote) {
 		@apply border-l-2 border-svelte/30 bg-muted/40 px-4 py-2 text-muted-foreground;
+	}
+
+	:global(.md .docs-beta-notice) {
+		@apply rounded-lg border border-amber-500/35 bg-amber-500/8 px-4 py-3 text-sm text-foreground;
+	}
+
+	:global(.md .docs-beta-notice strong) {
+		@apply font-semibold text-amber-800 dark:text-amber-300;
+	}
+
+	:global(.md .docs-beta-notice p) {
+		@apply m-0 leading-relaxed;
+	}
+
+	:global(.md .docs-beta-notice p + p) {
+		@apply mt-2;
 	}
 </style>

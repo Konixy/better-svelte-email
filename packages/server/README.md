@@ -1,8 +1,11 @@
 # @better-svelte-email/server
 
+> [!WARNING]
+> This package is still in **beta**; APIs and behavior may change before a stable release.
+
 Server-side renderer for Better Svelte Email: compile Tailwind-aware Svelte components into **email-safe HTML** (styles inlined, markup adapted for clients).
 
-Used by [`better-svelte-email`](https://www.npmjs.com/package/better-svelte-email), [`@better-svelte-email/components`](../components), [`@better-svelte-email/preview`](../preview), and the [`@better-svelte-email/cli`](../cli).
+Used by `[better-svelte-email](https://www.npmjs.com/package/better-svelte-email)`, `[@better-svelte-email/components](../components)`, `[@better-svelte-email/preview](../preview)`, and the `[@better-svelte-email/cli](../cli)`.
 
 ## Install
 
@@ -16,10 +19,10 @@ npm i @better-svelte-email/server
 
 The main entry exposes:
 
-- **`Renderer`** — configure Tailwind (`tailwindConfig`), optional injected **`customCSS`** (e.g. theme variables), then **`render(component, options)`** to produce HTML
-- **`toPlainText`** — derive a plain-text version from rendered HTML
+- `**Renderer`** — configure Tailwind (`tailwindConfig`), optional injected `**customCSS`** (e.g. theme variables), then `**render(component, options)**` to produce HTML
+- `**toPlainText**` — derive a plain-text version from rendered HTML
 - **Types** — `TailwindConfig`, `RendererOptions`, `RenderOptions`, `AST`, etc.
-- **`pixelBasedPreset`** — Tailwind-related helper for pixel-oriented email styling
+- `**pixelBasedPreset`** — Tailwind-related helper for pixel-oriented email styling
 
 See JSDoc in the source and the [project documentation](https://better-svelte-email.konixy.dev/docs) for examples.
 

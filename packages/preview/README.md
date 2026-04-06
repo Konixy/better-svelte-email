@@ -17,7 +17,7 @@ npm i @better-svelte-email/preview
 
 ## Main exports
 
-- `**EmailPreview`** — Svelte component for browsing and previewing templates (also available as `@better-svelte-email/preview/EmailPreview.svelte`)
+- `**EmailPreview`\*\* — Svelte component for browsing and previewing templates (also available as `@better-svelte-email/preview/EmailPreview.svelte`)
 - `**createEmail**` — returns SvelteKit actions that render a selected template to HTML (and source) using `Renderer`
 - `**sendEmail**` — actions that render and send via **Resend** (API key server-side) or a custom send function
 - **Filesystem helpers** — `emailList`, `getEmailComponent`, `getFiles`, etc. for wiring a local emails directory

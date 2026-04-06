@@ -2,15 +2,15 @@
 
 # Email dev server (beta)
 
-For **v2**, the recommended workflow is the `**@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through `[@better-svelte-email/server](./render-beta)`. You do **not** need a SvelteKit preview route.
+For **v2**, the recommended workflow is the `**@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through `[@better-svelte-email/server](./render-beta)`. You do **not\*\* need a SvelteKit preview route.
 
-Right now, `**dev`** is the only command the CLI provides; other subcommands may be added later.
+Right now, `**dev`\*\* is the only command the CLI provides; other subcommands may be added later.
 
 > **Try it live!** The hosted docs use the same preview UI—open [/preview](/preview) to explore sample templates.
 
 ## `@better-svelte-email/preview` (deprecated)
 
-The `**@better-svelte-email/preview`** package (`EmailPreview`, `createEmail`, `sendEmail`, SvelteKit `+page.server.ts` wiring) is **deprecated**. It remains published for **backward compatibility** with apps that already embed the inline preview. **New projects should use `@better-svelte-email/cli`** instead.
+The `**@better-svelte-email/preview`** package (`EmailPreview`, `createEmail`, `sendEmail`, SvelteKit `+page.server.ts` wiring) is **deprecated**. It remains published for **backward compatibility** with apps that already embed the inline preview. **New projects should use `@better-svelte-email/cli`\*\* instead.
 
 For the classic SvelteKit-integrated flow (v1-style, stable package), see [Email Preview](./email-preview).
 
@@ -69,7 +69,7 @@ npx @better-svelte-email/cli dev
 bse dev
 ```
 
-This watches `**src/lib/emails**` by default and serves the preview UI (bundled **preview-server** build) on **port 3000**, with JSON APIs under `/api/`* on the same origin.
+This watches `**src/lib/emails**` by default and serves the preview UI (bundled **preview-server** build) on **port 3000**, with JSON APIs under `/api/`\* on the same origin.
 
 ### `package.json` script
 
@@ -100,7 +100,6 @@ npm run email:dev
 
 ## CLI options
 
-
 | Option                         | Description                                                                                                                                                                  |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `-p, --port <port>`            | Port for the preview server (default `3000`)                                                                                                                                 |
@@ -109,7 +108,6 @@ npm run email:dev
 | `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the bundled app.                                                  |
 | `--preview-port <port>`        | Port for `--preview-dev` UI (default `3001`; must differ from `--port`).                                                                                                     |
 | `--no-hmr`                     | Disable live reload when templates or watched CSS change.                                                                                                                    |
-
 
 ### Custom emails directory
 
@@ -150,7 +148,7 @@ There is **no built-in “send test email”** endpoint in the CLI server; use y
 
 ### Styles look wrong
 
-Pass `**-c`** to the same CSS entry you use for Tailwind v4 / variables in the app, or ensure `src/app.css` / `src/routes/layout.css` exists so the CLI can pick it up automatically.
+Pass `**-c`\*\* to the same CSS entry you use for Tailwind v4 / variables in the app, or ensure `src/app.css` / `src/routes/layout.css` exists so the CLI can pick it up automatically.
 
 ### Port already in use
 

@@ -2,7 +2,11 @@ import http from 'node:http';
 import { type ChildProcess } from 'node:child_process';
 import { sleep } from './async-utils';
 
-export async function waitForChildServer(port: number, childProcess: ChildProcess, timeoutMs = 10_000) {
+export async function waitForChildServer(
+	port: number,
+	childProcess: ChildProcess,
+	timeoutMs = 10_000
+) {
 	const deadline = Date.now() + timeoutMs;
 
 	while (Date.now() < deadline) {

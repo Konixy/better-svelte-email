@@ -36,7 +36,7 @@ This package depends on `[@better-svelte-email/server](../server)` for shared re
 
 Individual `.svelte` files can be imported via the `./ComponentName.svelte` export pattern (see `package.json` `exports`).
 
-`**@better-svelte-email/components/utils**` — shared utilities subpath (see `exports`).
+**`@better-svelte-email/components/utils`** — shared utilities subpath (see `exports`).
 
 Most users install the umbrella package `[better-svelte-email](../better-svelte-email)` instead, which re-exports these components.
 

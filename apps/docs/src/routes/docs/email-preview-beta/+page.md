@@ -1,16 +1,18 @@
-**Beta.** `@better-svelte-email/cli` and related tooling are in beta; defaults and flags may change.
+<aside class="docs-beta-notice">
+<p><strong>Beta.</strong> <code>@better-svelte-email/cli</code> and related tooling are in beta; defaults and flags may change.</p>
+</aside>
 
 # Email dev server (beta)
 
-For **v2**, the recommended workflow is the `**@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through `[@better-svelte-email/server](./render-beta)`. You do **not\*\* need a SvelteKit preview route.
+For **v2**, the recommended workflow is the **`@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through [**@better-svelte-email/server**](./render-beta). You do **not** need a SvelteKit preview route.
 
-Right now, `**dev`\*\* is the only command the CLI provides; other subcommands may be added later.
+Right now, **`dev`** is the only command the CLI provides; other subcommands may be added later.
 
 > **Try it live!** The hosted docs use the same preview UI—open [/preview](/preview) to explore sample templates.
 
 ## `@better-svelte-email/preview` (deprecated)
 
-The `**@better-svelte-email/preview`** package (`EmailPreview`, `createEmail`, `sendEmail`, SvelteKit `+page.server.ts` wiring) is **deprecated**. It remains published for **backward compatibility** with apps that already embed the inline preview. **New projects should use `@better-svelte-email/cli`\*\* instead.
+The **`@better-svelte-email/preview`** package (`EmailPreview`, `createEmail`, `sendEmail`, SvelteKit `+page.server.ts` wiring) is **deprecated**. It remains published for **backward compatibility** with apps that already embed the inline preview. **New projects should use `@better-svelte-email/cli`** instead.
 
 For the classic SvelteKit-integrated flow (v1-style, stable package), see [Email Preview](./email-preview).
 
@@ -24,7 +26,7 @@ Pick one (or combine dev dependency + `npx` for CI).
 npm install -D @better-svelte-email/cli
 ```
 
-The package exposes the `**bse**` binary in `node_modules/.bin`. Use npm scripts (see [Run the dev server](#run-the-dev-server)) or:
+The package exposes the **`bse`** binary in `node_modules/.bin`. Use npm scripts (see [Run the dev server](#run-the-dev-server)) or:
 
 ```bash
 npx @better-svelte-email/cli dev
@@ -45,7 +47,7 @@ npm install -g @better-svelte-email/cli
 bse dev
 ```
 
-Your email templates should import primitives from `[@better-svelte-email/components](./components-beta)`. The CLI uses `**@better-svelte-email/server**` internally to render those components.
+Your email templates should import primitives from [`@better-svelte-email/components`](./components-beta). The CLI uses **`@better-svelte-email/server`** internally to render those components.
 
 ## Run the dev server
 
@@ -60,7 +62,7 @@ npx @better-svelte-email/cli dev
 **After `npm install -D @better-svelte-email/cli`:**
 
 ```bash
-npx @better-svelte-email/cli dev
+bse dev
 ```
 
 **After a global install:**
@@ -69,7 +71,7 @@ npx @better-svelte-email/cli dev
 bse dev
 ```
 
-This watches `**src/lib/emails**` by default and serves the preview UI (bundled **preview-server** build) on **port 3000**, with JSON APIs under `/api/`\* on the same origin.
+This watches **`src/lib/emails`** by default and serves the preview UI (bundled **preview-server** build) on **port 3000**, with JSON APIs under `/api/*` on the same origin.
 
 ### `package.json` script
 
@@ -132,9 +134,9 @@ For working on the preview app itself (e.g. in this monorepo), the API and UI ru
 
 The dev server exposes a small JSON API (also used by the bundled preview):
 
-- `**GET /api/emails**` — lists template files under the configured emails directory.
-- `**GET /api/source?file=…**` — returns source for a template path.
-- `**POST /api/render**` — body `{ "file": "…", "props": { … }, "includeSource"?: boolean }` — returns rendered HTML (and optional source).
+- **`GET /api/emails`** — lists template files under the configured emails directory.
+- **`GET /api/source?file=…`** — returns source for a template path.
+- **`POST /api/render`** — body `{ "file": "…", "props": { … }, "includeSource"?: boolean }` — returns rendered HTML (and optional source).
 
 There is **no built-in “send test email”** endpoint in the CLI server; use your provider (Resend, etc.) from your own app or scripts if you need outbound mail.
 
@@ -148,7 +150,7 @@ There is **no built-in “send test email”** endpoint in the CLI server; use y
 
 ### Styles look wrong
 
-Pass `**-c`\*\* to the same CSS entry you use for Tailwind v4 / variables in the app, or ensure `src/app.css` / `src/routes/layout.css` exists so the CLI can pick it up automatically.
+Pass **`-c`** to the same CSS entry you use for Tailwind v4 / variables in the app, or ensure `src/app.css` / `src/routes/layout.css` exists so the CLI can pick it up automatically.
 
 ### Port already in use
 
@@ -160,4 +162,4 @@ With `--preview-dev`, also set `--preview-port` to a free port different from `-
 
 ## Legacy package reference
 
-If you must keep `**@better-svelte-email/preview**` in a SvelteKit app, the API surface is described in the [v1 Email Preview](./email-preview#api-reference) doc (`createEmail`, `sendEmail`, `emailList`, etc.). Prefer migrating to `**npx @better-svelte-email/cli dev**` (or a local/global `**bse**`) when you can.
+If you must keep **`@better-svelte-email/preview`** in a SvelteKit app, the API surface is described in the [v1 Email Preview](./email-preview#api-reference) doc (`createEmail`, `sendEmail`, `emailList`, etc.). Prefer migrating to **`npx @better-svelte-email/cli dev`** (or a local/global **`bse`**) when you can.

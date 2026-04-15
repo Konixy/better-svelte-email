@@ -1,7 +1,7 @@
 # @better-svelte-email/preview
 
 > [!WARNING]
-> This package is still in **beta**; APIs and behavior may change before a stable release.
+> **Deprecated for new projects.** This package remains published for **compatibility** with existing SvelteKit apps that already wire `EmailPreview`, `createEmail`, and `sendEmail`. **New projects** should use **`@better-svelte-email/cli`** for a standalone email dev server instead of adding preview routes to the app. APIs and behavior may still change before a stable release.
 
 **Preview and test-send** utilities for Better Svelte Email inside **SvelteKit**: UI component, form actions to render templates on demand, and optional **Resend** integration for sending test messages.
 
@@ -17,9 +17,9 @@ npm i @better-svelte-email/preview
 
 ## Main exports
 
-- `**EmailPreview`\*\* — Svelte component for browsing and previewing templates (also available as `@better-svelte-email/preview/EmailPreview.svelte`)
-- `**createEmail**` — returns SvelteKit actions that render a selected template to HTML (and source) using `Renderer`
-- `**sendEmail**` — actions that render and send via **Resend** (API key server-side) or a custom send function
+- **`EmailPreview`** — Svelte component for browsing and previewing templates (also available as `@better-svelte-email/preview/EmailPreview.svelte`)
+- **`createEmail`** — returns SvelteKit actions that render a selected template to HTML (and source) using `Renderer`
+- **`sendEmail`** — actions that render and send via **Resend** (API key server-side) or a custom send function
 - **Filesystem helpers** — `emailList`, `getEmailComponent`, `getFiles`, etc. for wiring a local emails directory
 
 Typical pattern: spread `createEmail({ renderer })` and `sendEmail({ resendApiKey, renderer })` into `+page.server.ts` `actions`, and mount `EmailPreview` on a dev-only route. See JSDoc in `src/index.ts` and the [docs](https://better-svelte-email.konixy.dev/docs).

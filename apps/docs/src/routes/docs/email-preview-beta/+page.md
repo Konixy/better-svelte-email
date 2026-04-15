@@ -1,4 +1,6 @@
-**Beta.** `@better-svelte-email/cli` and related tooling are in beta; defaults and flags may change.
+<aside class="docs-beta-notice">
+<p><strong>Beta.</strong> <code>@better-svelte-email/cli</code> and related tooling are in beta; defaults and flags may change.</p>
+</aside>
 
 # Email dev server (beta)
 

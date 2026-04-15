@@ -1,8 +1,15 @@
 # better-svelte-email
 
+> [!WARNING]
+> **Compatibility package:** this npm name exists mainly for a **single-install** workflow. It **re-exports** `[@better-svelte-email/server](../server)` and `[@better-svelte-email/components](../components)`, and depends on `[@better-svelte-email/preview](../preview)` so versions stay aligned. It does **not** add its own runtime beyond those re-exports.
+>
+> **Maintenance:** active development targets the scoped packages below. This meta-package **may receive less attention over time** and is not guaranteed to track every new export from the underlying packages—prefer depending on **`@better-svelte-email/*`** directly when you want the clearest upgrade path.
+
+---
+
 Published meta-package for **Better Svelte Email**: render Svelte 5 email templates to HTML with Tailwind CSS inlined for email clients, plus optional preview and send helpers.
 
-This package depends on [`@better-svelte-email/server`](../server), [`@better-svelte-email/components`](../components), and [`@better-svelte-email/preview`](../preview) (the preview package is installed with it so versions stay aligned). The **published main entry** re-exports **components** plus **`Renderer`**, **`toPlainText`**, and related types from the server package. Import preview and SvelteKit helpers from **`@better-svelte-email/preview`** directly. For maximal control you can depend on the scoped packages only and skip this meta-package.
+The **published main entry** re-exports **components** plus **`Renderer`**, **`toPlainText`**, and related types from the server package. Import preview and SvelteKit helpers from **`@better-svelte-email/preview`** directly. For maximal control you can depend on the scoped packages only and skip this meta-package.
 
 ## Documentation
 
@@ -21,7 +28,7 @@ Minimum **Svelte** version: **5.14.3**.
 From **`better-svelte-email`** (main export):
 
 - **`Renderer`** and **`toPlainText`** — server-side HTML (+ optional plain text) from `.svelte` templates, with Tailwind inlined for email clients
-- **Email layout components** — `Html`, `Body`, `Container`, `Section`, `Text`, `Button`, … (same as [`@better-svelte-email/components`](../components))
+- **Email layout components** — `Html`, `Body`, `Container`, `Section`, `Text`, `Button`, … (same as `[@better-svelte-email/components](../components)`)
 
 From **`@better-svelte-email/preview`** (installed as a dependency; import this module name):
 

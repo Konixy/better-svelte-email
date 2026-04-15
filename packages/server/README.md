@@ -1,8 +1,11 @@
 # @better-svelte-email/server
 
+> [!WARNING]
+> This package is still in **beta**; APIs and behavior may change before a stable release.
+
 Server-side renderer for Better Svelte Email: compile Tailwind-aware Svelte components into **email-safe HTML** (styles inlined, markup adapted for clients).
 
-Used by [`better-svelte-email`](https://www.npmjs.com/package/better-svelte-email), [`@better-svelte-email/components`](../components), [`@better-svelte-email/preview`](../preview), and the [`@better-svelte-email/cli`](../cli).
+Used by `[better-svelte-email](https://www.npmjs.com/package/better-svelte-email)`, `[@better-svelte-email/components](../components)`, `[@better-svelte-email/preview](../preview)`, and the `[@better-svelte-email/cli](../cli)`.
 
 ## Install
 

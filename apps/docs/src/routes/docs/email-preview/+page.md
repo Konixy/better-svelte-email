@@ -2,6 +2,8 @@
 
 The Email Preview component provides a visual development environment for creating and testing your email templates. It includes features like live preview, HTML source and code source viewing, and test email sending—all within your SvelteKit application.
 
+Use **`better-svelte-email/preview`**. For v2, see [Email dev server (beta)](./email-preview-beta) (`@better-svelte-email/cli`).
+
 > **Try it live!** Check out the preview in action in [this page](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project.
 
 ## Setup
@@ -13,7 +15,7 @@ Create a new route under `src/routes/email-preview/[...email]` in your SvelteKit
 ```svelte
 <!-- src/routes/email-preview/[...email]/+page.svelte -->
 <script lang="ts">
-	import { EmailPreview } from '@better-svelte-email/preview';
+	import { EmailPreview } from 'better-svelte-email/preview';
 	import { page } from '$app/state';
 </script>
 
@@ -26,7 +28,7 @@ Create a `+page.server.ts` file in the same route to load your email templates a
 
 ```typescript
 // src/routes/email-preview/[...email]/+page.server.ts
-import { emailList, createEmail, sendEmail } from '@better-svelte-email/preview';
+import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
 import { env } from '$env/dynamic/private';
 
 export function load() {
@@ -62,8 +64,8 @@ Get your API key from [Resend](https://resend.com/docs/dashboard/api-keys/introd
 To use Tailwind in your email templates, you need to pass a renderer instance to the `createEmail` and `sendEmail` actions.
 
 ```typescript
-import { Renderer } from '@better-svelte-email/server';
-import { createEmail, sendEmail } from '@better-svelte-email/preview';
+import Renderer from 'better-svelte-email/render';
+import { createEmail, sendEmail } from 'better-svelte-email/preview';
 
 const tailwindConfig = {
 	theme: { extend: { colors: { brand: '#FF3E00' } } }
@@ -151,7 +153,7 @@ And return an object with:
 ## Example Setup with SendGrid
 
 ```typescript
-import { emailList, createEmail, sendEmail } from '@better-svelte-email/preview';
+import { emailList, createEmail, sendEmail } from 'better-svelte-email/preview';
 import sgMail from '@sendgrid/mail';
 import { env } from '$env/dynamic/private';
 

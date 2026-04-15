@@ -13,13 +13,13 @@ The root `turbo` build excludes this package from the default `build` filter (se
 
 ## Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `dev` | `vite dev` |
-| `build` | `vite build` (Bun) |
-| `build:watch` | Rebuild on changes |
-| `start` | `node build` (adapter output) |
-| `test` | `vitest run` |
+| Script        | Purpose                       |
+| ------------- | ----------------------------- |
+| `dev`         | `vite dev`                    |
+| `build`       | `vite build` (Bun)            |
+| `build:watch` | Rebuild on changes            |
+| `start`       | `node build` (adapter output) |
+| `test`        | `vitest run`                  |
 
 ## Monorepo
 

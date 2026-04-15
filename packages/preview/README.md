@@ -1,8 +1,11 @@
 # @better-svelte-email/preview
 
+> [!WARNING]
+> **Deprecated for new projects.** This package remains published for **compatibility** with existing SvelteKit apps that already wire `EmailPreview`, `createEmail`, and `sendEmail`. **New projects** should use **`@better-svelte-email/cli`** for a standalone email dev server instead of adding preview routes to the app. APIs and behavior may still change before a stable release.
+
 **Preview and test-send** utilities for Better Svelte Email inside **SvelteKit**: UI component, form actions to render templates on demand, and optional **Resend** integration for sending test messages.
 
-Builds on [`@better-svelte-email/server`](../server) (`Renderer`).
+Builds on `[@better-svelte-email/server](../server)` (`Renderer`).
 
 ## Install
 
@@ -23,7 +26,7 @@ Typical pattern: spread `createEmail({ renderer })` and `sendEmail({ resendApiKe
 
 ## Umbrella package
 
-[`better-svelte-email`](../better-svelte-email) re-exports this package’s preview surface for a single dependency.
+`[better-svelte-email](../better-svelte-email)` re-exports this package’s preview surface for a single dependency.
 
 ## Monorepo
 

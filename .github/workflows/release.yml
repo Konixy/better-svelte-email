@@ -59,7 +59,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: latest
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: bun install
@@ -73,8 +73,8 @@ jobs:
           version: bun run ci:version
           # changesets/action splits publish on whitespace (first token = executable); use a script.
           publish: bun run ci:publish
-          commit: "chore: version packages"
-          title: "chore: version packages"
+          commit: 'chore: version packages'
+          title: 'chore: version packages'
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

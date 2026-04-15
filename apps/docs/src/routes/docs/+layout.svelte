@@ -1,7 +1,14 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { toggleMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
+	import {
+		Select as SelectRoot,
+		SelectContent,
+		SelectItem,
+		SelectTrigger
+	} from '$lib/components/ui/select';
 	import { Separator } from '$lib/components/ui/separator';
 	import Github from '$lib/components/github.svelte';
 	import { MoonIcon, SunIcon } from '@lucide/svelte';
@@ -23,28 +30,60 @@
 		};
 	});
 
-	const navGroups = [
-		{
-			label: 'v1',
-			items: [
-				{ title: 'Getting started', slug: 'getting-started' },
-				{ title: 'Migrating to v1', slug: 'migrating-to-v1' },
-				{ title: 'Renderer API', slug: 'render' },
-				{ title: 'Components', slug: 'components' },
-				{ title: 'Email Preview', slug: 'email-preview' }
-			]
-		},
-		{
-			label: 'v2',
-			items: [
-				{ title: 'Getting started', slug: 'getting-started-beta', beta: true },
-				{ title: 'Migrating to v2', slug: 'migrating-to-v2', beta: true },
-				{ title: 'Renderer API', slug: 'render-beta', beta: true },
-				{ title: 'Components', slug: 'components-beta', beta: true },
-				{ title: 'Email dev server', slug: 'email-preview-beta', beta: true }
-			]
-		}
+	const slugPairs: [string, string][] = [
+		['getting-started', 'getting-started-beta'],
+		['migrating-to-v1', 'migrating-to-v2'],
+		['render', 'render-beta'],
+		['components', 'components-beta'],
+		['email-preview', 'email-preview-beta']
 	];
+
+	const v2Slugs = new Set(slugPairs.map(([, b]) => b));
+
+	const v1NavItems = [
+		{ title: 'Getting started', slug: 'getting-started' },
+		{ title: 'Migrating to v1', slug: 'migrating-to-v1' },
+		{ title: 'Renderer API', slug: 'render' },
+		{ title: 'Components', slug: 'components' },
+		{ title: 'Email Preview', slug: 'email-preview' }
+	] as const;
+
+	const v2NavItems = [
+		{ title: 'Getting started', slug: 'getting-started-beta' },
+		{ title: 'Migrating to v2', slug: 'migrating-to-v2' },
+		{ title: 'Renderer API', slug: 'render-beta' },
+		{ title: 'Components', slug: 'components-beta' },
+		{ title: 'Email dev server', slug: 'email-preview-beta' }
+	] as const;
+
+	function getDocSlug(pathname: string): string | null {
+		const match = /^\/docs\/([^/]+)\/?$/.exec(pathname);
+		return match?.[1] ?? null;
+	}
+
+	let docVersion = $derived.by((): 'v1' | 'v2' => {
+		const slug = getDocSlug(page.url.pathname);
+		if (slug && v2Slugs.has(slug)) return 'v2';
+		return 'v1';
+	});
+
+	let navItems = $derived(docVersion === 'v2' ? v2NavItems : v1NavItems);
+
+	function counterpartSlug(slug: string, target: 'v1' | 'v2'): string {
+		for (const [v1Slug, v2Slug] of slugPairs) {
+			if (v1Slug === slug) return target === 'v2' ? v2Slug : v1Slug;
+			if (v2Slug === slug) return target === 'v1' ? v1Slug : v2Slug;
+		}
+		return target === 'v2' ? 'getting-started-beta' : 'getting-started';
+	}
+
+	function handleDocVersionChange(next: string) {
+		if (next !== 'v1' && next !== 'v2') return;
+		if (next === docVersion) return;
+		const slug = getDocSlug(page.url.pathname) ?? 'getting-started';
+		const targetSlug = counterpartSlug(slug, next);
+		void goto(`/docs/${targetSlug}`);
+	}
 </script>
 
 <svelte:head>
@@ -97,32 +136,54 @@
 		<aside
 			class="flex flex-col gap-6 lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
 		>
-			<nav class="flex flex-col gap-6">
-				{#each navGroups as group}
-					<div class="flex flex-col gap-1">
-						<div
-							class="mb-1 px-3 font-mono text-[10px] font-semibold tracking-wide text-foreground uppercase"
-						>
-							{group.label}
-						</div>
-						{#each group.items as section}
-							{@const isActive = page.url.pathname === `/docs/${section.slug}`}
-							<a
-								href={`/docs/${section.slug}`}
-								class="flex items-center gap-2 border-l-2 px-3 py-1.5 font-mono text-sm transition-colors {isActive
-									? 'border-svelte bg-muted/50 font-medium text-foreground'
-									: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
-							>
-								<span>{section.title}</span>
-								{#if 'beta' in section && section.beta}
-									<span
-										class="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
-										>Beta</span
-									>
-								{/if}
-							</a>
-						{/each}
-					</div>
+			<div class="flex flex-col gap-2 px-0">
+				<div
+					class="px-3 font-mono text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
+				>
+					Version
+				</div>
+				<SelectRoot type="single" value={docVersion} onValueChange={handleDocVersionChange}>
+					<SelectTrigger size="sm" class="w-full font-mono text-xs shadow-none">
+						<span data-slot="select-value" class="flex w-full items-center justify-between gap-2">
+							{#if docVersion === 'v2'}
+								<span>v2</span>
+								<span
+									class="shrink-0 rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
+								>
+									Beta
+								</span>
+							{:else}
+								<span>v1</span>
+							{/if}
+						</span>
+					</SelectTrigger>
+					<SelectContent align="start" class="min-w-(--bits-select-anchor-width)">
+						<SelectItem value="v1" label="Version 1">v1</SelectItem>
+						<SelectItem value="v2" label="Version 2 beta">
+							<span class="flex w-full items-center justify-between gap-2">
+								<span>v2</span>
+								<span
+									class="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
+								>
+									Beta
+								</span>
+							</span>
+						</SelectItem>
+					</SelectContent>
+				</SelectRoot>
+			</div>
+
+			<nav class="flex flex-col gap-1">
+				{#each navItems as section}
+					{@const isActive = page.url.pathname === `/docs/${section.slug}`}
+					<a
+						href={`/docs/${section.slug}`}
+						class="flex items-center gap-2 border-l-2 px-3 py-1.5 font-mono text-sm transition-colors {isActive
+							? 'border-svelte bg-muted/50 font-medium text-foreground'
+							: 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'}"
+					>
+						<span>{section.title}</span>
+					</a>
 				{/each}
 			</nav>
 		</aside>

@@ -3,6 +3,7 @@
 '@better-svelte-email/cli': major
 '@better-svelte-email/components': major
 '@better-svelte-email/preview': major
+'@better-svelte-email/preview-server': major
 '@better-svelte-email/server': major
 ---
 

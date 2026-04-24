@@ -9,7 +9,7 @@
 	],
 	"scripts": {
 		"dev": "bun run --cwd apps/docs dev",
-		"build": "turbo run build --filter=!@better-svelte-email/preview-server",
+		"build": "turbo run build",
 		"test": "turbo run test",
 		"lint": "turbo run lint",
 		"check": "turbo run check",

@@ -71,7 +71,7 @@ bse dev
 bse dev
 ```
 
-This watches **`src/lib/emails`** by default and serves the preview UI (bundled **preview-server** build) on **port 3000**, with JSON APIs under `/api/*` on the same origin.
+This watches **`src/lib/emails`** by default and serves the preview UI on **port 3000**, with JSON APIs under `/api/*` on the same origin. The CLI installs its internal `@better-svelte-email/preview-server` runtime automatically.
 
 ### `package.json` script
 
@@ -107,7 +107,7 @@ npm run email:dev
 | `-p, --port <port>`            | Port for the preview server (default `3000`)                                                                                                                                 |
 | `-d, --dir <directory>`        | Folder of `.svelte` email templates to watch (default `src/lib/emails`)                                                                                                      |
 | `-c, --custom-css-path <path>` | File whose contents are passed as `customCSS` to the renderer (Tailwind v4 / theme parity). If omitted, the CLI tries `src/app.css` or `src/routes/layout.css` when present. |
-| `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the bundled app.                                                  |
+| `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the published runtime package.                                     |
 | `--preview-port <port>`        | Port for `--preview-dev` UI (default `3001`; must differ from `--port`).                                                                                                     |
 | `--no-hmr`                     | Disable live reload when templates or watched CSS change.                                                                                                                    |
 

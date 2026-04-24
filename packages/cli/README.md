@@ -34,7 +34,7 @@ Common options:
 
 ## Build note (maintainers)
 
-The published CLI bundles the [`@better-svelte-email/preview-server`](../preview-server) build output (see `build:preview` / `build:copy-preview-runtime` in `package.json`). Full `bun run build` for this package runs both the CLI compile and the preview app build.
+The published CLI depends on the internal [`@better-svelte-email/preview-server`](../preview-server) runtime package. `bun run build` in this package only builds the CLI itself; the preview runtime is built and published from `packages/preview-server`.
 
 ## Monorepo
 

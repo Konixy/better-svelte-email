@@ -12,10 +12,10 @@ export function resolveCliPackageRoot(): string {
 export async function resolvePreviewServerEntry() {
 	let entry: string;
 	try {
-		entry = resolveFromCli.resolve('@better-svelte-email/cli/preview-entry');
+		entry = resolveFromCli.resolve('@better-svelte-email/preview-server');
 	} catch {
 		throw new Error(
-			'Could not resolve the preview server entry. Did you build @better-svelte-email/cli? Run `bun run build:preview` in packages/cli first.'
+			'Could not resolve @better-svelte-email/preview-server. Reinstall @better-svelte-email/cli so its runtime dependency is available.'
 		);
 	}
 
@@ -26,7 +26,7 @@ export async function resolvePreviewServerEntry() {
 		}
 	} catch {
 		throw new Error(
-			'Could not find the built SvelteKit preview server. Run `bun run build:preview` in packages/cli first.'
+			'Could not find the published preview server entrypoint from @better-svelte-email/preview-server.'
 		);
 	}
 

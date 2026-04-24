@@ -1,12 +1,19 @@
 {
 	"name": "@better-svelte-email/preview-server",
-	"private": true,
 	"version": "2.0.0-beta.4",
-	"description": "Preview server for @better-svelte-email/cli",
+	"description": "Internal preview runtime for @better-svelte-email/cli",
 	"type": "module",
+	"main": "./build/index.js",
 	"files": [
 		"build"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"exports": {
+		".": "./build/index.js",
+		"./package.json": "./package.json"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "bunx --bun vite build",
@@ -16,6 +23,11 @@
 	},
 	"author": "Konixy",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/preview-server"
+	},
 	"dependencies": {
 		"@lucide/svelte": "^1.0.1",
 		"@sveltejs/adapter-node": "^5.5.4",

@@ -1,5 +1,11 @@
 # @better-svelte-email/server
 
+## 2.0.0-beta.5
+
+### Patch Changes
+
+- add02f8: externalized the preview-server package to fix dependency management problems
+
 ## 2.0.0-beta.4
 
 ### Patch Changes

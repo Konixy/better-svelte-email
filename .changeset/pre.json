@@ -6,6 +6,7 @@
 		"@better-svelte-email/cli": "1.4.0",
 		"@better-svelte-email/components": "1.4.0",
 		"@better-svelte-email/preview": "1.4.0",
+		"@better-svelte-email/preview-server": "1.4.0",
 		"@better-svelte-email/server": "1.4.0"
 	},
 	"changesets": [

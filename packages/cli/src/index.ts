@@ -17,7 +17,7 @@ program
 	.option('-p, --port <port>', 'Port to listen on', '3000')
 	.option(
 		'--preview-dev',
-		'Start the local preview-server Vite dev server instead of the published preview runtime'
+		'Start the local preview-server Vite dev server instead of the bundled preview app'
 	)
 	.option('--preview-port <port>', 'Port for the local preview-server dev server', '3001')
 	.option('-d, --dir <directory>', 'Directory to watch', 'src/lib/emails')

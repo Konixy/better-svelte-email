@@ -1,15 +1,15 @@
 # @better-svelte-email/preview-server
 
-Internal published runtime package: the SvelteKit + Vite **preview UI** that powers [`@better-svelte-email/cli`](../cli).
+**Private** workspace package: the SvelteKit + Vite **preview UI** that the [`@better-svelte-email/cli`](../cli) ships (or runs in dev via `--preview-dev`).
 
-It is published to npm so the CLI can depend on it, but it is **not meant to be installed or used directly by end users**. Use the CLI (`bse`) instead, or the SvelteKit integration in [`@better-svelte-email/preview`](../preview).
+It is **not published to npm** on its own. Consumers use the CLI (`bse`) or the SvelteKit integration in [`@better-svelte-email/preview`](../preview).
 
 ## Role in the monorepo
 
 - **`bun run dev`** — local Vite/SvelteKit dev server for iterating on the preview workbench
-- **`bun run build`** — production build (adapter-node) for the published preview runtime package
+- **`bun run build`** — production build (adapter-node), then the CLI copies artifacts into its `dist` preview runtime
 
-In this monorepo, `--preview-dev` exists for working on the preview UI itself. Outside the monorepo, the CLI consumes the published runtime package automatically.
+The root `turbo` build excludes this package from the default `build` filter (see root `package.json`) because it is built as part of the CLI release pipeline.
 
 ## Scripts
 

@@ -2,9 +2,9 @@
 
 The Email Preview component provides a visual development environment for creating and testing your email templates. It includes features like live preview, HTML source and code source viewing, and test email sending—all within your SvelteKit application.
 
-Use **`better-svelte-email/preview`**. For v2, see [Email dev server (beta)](./email-preview-beta) (`@better-svelte-email/cli`).
+Use **`better-svelte-email/preview`**. For v2, see [Email dev server](./email-dev-server) (`@better-svelte-email/cli`).
 
-> **Try it live!** Check out the preview in action in [this page](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project.
+<!-- > **Try it live!** Check out the preview in action in [this page](/preview). You can explore sample email templates and see how the preview component works before setting it up in your own project. -->
 
 ## Setup
 
@@ -178,12 +178,6 @@ export const actions = {
 	})
 };
 ```
-
-## Vercel Setup
-
-If you're using Vercel serverless functions, the `createEmail` and `sendEmail` actions will not work out of the box. You will need to create some custom serverless functions to handle the actions.
-
-You can see an example implementation in [this file](https://github.com/Konixy/better-svelte-email/blob/main/apps/docs/src/routes/preview/%5B...email%5D/%2Bpage.server.ts).
 
 ## Troubleshooting
 

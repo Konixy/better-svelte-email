@@ -1,11 +1,11 @@
-<aside class="docs-beta-notice">
-<p><strong>Beta.</strong> <code>@better-svelte-email/server</code> exposes the same rendering APIs as <code>better-svelte-email/render</code> with a different import path. See the stable <a href="./render">Renderer API</a> for equivalent behavior.</p>
-</aside>
+# Renderer API
 
-# Renderer API (beta)
+Render Svelte email templates to production-ready HTML and plain text using **`better-svelte-email/render`**.
+
+For **`@better-svelte-email/server`**, see [Renderer API](./render).
 
 ```ts
-import { Renderer, toPlainText, type RenderOptions } from '@better-svelte-email/server';
+import Renderer, { toPlainText, type RenderOptions } from 'better-svelte-email/render';
 ```
 
 ## Renderer

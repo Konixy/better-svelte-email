@@ -1,8 +1,10 @@
-<!-- <aside class="docs-beta-notice">
-<p><strong>Beta.</strong> Import UI primitives from <code>@better-svelte-email/components</code> instead of <code>better-svelte-email</code>. Props and behavior match the stable components unless release notes say otherwise.</p>
-</aside> -->
-
 # Components
+
+Better Svelte Email provides Svelte components with sensible defaults for building email layouts. They all forward regular HTML attributes, merge inline styles, and take props tuned for email-friendly rendering.
+
+Import from **`better-svelte-email`** or **`better-svelte-email/components`**. For v2 (`@better-svelte-email/components`), see [Components](./components).
+
+## Quick start
 
 ```svelte
 <script>
@@ -21,7 +23,7 @@
 		Link,
 		Img,
 		Hr
-	} from '@better-svelte-email/components';
+	} from 'better-svelte-email';
 </script>
 ```
 

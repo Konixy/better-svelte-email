@@ -1,6 +1,6 @@
-<aside class="docs-beta-notice">
+<!-- <aside class="docs-beta-notice">
 <p><strong>Beta.</strong> v2 scoped packages (<code>@better-svelte-email/*</code>) are in beta. For production, prefer the stable <code>better-svelte-email</code> package until v2 is finalized.</p>
-</aside>
+</aside> -->
 
 # Migrating to v2
 
@@ -36,7 +36,7 @@ Add the **CLI** for the preview workbench (dev dependency is typical):
 npm install -D @better-svelte-email/cli
 ```
 
-You only need **`@better-svelte-email/preview`** if you are **temporarily** keeping an existing SvelteKit preview route; plan to replace it with **`npx @better-svelte-email/cli dev`** (or `bse dev` after a global install). Details: [Email dev server (beta)](./email-preview-beta).
+You only need **`@better-svelte-email/preview`** if you are **temporarily** keeping an existing SvelteKit preview route; plan to replace it with **`npx @better-svelte-email/cli dev`** (or `bse dev` after a global install). Details: [Email dev server](./email-dev-server).
 
 ## 2) Update imports
 
@@ -79,7 +79,7 @@ npx @better-svelte-email/cli dev
 
 If the CLI is a **dev dependency**, you can also run the **`bse`** binary from `node_modules` (e.g. via an npm script — see below) or use the same `npx` form. With a **global** install: `bse dev`.
 
-See [Email dev server (beta)](./email-preview-beta) for `-d`, `-c`, ports, and other flags.
+See [Email dev server](./email-dev-server) for `-d`, `-c`, ports, and other flags.
 
 **Legacy (compat only):** `@better-svelte-email/preview` still exports `EmailPreview`, `emailList`, `createEmail`, and `sendEmail` for existing `+page.server.ts` wiring.
 
@@ -111,7 +111,7 @@ Or call the package explicitly without relying on `PATH`:
 }
 ```
 
-Then `npm run email:dev`. Adjust `-c` / `-d` to match your CSS entry and emails folder. The CLI serves the preview UI and `/api/render` — see [Email dev server (beta)](./email-preview-beta).
+Then `npm run email:dev`. Adjust `-c` / `-d` to match your CSS entry and emails folder. The CLI serves the preview UI and `/api/render` — see [Email dev server](./email-dev-server).
 
 ## 4) Tailwind usage
 
@@ -122,4 +122,4 @@ No v2-specific Tailwind syntax migration is required. Keep using your existing T
 
 Pass the same CSS file to **`npx @better-svelte-email/cli dev -c …`** (or `bse dev -c …`) so the preview matches production rendering.
 
-See [Renderer API (beta)](./render-beta) and [Email dev server (beta)](./email-preview-beta) for more detail.
+See [Renderer API](./render) and [Email dev server](./email-dev-server) for more detail.

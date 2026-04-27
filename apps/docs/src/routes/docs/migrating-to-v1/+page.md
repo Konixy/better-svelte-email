@@ -130,4 +130,4 @@ export const actions = {
 };
 ```
 
-See the [email preview documentation](./email-preview) for more information.
+See the [email preview documentation](./email-preview-v1) for more information.

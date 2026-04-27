@@ -23,9 +23,9 @@
 				You can still try it out on your own project, see the <Button
 					variant="link"
 					class="text-foreground/80"
-					href="/docs/email-preview-beta"
+					href="/docs/email-dev-server"
 				>
-					Email dev server (beta)
+					Email dev server
 				</Button> documentation for more information.
 			</p>
 

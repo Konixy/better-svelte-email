@@ -1,16 +1,8 @@
-<aside class="docs-beta-notice">
-<p><strong>Beta.</strong> These instructions use the scoped <code>@better-svelte-email/*</code> packages (v2-style split). Install names, exports, and behavior may change before a stable release. For production, prefer <a href="./getting-started">Getting started</a> with <code>better-svelte-email</code>.</p>
-</aside>
+# Getting started
 
-# Getting started (beta)
+Welcome to **Better Svelte Email**! This guide walks you through installation, configuration, and building your first email using the legacy **`better-svelte-email`** package.
 
-This guide mirrors [Getting started](./getting-started) but uses **`@better-svelte-email/components`** and **`@better-svelte-email/server`**.
-
-## Preview: CLI, not `@better-svelte-email/preview`
-
-**`@better-svelte-email/preview`** (SvelteKit `EmailPreview`, `createEmail`, `sendEmail`, etc.) is **deprecated** in v2. It remains on npm only for **compatibility** with existing apps that already wired a `/preview` route.
-
-For **new** projects, use **`@better-svelte-email/cli`**: it runs a standalone **email dev server** (file watching, live preview, render API) without adding preview routes to your app. See [Email dev server (beta)](./email-preview-beta) for install options and flags.
+For the stable v2 scoped packages (`@better-svelte-email/*`), see [Getting started](./getting-started).
 
 ## Requirements
 
@@ -19,30 +11,13 @@ For **new** projects, use **`@better-svelte-email/cli`**: it runs a standalone *
 
 ## Installation
 
-Core rendering and components:
+Install the package:
 
 ```bash
-npm install @better-svelte-email/components @better-svelte-email/server
+npm install better-svelte-email
 ```
 
-Optional — local email preview (recommended for development):
-
-```bash
-npm install -D @better-svelte-email/cli
-```
-
-Run it without adding a dependency first:
-
-```bash
-npx @better-svelte-email/cli dev
-```
-
-Or install the CLI **globally** and use the **`bse`** binary:
-
-```bash
-npm install -g @better-svelte-email/cli
-bse dev
-```
+The stable release uses subpath imports such as `better-svelte-email` and `better-svelte-email/render`.
 
 ## Write your first email
 
@@ -61,7 +36,7 @@ Create a new file at `src/lib/emails/welcome.svelte`. This example uses Tailwind
 		Text,
 		Button,
 		Row
-	} from '@better-svelte-email/components';
+	} from 'better-svelte-email';
 
 	let { name = 'there' } = $props();
 </script>
@@ -102,9 +77,11 @@ Create a new file at `src/lib/emails/welcome.svelte`. This example uses Tailwind
 
 ## Render and send it
 
+Render the email using the `Renderer` class and send it using your preferred email provider (Resend in this example).
+
 ```typescript
 // src/routes/api/send-email/+server.ts
-import { Renderer } from '@better-svelte-email/server';
+import Renderer from 'better-svelte-email/render';
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 import WelcomeEmail from '$lib/emails/welcome.svelte';
@@ -117,6 +94,7 @@ export async function POST({ request }) {
 
 	const html = await render(WelcomeEmail, { props: { name } });
 
+	// Send email using your preferred service (Resend, SendGrid, etc.)
 	await resend.emails.send({
 		from: 'onboarding@resend.dev',
 		to: email,
@@ -130,8 +108,10 @@ export async function POST({ request }) {
 
 ## Plain text version
 
+You can also render the email as plain text using the `toPlainText` function for better accessibility.
+
 ```typescript
-import { toPlainText } from '@better-svelte-email/server';
+import { toPlainText } from 'better-svelte-email/render';
 
 const plainText = toPlainText(html);
 
@@ -140,6 +120,7 @@ await resend.emails.send({
 	to: email,
 	subject: 'Welcome!',
 	html,
+	// Add the plain text version to the email
 	text: plainText
 });
 ```
@@ -148,13 +129,16 @@ await resend.emails.send({
 
 ### Tailwind configuration
 
-Pass `customCSS` or `tailwindConfig` to `Renderer` from `@better-svelte-email/server` (same options as the stable renderer).
+You can pass your main CSS file where your config lives (e.g. `src/routes/layout.css` or `src/app.css`) to the `Renderer` class.
+This is useful if you want to inject your app's CSS (including CSS variables or a shadcn-svelte theme for example) and your tailwind config into email rendering.
 
 ```js
 import layoutStyles from 'src/routes/layout.css?raw';
 
 const { render } = new Renderer({ customCSS: layoutStyles });
 ```
+
+You can also pass a Tailwind v3 configuration object to the `Renderer` class.
 
 ```js
 const tailwindConfig = {
@@ -165,4 +149,5 @@ const { render } = new Renderer({ tailwindConfig });
 
 ## Preview your emails
 
-Use **`@better-svelte-email/cli`** — see [Email dev server (beta)](./email-preview-beta) (`npx @better-svelte-email/cli dev`, dev dependency, or global install).
+Better Svelte Email provides an `EmailPreview` component that you can use to preview your emails in the browser.
+See [Email Preview](./email-preview-v1) for a guide on how to use it.

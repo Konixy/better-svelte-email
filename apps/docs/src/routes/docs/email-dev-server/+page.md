@@ -1,20 +1,20 @@
-<aside class="docs-beta-notice">
+<!-- <aside class="docs-beta-notice">
 <p><strong>Beta.</strong> <code>@better-svelte-email/cli</code> and related tooling are in beta; defaults and flags may change.</p>
-</aside>
+</aside> -->
 
-# Email dev server (beta)
+# Email dev server
 
-For **v2**, the recommended workflow is the **`@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through [**@better-svelte-email/server**](./render-beta). You do **not** need a SvelteKit preview route.
+For **v2**, the recommended workflow is the **`@better-svelte-email/cli`** command-line tool. It starts a dedicated **email preview server** in any project folder: file watching, live reload, HTML/source views, and rendering through [**@better-svelte-email/server**](./render). You do **not** need a SvelteKit preview route.
 
 Right now, **`dev`** is the only command the CLI provides; other subcommands may be added later.
 
-> **Try it live!** The hosted docs use the same preview UI—open [/preview](/preview) to explore sample templates.
+<!-- > **Try it live!** The hosted docs use the same preview UI—open [/preview](/preview) to explore sample templates. -->
 
 ## `@better-svelte-email/preview` (deprecated)
 
 The **`@better-svelte-email/preview`** package (`EmailPreview`, `createEmail`, `sendEmail`, SvelteKit `+page.server.ts` wiring) is **deprecated**. It remains published for **backward compatibility** with apps that already embed the inline preview. **New projects should use `@better-svelte-email/cli`** instead.
 
-For the classic SvelteKit-integrated flow (v1-style, stable package), see [Email Preview](./email-preview).
+For the classic SvelteKit-integrated flow (v1-style, legacy package), see [Email Preview](./email-preview-v1).
 
 ## Install the CLI
 
@@ -47,7 +47,7 @@ npm install -g @better-svelte-email/cli
 bse dev
 ```
 
-Your email templates should import primitives from [`@better-svelte-email/components`](./components-beta). The CLI uses **`@better-svelte-email/server`** internally to render those components.
+Your email templates should import primitives from [`@better-svelte-email/components`](./components). The CLI uses **`@better-svelte-email/server`** internally to render those components.
 
 ## Run the dev server
 
@@ -107,7 +107,7 @@ npm run email:dev
 | `-p, --port <port>`            | Port for the preview server (default `3000`)                                                                                                                                 |
 | `-d, --dir <directory>`        | Folder of `.svelte` email templates to watch (default `src/lib/emails`)                                                                                                      |
 | `-c, --custom-css-path <path>` | File whose contents are passed as `customCSS` to the renderer (Tailwind v4 / theme parity). If omitted, the CLI tries `src/app.css` or `src/routes/layout.css` when present. |
-| `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the published runtime package.                                     |
+| `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the published runtime package.                                    |
 | `--preview-port <port>`        | Port for `--preview-dev` UI (default `3001`; must differ from `--port`).                                                                                                     |
 | `--no-hmr`                     | Disable live reload when templates or watched CSS change.                                                                                                                    |
 

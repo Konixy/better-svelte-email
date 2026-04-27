@@ -31,29 +31,29 @@
 	});
 
 	const slugPairs: [string, string][] = [
-		['getting-started', 'getting-started-beta'],
+		['getting-started-v1', 'getting-started'],
 		['migrating-to-v1', 'migrating-to-v2'],
-		['render', 'render-beta'],
-		['components', 'components-beta'],
-		['email-preview', 'email-preview-beta']
+		['render-v1', 'render'],
+		['components-v1', 'components'],
+		['email-preview-v1', 'email-dev-server']
 	];
 
 	const v2Slugs = new Set(slugPairs.map(([, b]) => b));
 
 	const v1NavItems = [
-		{ title: 'Getting started', slug: 'getting-started' },
+		{ title: 'Getting started', slug: 'getting-started-v1' },
 		{ title: 'Migrating to v1', slug: 'migrating-to-v1' },
-		{ title: 'Renderer API', slug: 'render' },
-		{ title: 'Components', slug: 'components' },
-		{ title: 'Email Preview', slug: 'email-preview' }
+		{ title: 'Renderer API', slug: 'render-v1' },
+		{ title: 'Components', slug: 'components-v1' },
+		{ title: 'Email Preview', slug: 'email-preview-v1' }
 	] as const;
 
 	const v2NavItems = [
-		{ title: 'Getting started', slug: 'getting-started-beta' },
+		{ title: 'Getting started', slug: 'getting-started' },
 		{ title: 'Migrating to v2', slug: 'migrating-to-v2' },
-		{ title: 'Renderer API', slug: 'render-beta' },
-		{ title: 'Components', slug: 'components-beta' },
-		{ title: 'Email dev server', slug: 'email-preview-beta' }
+		{ title: 'Renderer API', slug: 'render' },
+		{ title: 'Components', slug: 'components' },
+		{ title: 'Email dev server', slug: 'email-dev-server' }
 	] as const;
 
 	function getDocSlug(pathname: string): string | null {
@@ -74,7 +74,7 @@
 			if (v1Slug === slug) return target === 'v2' ? v2Slug : v1Slug;
 			if (v2Slug === slug) return target === 'v1' ? v1Slug : v2Slug;
 		}
-		return target === 'v2' ? 'getting-started-beta' : 'getting-started';
+		return target === 'v2' ? 'getting-started' : 'getting-started-v1';
 	}
 
 	function handleDocVersionChange(next: string) {
@@ -137,35 +137,45 @@
 			class="flex flex-col gap-6 lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
 		>
 			<div class="flex flex-col gap-2 px-0">
-				<div
-					class="px-3 font-mono text-[10px] font-semibold tracking-wide text-muted-foreground uppercase"
-				>
-					Version
-				</div>
+				<div class="font-mono text-[10px] font-semibold text-muted-foreground">Version</div>
 				<SelectRoot type="single" value={docVersion} onValueChange={handleDocVersionChange}>
 					<SelectTrigger size="sm" class="w-full font-mono text-xs shadow-none">
 						<span data-slot="select-value" class="flex w-full items-center justify-between gap-2">
 							{#if docVersion === 'v2'}
 								<span>v2</span>
 								<span
-									class="shrink-0 rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
+									class="shrink-0 rounded border border-green-500/40 bg-green-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-green-700 uppercase dark:text-green-400"
 								>
-									Beta
+									Stable
 								</span>
 							{:else}
 								<span>v1</span>
+								<span
+									class="shrink-0 rounded border border-red-500/40 bg-red-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-red-700 uppercase dark:text-red-400"
+								>
+									Legacy
+								</span>
 							{/if}
 						</span>
 					</SelectTrigger>
-					<SelectContent align="start" class="min-w-(--bits-select-anchor-width)">
-						<SelectItem value="v1" label="Version 1">v1</SelectItem>
-						<SelectItem value="v2" label="Version 2 beta">
+					<SelectContent align="start" class="min-w-(--bits-select-anchor-width) font-mono">
+						<SelectItem value="v1" label="Version 1 (Legacy)">
+							<span class="flex w-full items-center justify-between gap-2">
+								<span>v1</span>
+								<span
+									class="shrink-0 rounded border border-red-500/40 bg-red-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-red-700 uppercase dark:text-red-400"
+								>
+									Legacy
+								</span>
+							</span>
+						</SelectItem>
+						<SelectItem value="v2" label="Version 2">
 							<span class="flex w-full items-center justify-between gap-2">
 								<span>v2</span>
 								<span
-									class="rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-amber-700 uppercase dark:text-amber-400"
+									class="rounded border border-green-500/40 bg-green-500/10 px-1.5 py-px font-mono text-[10px] font-semibold tracking-wide text-green-700 uppercase dark:text-green-400"
 								>
-									Beta
+									Stable
 								</span>
 							</span>
 						</SelectItem>

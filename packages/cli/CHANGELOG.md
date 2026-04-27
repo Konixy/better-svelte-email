@@ -4,114 +4,62 @@
 
 ### Major Changes
 
-- b41cc08: # New in v2
+### New in v2
 
-  A CLI (`npx @better-svelte-email/cli`) has been added to preview your emails locally. It replaces the old preview system.
+A CLI (`npx @better-svelte-email/cli`) has been added to preview your emails locally. It replaces the old preview system.
 
-  I also have migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
+I also have migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
 
-  ## Breaking Changes
+### Breaking Changes
 
-  The `better-svelte-email` package is now deprecated. You should use the new isolated packages instead.
-  See the migration guide below for more details.
+The `better-svelte-email` package is now deprecated. You should use the new isolated packages instead.
+See the migration guide below for more details.
 
-  ## Migration Guide
+### Migration Guide
 
-  ### Update your dependencies
+### Update your dependencies
 
-  First, uninstall the old package:
+First, uninstall the old package:
 
-  ```bash
-  npm uninstall better-svelte-email
-  ```
+```bash
+npm uninstall better-svelte-email
+```
 
-  Then, install the new packages:
+Then, install the new packages:
 
-  ```bash
-  npm install @better-svelte-email/components @better-svelte-email/server
-  ```
+```bash
+npm install @better-svelte-email/components @better-svelte-email/server
+```
 
-  If you are using the preview system, you will need to install the preview package:
+If you are using the preview system, you will need to install the preview package:
 
-  ```bash
-  npm install @better-svelte-email/preview
-  ```
+```bash
+npm install @better-svelte-email/preview
+```
 
-  ### Update your imports
+### Update your imports
 
-  You will need to update all your imports across your project to use the new packages.
+You will need to update all your imports across your project to use the new packages.
 
-  For the renderer, import it from the server package:
+For the renderer, import it from the server package:
 
-  ```typescript
-  import { Renderer } from '@better-svelte-email/server';
-  ```
+```typescript
+import { Renderer } from '@better-svelte-email/server';
+```
 
-  For the components, import them from the components package:
+For the components, import them from the components package:
 
-  ```typescript
-  import { Button, Text, Heading, Container, Section } from '@better-svelte-email/components';
-  ```
+```typescript
+import { Button, Text, Heading, Container, Section } from '@better-svelte-email/components';
+```
 
-  For the preview, import it from the preview package:
+For the preview, import it from the preview package:
 
-  ```typescript
-  import { EmailPreview } from '@better-svelte-email/preview';
-  ```
+```typescript
+import { EmailPreview } from '@better-svelte-email/preview';
+```
 
-  And that's it!
-
-- 4825786: # New in v2
-
-  A CLI (`npx @better-svelte-email/cli`) has been added to preview your emails locally. It replaces the old preview system.
-
-  I also have migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
-
-  ## Migration Guide
-
-  ### Update your dependencies
-
-  First, uninstall the old package:
-
-  ```bash
-  npm uninstall better-svelte-email
-  ```
-
-  Then, install the new packages:
-
-  ```bash
-  npm install @better-svelte-email/components @better-svelte-email/server
-  ```
-
-  If you are using the preview system, you will need to install the preview package:
-
-  ```bash
-  npm install @better-svelte-email/preview
-  ```
-
-  ### Update your imports
-
-  You will need to update all your imports across your project to use the new packages.
-
-  For the renderer, import it from the server package:
-
-  ```typescript
-  import { Renderer } from '@better-svelte-email/server';
-  ```
-
-  For the components, import them from the components package:
-
-  ```typescript
-  import { Button, Text, Heading, Container, Section } from '@better-svelte-email/components';
-  ```
-
-  For the preview, import it from the preview package:
-
-  ```typescript
-  import { EmailPreview } from '@better-svelte-email/preview';
-  ```
-
-  And that's it!
+And that's it!
 
 ### Patch Changes
 
@@ -175,57 +123,7 @@
 
 ### Major Changes
 
-- 4825786: # New in v2
-
-  A CLI (`npx @better-svelte-email/cli`) has been added to preview your emails locally. It replaces the old preview system.
-
-  I've also migrated the codebase to a monorepo with new isolated packages (ex: @better-svelte-email/preview, @better-svelte-email/server, @better-svelte-email/components) instead of a single package. This allows for better isolation and modularity, making it easier to maintain and update the different parts of the library. It also reduces the bundle size of the library, when you only need to install the packages you need.
-
-  ## Migration Guide
-
-  ### Update your dependencies
-
-  First, uninstall the old package:
-
-  ```bash
-  npm uninstall better-svelte-email
-  ```
-
-  Then, install the new packages:
-
-  ```bash
-  npm install @better-svelte-email/components @better-svelte-email/server
-  ```
-
-  If you are using the preview system, you will need to install the preview package:
-
-  ```bash
-  npm install @better-svelte-email/preview
-  ```
-
-  ### Update your imports
-
-  You will need to update all your imports across your project to use the new packages.
-
-  For the renderer, import it from the server package:
-
-  ```typescript
-  import { Renderer } from '@better-svelte-email/server';
-  ```
-
-  For the components, import them from the components package:
-
-  ```typescript
-  import { Button, Text, Heading, Container, Section } from '@better-svelte-email/components';
-  ```
-
-  For the preview, import it from the preview package:
-
-  ```typescript
-  import { EmailPreview } from '@better-svelte-email/preview';
-  ```
-
-  And that's it!
+- 4825786: v2 beta initial release
 
 ### Patch Changes
 

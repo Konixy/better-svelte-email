@@ -1,5 +1,15 @@
 # better-svelte-email
 
+## 2.0.1
+
+### Patch Changes
+
+- 198c010: Removed the `@better-svelte-email/server` dependency for the `@better-svelte-email/components` package. Also updated READMEs across the library.
+- Updated dependencies [198c010]
+  - @better-svelte-email/components@2.0.1
+  - @better-svelte-email/preview@2.0.1
+  - @better-svelte-email/server@2.0.1
+
 ## 2.0.0
 
 ### Major Changes

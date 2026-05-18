@@ -9,6 +9,7 @@
 ## server
 
 - [ ] remove hydratation warnings
+- [ ] add inferred props typing ([#83](https://github.com/Konixy/better-svelte-email/pull/83))
 
 ## docs
 

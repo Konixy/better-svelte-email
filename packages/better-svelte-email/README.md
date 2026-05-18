@@ -1,7 +1,7 @@
 # better-svelte-email
 
 > [!WARNING]
-> **Compatibility package:** this npm name exists mainly for a **single-install** workflow. It **re-exports** `[@better-svelte-email/server](../server)` and `[@better-svelte-email/components](../components)`, and depends on `[@better-svelte-email/preview](../preview)` so versions stay aligned. It does **not** add its own runtime beyond those re-exports.
+> **Compatibility package:** this npm name exists mainly for a **single-install** workflow. It **re-exports** [`@better-svelte-email/server`](../server) and [`@better-svelte-email/components`](../components), and depends on [`@better-svelte-email/preview`](../preview) so versions stay aligned. It does **not** add its own runtime beyond those re-exports.
 >
 > **Maintenance:** active development targets the scoped packages below. This meta-package **may receive less attention over time** and is not guaranteed to track every new export from the underlying packages—prefer depending on **`@better-svelte-email/*`** directly when you want the clearest upgrade path.
 
@@ -28,7 +28,7 @@ Minimum **Svelte** version: **5.14.3**.
 From **`better-svelte-email`** (main export):
 
 - **`Renderer`** and **`toPlainText`** — server-side HTML (+ optional plain text) from `.svelte` templates, with Tailwind inlined for email clients
-- **Email layout components** — `Html`, `Body`, `Container`, `Section`, `Text`, `Button`, … (same as `[@better-svelte-email/components](../components)`)
+- **Email layout components** — `Html`, `Body`, `Container`, `Section`, `Text`, `Button`, … (same as [`@better-svelte-email/components`](../components))
 
 From **`@better-svelte-email/preview`** (installed as a dependency; import this module name):
 
@@ -37,22 +37,6 @@ From **`@better-svelte-email/preview`** (installed as a dependency; import this 
 ## Monorepo
 
 Source: [github.com/Konixy/better-svelte-email](https://github.com/Konixy/better-svelte-email) — this directory is `packages/better-svelte-email`.
-
-## Development
-
-From the repository root:
-
-```bash
-bun run build --filter=better-svelte-email
-bun run test --filter=better-svelte-email
-```
-
-Or from this package:
-
-```bash
-bun run build
-bun run test
-```
 
 ## License
 

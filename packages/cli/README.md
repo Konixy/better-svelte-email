@@ -1,7 +1,7 @@
 # @better-svelte-email/cli
 
-> [!WARNING]
-> This package is still in **beta**; APIs, CLI behavior, and defaults may change before a stable release.
+<!-- > [!WARNING]
+> This package is still in **beta**; APIs, CLI behavior, and defaults may change before a stable release. -->
 
 Command-line tool for Better Svelte Email: run a **local email preview** with file watching, Tailwind-aware rendering (via [`@better-svelte-email/server`](../server)), and an embedded or dev preview app.
 
@@ -12,8 +12,6 @@ npm i -D @better-svelte-email/cli
 ```
 
 The executable is **`bse`**.
-
-**Optional peer:** `@sveltejs/kit` ^2 — used when integrating with Kit-powered preview workflows.
 
 ## Usage
 
@@ -39,20 +37,6 @@ The published CLI depends on the internal [`@better-svelte-email/preview-server`
 ## Monorepo
 
 [github.com/Konixy/better-svelte-email](https://github.com/Konixy/better-svelte-email) — `packages/cli`.
-
-## Development
-
-```bash
-bun run dev
-```
-
-Runs `bse` in watch mode with paths suitable for this repo’s docs app (see `dev` script in `package.json`).
-
-```bash
-bun run build
-bun run test
-bun run lint
-```
 
 ## License
 

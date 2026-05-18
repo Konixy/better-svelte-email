@@ -3,14 +3,14 @@
     <img src="/banner.png" alt="Better Svelte Email, the only way to build emails in Svelte" width="1280" height="640">
   </a>
   <p align="center">
-    <a href="https://www.npmjs.com/package/better-svelte-email">
-      <img src="https://img.shields.io/npm/v/better-svelte-email.svg?logo=npm" alt="npm version">
+    <a href="https://www.npmjs.com/package/@better-svelte-email/server">
+      <img src="https://img.shields.io/npm/v/@better-svelte-email/server.svg?logo=npm" alt="npm version">
     </a>
     <a href="https://github.com/Konixy/better-svelte-email/stargazers">
       <img src="https://img.shields.io/github/stars/Konixy/better-svelte-email?style=default&logo=github" alt="GitHub stars">
     </a>
-    <a href="https://www.npmjs.com/package/better-svelte-email">
-      <img src="https://img.shields.io/npm/dw/better-svelte-email" alt="npm downloads">
+    <a href="https://www.npmjs.com/package/@better-svelte-email/server">
+      <img src="https://img.shields.io/npm/dw/@better-svelte-email/server" alt="npm downloads">
     </a>
   </p>
   <p align="center">
@@ -30,6 +30,7 @@ See the [documentation](https://better-svelte-email.konixy.dev/docs) for a compl
 - **Email Preview via CLI** - Visual email preview and test sending, just run `npx @better-svelte-email/cli dev`
 - **TypeScript First** - Fully typed with comprehensive type definitions
 - **Well Tested** - >90% test coverage with unit and integration tests
+- **Minimal** - Whole library is under 16k lines of code and ≈220kb uncompressed
 
 ## Why?
 

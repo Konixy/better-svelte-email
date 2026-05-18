@@ -12,7 +12,7 @@
 			"optional": true
 		}
 	},
-	"dependencies": {
+	"devDependencies": {
 		"@better-svelte-email/server": "workspace:*"
 	},
 	"exports": {

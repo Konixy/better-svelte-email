@@ -1,5 +1,15 @@
 # @better-svelte-email/preview-server
 
+## 2.1.0
+
+### Minor Changes
+
+- 6a6cc75: - Allow external images in cli email preview
+  - Add Resend test email sending from the CLI preview UI, with optional `.bse/resend.json` credential storage.
+    See [the docs](http://localhost:5173/docs/email-dev-server#send-test-email-using-resend) for more details.
+  - Small preview UI improvements and fixes
+  - Updated dependencies
+
 ## 2.0.1
 
 ### Patch Changes

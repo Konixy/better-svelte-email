@@ -4,6 +4,7 @@ import { mdsvex, escapeSvelte } from 'mdsvex';
 import { createHighlighter } from 'shiki';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import rehypeEnhancedTables from '@benjc/rehype-enhanced-tables';
 
 const theme = 'vesper';
 const highlighter = await createHighlighter({
@@ -20,7 +21,8 @@ const mdsvexOptions = {
 			{
 				properties: { class: 'heading-link', title: 'Link to this heading' }
 			}
-		]
+		],
+		rehypeEnhancedTables
 	],
 	highlight: {
 		highlighter: async (code, lang = 'text') => {

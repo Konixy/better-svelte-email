@@ -301,4 +301,38 @@
 	:global(.md .docs-beta-notice p + p) {
 		@apply mt-2;
 	}
+
+	:global(.md .ret-table-wrapper) {
+		@apply -mx-1 my-6 overflow-x-auto px-1;
+	}
+
+	:global(.md .ret-table) {
+		@apply w-full min-w-lg border-collapse border border-border text-sm;
+	}
+
+	:global(.md .ret-table-thead) {
+		@apply bg-muted/50;
+	}
+
+	:global(.md .ret-table-th) {
+		@apply border-b border-border px-4 py-2.5 text-left font-semibold text-foreground;
+	}
+
+	:global(.md .ret-table-cell) {
+		@apply border-t border-border px-4 py-2.5 align-top leading-relaxed;
+	}
+
+	:global(.md .ret-table-body .ret-table-row:hover) {
+		@apply bg-muted/25;
+	}
+
+	:global(.md .ret-table-th:first-child),
+	:global(.md .ret-table-cell:first-child) {
+		@apply font-mono text-[13px] text-foreground/90;
+	}
+
+	:global(.md .ret-table-th code),
+	:global(.md .ret-table-cell code) {
+		@apply text-[12px];
+	}
 </style>

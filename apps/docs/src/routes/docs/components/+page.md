@@ -31,83 +31,121 @@ Use `Html`, `Head`, and `Body` at the root, then mix layout and content componen
 
 ### Html
 
-- `lang? = 'en'` — Language attribute.
-- `dir? = 'ltr'` — Text direction.
-- Accepts all `<html>` attributes plus a default slot for nested components.
+| Prop | Description |
+| ---- | ----------- |
+| `lang? = 'en'` | Language attribute |
+| `dir? = 'ltr'` | Text direction |
+| *(default slot)* | Nested components |
+| *(attributes)* | All `<html>` attributes |
 
 ### Head
 
-- Default slot for meta tags, styles, or fonts.
-- No custom props beyond standard `<head>` children.
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | Meta tags, styles, or fonts |
+| *(children)* | Standard `<head>` children only; no custom props |
 
 ### Body
 
-- Default slot for your email content.
-- Accepts all `<body>` attributes (`class`, `style`, etc.).
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | Email content |
+| *(attributes)* | All `<body>` attributes (`class`, `style`, etc.) |
 
 ### Preview
 
-- `preview: string` (required) — Text shown in inbox previews, trimmed to 150 characters.
-- Forwards standard `<div>` attributes.
+| Prop | Description |
+| ---- | ----------- |
+| `preview: string` | Inbox preview text (required); trimmed to 150 characters |
+| *(attributes)* | Standard `<div>` attributes |
 
 ## Layout
 
 ### Container
 
-- Default slot for Inner sections.
-- Merges `style` with a max-width of `37.5em`; accepts all `<table>` attributes.
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | Inner sections |
+| `style` | Merged with a max-width of `37.5em` |
+| *(attributes)* | All `<table>` attributes |
 
 ### Section
 
-- A wrapper around content blocks.
-- Accepts all `<table>` attributes and a default slot.
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | Wrapper around content blocks |
+| *(attributes)* | All `<table>` attributes |
 
 ### Row
 
-- Groups columns horizontally.
-- Default slot for `Column` components, plus `<table>` attributes.
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | `Column` components; groups columns horizontally |
+| *(attributes)* | All `<table>` attributes |
 
 ### Column
 
-- Wraps content inside a table cell.
-- Accepts all `<td>` attributes, including `align`, `width`, and `style`.
+| Prop | Description |
+| ---- | ----------- |
+| *(default slot)* | Cell content |
+| *(attributes)* | All `<td>` attributes (`align`, `width`, `style`, etc.) |
 
 ## Typography
 
 ### Heading
 
-- `as? = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'` — Element to render.
-- Margin shorthands: `m`, `mx`, `my`, `mt`, `mr`, `mb`, `ml`.
-- Default slot for heading text; forwards remaining `<h*>` attributes.
+| Prop | Description |
+| ---- | ----------- |
+| `as?` | Element to render (`h1`–`h6`, default `h1`) |
+| `m`, `mx`, `my`, `mt`, `mr`, `mb`, `ml` | Margin shorthands |
+| *(default slot)* | Heading text |
+| *(attributes)* | Remaining `<h*>` attributes |
 
 ### Text
 
-- `as? = string` — Element type, defaults to `<p>`.
-- Default slot for body copy and all `<p>` attributes.
-- Merges `style` with default font size/line height.
+| Prop | Description |
+| ---- | ----------- |
+| `as? = string` | Element type; defaults to `<p>` |
+| *(default slot)* | Body copy |
+| `style` | Merged with default font size and line height |
+| *(attributes)* | All `<p>` attributes |
 
 ## Links and buttons
 
 ### Link
 
-- `href: string` (required).
-- `target? = '_blank'`.
-- Default slot for link text; all other anchor attributes pass through.
+| Prop | Description |
+| ---- | ----------- |
+| `href: string` | Destination URL (required) |
+| `target? = '_blank'` | Link target |
+| *(default slot)* | Link text |
+| *(attributes)* | Remaining anchor attributes |
 
 ### Button
 
-- `href? = '#'`.
-- `target? = '_blank'`.
-- `pX? = 0`, `pY? = 0` — Horizontal and vertical padding in pixels.
-- Default slot for button content; forwards remaining `<a>` attributes.
+| Prop | Description |
+| ---- | ----------- |
+| `href? = '#'` | Destination URL |
+| `target? = '_blank'` | Link target |
+| `pX? = 0` | Horizontal padding in pixels |
+| `pY? = 0` | Vertical padding in pixels |
+| *(default slot)* | Button content |
+| *(attributes)* | Remaining `<a>` attributes |
 
 ## Media and dividers
 
 ### Img
 
-- `src: string`, `alt: string`, `width: string`, `height: string` (all required).
-- Forwards additional `<img>` attributes and merges custom styles.
+| Prop | Description |
+| ---- | ----------- |
+| `src: string` | Image URL (required) |
+| `alt: string` | Alt text (required) |
+| `width: string` | Width (required) |
+| `height: string` | Height (required) |
+| *(attributes)* | Additional `<img>` attributes; custom styles are merged |
 
 ### Hr
 
-- Accepts all `<hr>` attributes and merges any styles you provide.
+| Prop | Description |
+| ---- | ----------- |
+| *(attributes)* | All `<hr>` attributes; provided styles are merged |

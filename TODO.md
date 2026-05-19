@@ -3,7 +3,7 @@
 ## cli
 
 - [ ] add ability to pass props to the email component and have it rendered realtime
-- [ ] add test sending email via resend
+- [x] add test sending email via resend
 - [ ] add good practices insights
 
 ## server

@@ -32,6 +32,25 @@ export async function loadEmails() {
 	};
 }
 
+import { emptySendEmailConfig, type SendEmailConfig } from '$lib/send-email-config';
+
+export async function loadSendEmailConfig(): Promise<SendEmailConfig> {
+	try {
+		const response = await fetchPreviewApi('/api/send-email/config');
+		const payload = (await response.json()) as SendEmailConfig;
+		if (!response.ok) {
+			return emptySendEmailConfig();
+		}
+		return {
+			configured: payload.configured === true,
+			from: typeof payload.from === 'string' ? payload.from : null,
+			persisted: payload.persisted === true
+		};
+	} catch {
+		return emptySendEmailConfig();
+	}
+}
+
 export async function renderEmail(file: string) {
 	const response = await fetchPreviewApi('/api/render', {
 		method: 'POST',

@@ -100,6 +100,12 @@ Then:
 npm run email:dev
 ```
 
+## Send test email (using Resend)
+
+Use **Send Email** in the preview toolbar (next to **Copy HTML**) to send a test email using your [Resend](https://resend.com) API key and sender address (defaults to `onboarding@resend.dev`). You can optionally save credentials to `.bse/resend.json` in the project; otherwise they last until you stop the dev server.
+
+See [cli flags](#resend-api-key-and-sender-address) to provide credentials from the command line.
+
 ## CLI options
 
 | Option                         | Description                                                                                                                                                                  |
@@ -107,9 +113,10 @@ npm run email:dev
 | `-p, --port <port>`            | Port for the preview server (default `3000`)                                                                                                                                 |
 | `-d, --dir <directory>`        | Folder of `.svelte` email templates to watch (default `src/lib/emails`)                                                                                                      |
 | `-c, --custom-css-path <path>` | File whose contents are passed as `customCSS` to the renderer (Tailwind v4 / theme parity). If omitted, the CLI tries `src/app.css` or `src/routes/layout.css` when present. |
-| `--preview-dev`                | Run the preview UI from a local **preview-server** Vite dev server (monorepo / CLI development) instead of the published runtime package.                                    |
-| `--preview-port <port>`        | Port for `--preview-dev` UI (default `3001`; must differ from `--port`).                                                                                                     |
 | `--no-hmr`                     | Disable live reload when templates or watched CSS change.                                                                                                                    |
+| `--resend-api-key <key>`       | Resend API key for test sends from the preview UI                                                                                                                            |
+| `--resend-from <address>`      | Sender for test emails (default `onboarding@resend.dev`)                                                                                                                     |
+| `--resend-persist`             | When used with `--resend-api-key`, save credentials to `.bse/resend.json` in the project                                                                                     |
 
 ### Custom emails directory
 
@@ -123,22 +130,17 @@ npx @better-svelte-email/cli dev -d src/emails
 npx @better-svelte-email/cli dev -c src/app.css
 ```
 
-### Two-port mode (`--preview-dev`)
+### Resend api key and sender address
 
-For working on the preview app itself (e.g. in this monorepo), the API and UI run on separate ports. The CLI prints both URLs—for example:
+Use **Send Email** in the preview toolbar (next to **Copy HTML**). On first use, enter your [Resend](https://resend.com) API key and sender address (defaults to `onboarding@resend.dev`). You can optionally save credentials to `.bse/resend.json` in the project; otherwise they last until you stop the dev server.
 
-- Preview API: `http://localhost:3000`
-- Preview UI: `http://localhost:3001`
+From the CLI you can also pass:
 
-## HTTP API (used by the preview UI)
+```bash
+bse dev --resend-api-key re_xxx --resend-from onboarding@resend.dev --resend-persist
+```
 
-The dev server exposes a small JSON API (also used by the bundled preview):
-
-- **`GET /api/emails`** — lists template files under the configured emails directory.
-- **`GET /api/source?file=…`** — returns source for a template path.
-- **`POST /api/render`** — body `{ "file": "…", "props": { … }, "includeSource"?: boolean }` — returns rendered HTML (and optional source).
-
-There is **no built-in “send test email”** endpoint in the CLI server; use your provider (Resend, etc.) from your own app or scripts if you need outbound mail.
+`--resend-persist` writes `.bse/resend.json` when used with `--resend-api-key`.
 
 ## Troubleshooting
 

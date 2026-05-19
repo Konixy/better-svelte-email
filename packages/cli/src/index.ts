@@ -26,6 +26,15 @@ program
 		'Path to CSS injected as raw customCSS (defaults to src/app.css or src/routes/layout.css if available)'
 	)
 	.option('--no-hmr', 'Disable live reload when email templates or preview CSS change')
+	.option('--resend-api-key <key>', 'Resend API key for sending test emails from the preview UI')
+	.option(
+		'--resend-from <address>',
+		'Sender address for test emails (default onboarding@resend.dev)'
+	)
+	.option(
+		'--resend-persist',
+		'When used with --resend-api-key, save credentials to .bse/resend.json in the project'
+	)
 	.action(dev);
 
 program.parse(process.argv);

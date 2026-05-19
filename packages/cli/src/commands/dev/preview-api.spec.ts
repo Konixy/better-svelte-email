@@ -10,6 +10,14 @@ import {
 	resolveEmailsRoot,
 	tryResolveSvelteKitRuntimeApp
 } from './preview-api';
+import { createResendCredentialsStore } from './resend-credentials';
+
+function createTestPreviewApiHandler(emailsDir: string) {
+	return createPreviewApiHandler({
+		emailsDir,
+		resendCredentials: createResendCredentialsStore()
+	});
+}
 
 function makeRequest(options: { method: string; url: string; body?: string }): IncomingMessage {
 	const stream = new PassThrough();
@@ -103,7 +111,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('GET /api/emails returns sorted relative paths', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/api/emails' });
 		const { res, status, json } = collectResponse();
 		const handled = await handlePreviewApi(new URL('http://127.0.0.1/api/emails'), req, res);
@@ -115,7 +123,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('GET /api/source returns file contents', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/api/source?file=Welcome' });
 		const { res, status, json } = collectResponse();
 		await handlePreviewApi(new URL('http://127.0.0.1/api/source?file=Welcome'), req, res);
@@ -126,7 +134,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('GET /api/source rejects path traversal', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/api/source?file=../Welcome' });
 		const { res, status, json } = collectResponse();
 		await handlePreviewApi(new URL('http://127.0.0.1/api/source?file=../Welcome'), req, res);
@@ -135,7 +143,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('GET /api/source returns 404 for missing file', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/api/source?file=Missing' });
 		const { res, status, json } = collectResponse();
 		await handlePreviewApi(new URL('http://127.0.0.1/api/source?file=Missing'), req, res);
@@ -144,7 +152,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('POST /api/render returns 404 when file is missing (before Vite)', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({
 			method: 'POST',
 			url: '/api/render',
@@ -157,7 +165,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('POST /api/render rejects invalid JSON body', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({
 			method: 'POST',
 			url: '/api/render',
@@ -170,7 +178,7 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('returns false for non-API paths', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/' });
 		const { res, status, raw } = collectResponse();
 		const handled = await handlePreviewApi(new URL('http://127.0.0.1/'), req, res);
@@ -180,11 +188,59 @@ describe('createPreviewApiHandler()', () => {
 	});
 
 	it('unknown API route returns 404 JSON', async () => {
-		const { handlePreviewApi } = createPreviewApiHandler({ emailsDir: '.' });
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
 		const req = makeRequest({ method: 'GET', url: '/api/unknown' });
 		const { res, status, json } = collectResponse();
 		await handlePreviewApi(new URL('http://127.0.0.1/api/unknown'), req, res);
 		expect(status()).toBe(404);
 		expect((json() as { error: { message: string } }).error.message).toContain('not found');
+	});
+
+	it('GET /api/send-email/config reports unconfigured by default', async () => {
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
+		const req = makeRequest({ method: 'GET', url: '/api/send-email/config' });
+		const { res, status, json } = collectResponse();
+		await handlePreviewApi(new URL('http://127.0.0.1/api/send-email/config'), req, res);
+		expect(status()).toBe(200);
+		expect(json()).toEqual({ configured: false, from: null, persisted: false });
+	});
+
+	it('POST /api/send-email/config stores session credentials without persisting', async () => {
+		const store = createResendCredentialsStore(tmpDir);
+		const { handlePreviewApi } = createPreviewApiHandler({
+			emailsDir: '.',
+			resendCredentials: store
+		});
+		const req = makeRequest({
+			method: 'POST',
+			url: '/api/send-email/config',
+			body: JSON.stringify({
+				apiKey: 're_test',
+				from: 'onboarding@resend.dev',
+				persist: false
+			})
+		});
+		const { res, status, json } = collectResponse();
+		await handlePreviewApi(new URL('http://127.0.0.1/api/send-email/config'), req, res);
+		expect(status()).toBe(200);
+		expect((json() as { configured: boolean }).configured).toBe(true);
+		expect(store.get()?.apiKey).toBe('re_test');
+	});
+
+	it('POST /api/send-email rejects when not configured', async () => {
+		const { handlePreviewApi } = createTestPreviewApiHandler('.');
+		const req = makeRequest({
+			method: 'POST',
+			url: '/api/send-email',
+			body: JSON.stringify({
+				to: 'user@example.com',
+				file: 'Welcome',
+				html: '<p>Hi</p>'
+			})
+		});
+		const { res, status, json } = collectResponse();
+		await handlePreviewApi(new URL('http://127.0.0.1/api/send-email'), req, res);
+		expect(status()).toBe(400);
+		expect((json() as { error: { message: string } }).error.message).toContain('not configured');
 	});
 });

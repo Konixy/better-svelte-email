@@ -6,6 +6,8 @@ import { format } from 'prettier';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { createServer, normalizePath, type Plugin, type ViteDevServer } from 'vite';
 import type { RendererOptions, TailwindConfig } from '@better-svelte-email/server';
+import { RESEND_DEFAULT_FROM, type createResendCredentialsStore } from './resend-credentials';
+import { defaultPreviewSubject, isValidEmailAddress, sendEmailViaResend } from './send-email';
 
 const PREVIEW_SK_VIRTUAL = '\0preview-sk:';
 
@@ -187,15 +189,24 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 	};
 }
 
+type ResendCredentialsStore = ReturnType<typeof createResendCredentialsStore>;
+
 type PreviewApiOptions = {
 	emailsDir: string;
 	customCssPath?: string;
+	resendCredentials: ResendCredentialsStore;
 };
 
-type RenderBody = {
+type PreviewApiJsonBody = {
 	file?: string;
 	props?: Record<string, unknown>;
 	includeSource?: boolean;
+	apiKey?: string;
+	from?: string;
+	persist?: boolean;
+	to?: string;
+	html?: string;
+	subject?: string;
 };
 
 const JSON_CONTENT_TYPE = 'application/json; charset=utf-8';
@@ -350,7 +361,7 @@ async function listEmailsRecursively(rootDir: string, currentDir = rootDir): Pro
 	return files;
 }
 
-async function readJsonBody(req: IncomingMessage): Promise<RenderBody> {
+async function readJsonBody(req: IncomingMessage): Promise<PreviewApiJsonBody> {
 	let rawBody = '';
 
 	for await (const chunk of req) {
@@ -370,7 +381,7 @@ async function readJsonBody(req: IncomingMessage): Promise<RenderBody> {
 			throw new Error('Invalid JSON object.');
 		}
 
-		return parsed as RenderBody;
+		return parsed as PreviewApiJsonBody;
 	} catch {
 		throw createError('Request body must be valid JSON.', 400);
 	}
@@ -580,6 +591,92 @@ export function createPreviewApiHandler(options: PreviewApiOptions): PreviewApiB
 				}
 
 				sendJson(res, 200, payload);
+				return true;
+			}
+
+			if (requestUrl.pathname === '/api/send-email/config' && req.method === 'GET') {
+				const config = await options.resendCredentials.getPublicConfig();
+				sendJson(res, 200, config);
+				return true;
+			}
+
+			if (requestUrl.pathname === '/api/send-email/config' && req.method === 'POST') {
+				const body = await readJsonBody(req);
+				const apiKey = typeof body.apiKey === 'string' ? body.apiKey.trim() : '';
+				const from =
+					typeof body.from === 'string' && body.from.trim()
+						? body.from.trim()
+						: RESEND_DEFAULT_FROM;
+				const persist = body.persist === true;
+
+				if (!apiKey) {
+					throw createError('Resend API key is required.', 400);
+				}
+
+				await options.resendCredentials.setCredentials({ apiKey, from }, { persist });
+				const config = await options.resendCredentials.getPublicConfig();
+				sendJson(res, 200, { ...config, configured: true });
+				return true;
+			}
+
+			if (requestUrl.pathname === '/api/send-email' && req.method === 'POST') {
+				const body = await readJsonBody(req);
+				const credentials = options.resendCredentials.get();
+				if (!credentials) {
+					throw createError(
+						'Resend is not configured. Add your API key in the preview UI or pass --resend-api-key.',
+						400
+					);
+				}
+
+				const to = typeof body.to === 'string' ? body.to.trim() : '';
+				if (!to || !isValidEmailAddress(to)) {
+					throw createError('A valid recipient email is required.', 400);
+				}
+
+				const file = sanitizeFileInput(body.file);
+				if (!file) {
+					throw createError('Missing or invalid "file" value.', 400);
+				}
+
+				let html = typeof body.html === 'string' ? body.html : '';
+				if (!html.trim()) {
+					const filePath = resolveEmailFile(emailsRoot, file);
+					try {
+						await fs.access(filePath);
+					} catch (error) {
+						if (isMissingFileError(error)) {
+							throw createError('Email component not found.', 404);
+						}
+						throw error;
+					}
+
+					const props =
+						body.props && typeof body.props === 'object' && !Array.isArray(body.props)
+							? body.props
+							: {};
+					const customCSS = await customCssPromise;
+					const rendered = await renderEmailComponent(filePath, props, customCSS);
+					html = rendered.html;
+				}
+
+				const subject =
+					typeof body.subject === 'string' && body.subject.trim()
+						? body.subject.trim()
+						: defaultPreviewSubject(file);
+
+				const sent = await sendEmailViaResend(credentials, {
+					from: credentials.from,
+					to,
+					subject,
+					html
+				});
+
+				if (!sent.success) {
+					throw createError(sent.error.message, 502);
+				}
+
+				sendJson(res, 200, { success: true });
 				return true;
 			}
 

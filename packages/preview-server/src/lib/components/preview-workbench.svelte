@@ -15,13 +15,16 @@
 	import { createSearchParamsSchema, useSearchParams } from 'runed/kit';
 	import { useTheme } from 'svelte-themes';
 	import EmailTreeNode from '$lib/components/email-tree-node.svelte';
+	import SendEmailControls from '$lib/components/send-email-controls.svelte';
 	import ShikiCode from '$lib/components/shiki-code.svelte';
 	import { buildEmailTree, filterEmailTree, type EmailTreeEntry } from '$lib/email-tree';
+	import { emptySendEmailConfig, type SendEmailConfig } from '$lib/send-email-config';
 	import { cn } from '$lib/utils';
 	import { Check, CodeIcon, MailWarningIcon, PanelLeftClose } from '@lucide/svelte';
 	import SvelteIcon from '$lib/svelte-icon.svelte';
 	import * as Tooltip from './ui/tooltip';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import Button from './ui/button/button.svelte';
 
 	type Props = {
 		files: string[];
@@ -32,6 +35,8 @@
 		source: string;
 		renderTimeMs: number | null;
 		renderError: { message?: string; stack?: string } | null;
+		previewApiOrigin?: string;
+		sendEmailConfig?: SendEmailConfig;
 	};
 
 	type ViewMode = 'render' | 'html' | 'source';
@@ -204,7 +209,9 @@
 		html,
 		source,
 		renderTimeMs,
-		renderError
+		renderError,
+		previewApiOrigin = '',
+		sendEmailConfig = emptySendEmailConfig()
 	}: Props = $props();
 
 	function formatRenderTimeMs(ms: number): string {
@@ -675,18 +682,16 @@
 						</button>
 					</div>
 
-					<button
-						class="flex items-center gap-2 border border-border bg-background px-3 py-1.5 text-xs transition-colors hover:bg-muted disabled:opacity-50"
-						onclick={copyHtml}
-						disabled={!html || viewMode !== 'render'}
-					>
+					<Button variant="outline" size="sm" onclick={copyHtml} disabled={!html}>
 						{#if copied}
 							<Check class="size-3" />
 						{:else}
 							<Copy class="size-3" />
 						{/if}
 						Copy HTML
-					</button>
+					</Button>
+
+					<SendEmailControls {previewApiOrigin} {sendEmailConfig} {selectedFile} {html} />
 				</div>
 			{/if}
 		</header>

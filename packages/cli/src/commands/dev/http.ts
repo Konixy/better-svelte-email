@@ -1,11 +1,48 @@
 import http from 'node:http';
 
+const LOCAL_PREVIEW_ORIGIN =
+	/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i;
+
+export function isLocalPreviewOrigin(origin: string | undefined) {
+	return typeof origin === 'string' && LOCAL_PREVIEW_ORIGIN.test(origin.trim());
+}
+
+/** CORS for preview UI on a different localhost port (e.g. `--preview-dev`). */
 export function allowPreviewCors(req: http.IncomingMessage, res: http.ServerResponse) {
 	const origin = req.headers.origin;
-	if (origin && /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i.test(origin.trim())) {
-		res.setHeader('Access-Control-Allow-Origin', origin);
-		res.setHeader('Vary', 'Origin');
+	if (!isLocalPreviewOrigin(origin)) {
+		return;
 	}
+
+	res.setHeader('Access-Control-Allow-Origin', origin!);
+	res.setHeader('Vary', 'Origin');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	res.setHeader('Access-Control-Max-Age', '86400');
+}
+
+/**
+ * Handles browser preflight for cross-origin `/api/*` calls.
+ * @returns true when the request was handled (caller should return).
+ */
+export function tryHandlePreviewApiCors(
+	requestUrl: URL,
+	req: http.IncomingMessage,
+	res: http.ServerResponse
+): boolean {
+	if (!requestUrl.pathname.startsWith('/api/')) {
+		return false;
+	}
+
+	allowPreviewCors(req, res);
+
+	if (req.method === 'OPTIONS') {
+		res.writeHead(204);
+		res.end();
+		return true;
+	}
+
+	return false;
 }
 
 export function parsePort(value: number | string, label: string) {

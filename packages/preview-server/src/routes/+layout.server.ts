@@ -1,11 +1,13 @@
 import { env } from '$env/dynamic/private';
+import { emptySendEmailConfig } from '$lib/send-email-config';
+import { loadSendEmailConfig } from '$lib/server/preview-api';
 
 function isPreviewHmrDisabled() {
 	const v = env.PREVIEW_HMR?.trim().toLowerCase();
 	return v === '0' || v === 'false' || v === 'off' || v === 'no';
 }
 
-export function load() {
+export async function load() {
 	const origin = env.PREVIEW_API_ORIGIN?.trim().replace(/\/+$/, '') ?? '';
 	const previewEventsUrl = isPreviewHmrDisabled()
 		? ''
@@ -13,5 +15,7 @@ export function load() {
 			? `${origin}/api/preview-events`
 			: '/api/preview-events';
 
-	return { previewEventsUrl };
+	const sendEmailConfig = origin ? await loadSendEmailConfig() : emptySendEmailConfig();
+
+	return { previewEventsUrl, previewApiOrigin: origin, sendEmailConfig };
 }

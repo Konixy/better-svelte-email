@@ -29,6 +29,9 @@ Common options:
 | `--preview-dev`                | Use the local [`preview-server`](../preview-server) Vite dev server instead of the bundled preview bundle |
 | `--preview-port <port>`        | Port for preview-dev (default `3001`)                                                                     |
 | `--no-hmr`                     | Disable live reload                                                                                       |
+| `--resend-api-key <key>`       | Resend API key for test sends from the preview UI                                                         |
+| `--resend-from <address>`      | Sender for test emails (default `onboarding@resend.dev`)                                                  |
+| `--resend-persist`             | With `--resend-api-key`, save credentials to `.bse/resend.json` (gitignored)                              |
 
 ## Build note (maintainers)
 

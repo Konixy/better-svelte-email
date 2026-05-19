@@ -2,9 +2,10 @@ import fs from 'node:fs/promises';
 import http from 'node:http';
 import chokidar, { type FSWatcher } from 'chokidar';
 import { debounceAsync } from './async-utils';
-import { allowPreviewCors, parsePort, proxyToPreviewServer } from './http';
+import { allowPreviewCors, parsePort, proxyToPreviewServer, tryHandlePreviewApiCors } from './http';
 import { createPreviewApiHandler } from './preview-api';
 import { startPreviewForDev, type ManagedPreviewServer } from './preview-servers';
+import { createResendCredentialsStore, RESEND_DEFAULT_FROM } from './resend-credentials';
 import type { DevOptions } from './types';
 
 export async function dev(options: DevOptions) {
@@ -18,9 +19,21 @@ export async function dev(options: DevOptions) {
 		throw new Error('The preview dev server port must be different from the backend port.');
 	}
 
+	const resendCredentials = createResendCredentialsStore();
+	if (options.resendApiKey?.trim()) {
+		await resendCredentials.initializeFromCliFlag(
+			{
+				apiKey: options.resendApiKey.trim(),
+				from: options.resendFrom?.trim() || RESEND_DEFAULT_FROM
+			},
+			options.resendPersist === true
+		);
+	}
+
 	const previewApi = createPreviewApiHandler({
 		emailsDir: options.dir,
-		customCssPath: options.customCssPath
+		customCssPath: options.customCssPath,
+		resendCredentials
 	});
 
 	const sseClients = new Set<http.ServerResponse>();
@@ -106,6 +119,14 @@ export async function dev(options: DevOptions) {
 			const requestUrl = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
 			if (tryHandlePreviewEvents(requestUrl, req, res)) {
 				return;
+			}
+
+			if (tryHandlePreviewApiCors(requestUrl, req, res)) {
+				return;
+			}
+
+			if (requestUrl.pathname.startsWith('/api/')) {
+				allowPreviewCors(req, res);
 			}
 
 			if (await previewApi.handlePreviewApi(requestUrl, req, res)) {

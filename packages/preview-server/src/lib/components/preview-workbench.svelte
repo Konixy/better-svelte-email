@@ -910,7 +910,7 @@
 												title="Rendered email preview"
 												srcdoc={iframeContent}
 												class="block h-full w-full rounded-xl bg-white"
-												sandbox="allow-popups allow-same-origin allow-scripts"
+												sandbox="allow-popups allow-scripts"
 											></iframe>
 
 											<!-- Live dimension badge -->

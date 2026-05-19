@@ -9,11 +9,9 @@
 	import PanelLeftOpen from '@lucide/svelte/icons/panel-left-open';
 	import Search from '@lucide/svelte/icons/search';
 	import Smartphone from '@lucide/svelte/icons/smartphone';
-	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import SunMedium from '@lucide/svelte/icons/sun-medium';
 	import Tablet from '@lucide/svelte/icons/tablet';
 	import Monitor from '@lucide/svelte/icons/monitor';
-	import WandSparkles from '@lucide/svelte/icons/wand-sparkles';
 	import { createSearchParamsSchema, useSearchParams } from 'runed/kit';
 	import { useTheme } from 'svelte-themes';
 	import EmailTreeNode from '$lib/components/email-tree-node.svelte';

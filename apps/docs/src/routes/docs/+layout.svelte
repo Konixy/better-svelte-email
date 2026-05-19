@@ -134,7 +134,7 @@
 		class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-6 pt-12 pb-32 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-16 lg:px-12"
 	>
 		<aside
-			class="flex flex-col gap-6 lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
+			class="flex flex-col gap-6 scroll-smooth lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
 		>
 			<div class="flex flex-col gap-2 px-0">
 				<div class="font-mono text-[10px] font-semibold text-muted-foreground">Version</div>
@@ -243,15 +243,15 @@
 	}
 
 	:global(.md h1) {
-		@apply mb-6 text-4xl leading-tight font-bold tracking-tight text-foreground;
+		@apply mb-6 scroll-mt-26 text-4xl leading-tight font-bold tracking-tight text-foreground;
 	}
 
 	:global(.md h2) {
-		@apply mt-12 border-b border-border pb-3 text-2xl font-semibold tracking-tight text-foreground;
+		@apply mt-12 scroll-mt-26 border-b border-border pb-3 text-2xl font-semibold tracking-tight text-foreground;
 	}
 
 	:global(.md h3) {
-		@apply mt-8 text-lg font-semibold tracking-tight text-foreground;
+		@apply mt-8 scroll-mt-26 text-lg font-semibold tracking-tight text-foreground;
 	}
 
 	:global(.md li::marker) {

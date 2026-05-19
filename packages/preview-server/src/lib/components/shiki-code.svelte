@@ -15,11 +15,11 @@
 	let highlightedHtml = $state<string | null>(null);
 	let highlighter = $state<Awaited<ReturnType<typeof createHighlighter>> | null>(null);
 
-	const theme = 'vesper';
+	let theme = $derived(isDark ? 'vesper' : 'github-light');
 
 	onMount(async () => {
 		highlighter = await createHighlighter({
-			themes: [theme],
+			themes: ['vesper', 'github-light'],
 			langs: ['html', 'svelte']
 		});
 	});

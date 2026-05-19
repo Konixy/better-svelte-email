@@ -898,7 +898,7 @@
 										<!-- iframe card -->
 										<div
 											class={cn(
-												'relative overflow-hidden rounded-[16px] border border-border bg-white shadow-xl',
+												'relative overflow-hidden border border-border bg-white shadow-xl',
 												!isResizing && 'transition-[width,height] duration-150 ease-out'
 											)}
 											style:width="{viewportWidth}px"
@@ -907,7 +907,7 @@
 											<iframe
 												title="Rendered email preview"
 												srcdoc={iframeContent}
-												class="block h-full w-full rounded-xl bg-white"
+												class="block h-full w-full bg-white"
 												sandbox="allow-popups allow-scripts"
 											></iframe>
 

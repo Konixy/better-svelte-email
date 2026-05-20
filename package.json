@@ -32,7 +32,7 @@
 		"eslint-plugin-svelte": "^3.17.1",
 		"globals": "^17.6.0",
 		"prettier": "^3.8.3",
-		"prettier-plugin-svelte": "^3.5.2",
+		"prettier-plugin-svelte": "^4.0.0",
 		"prettier-plugin-tailwindcss": "^0.8.0",
 		"publint": "^0.3.21",
 		"shiki": "^4.1.0",

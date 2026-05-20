@@ -38,7 +38,7 @@
 		"@tailwindcss/vite": "^4.3.0",
 		"@types/node": "24.10.9",
 		"bits-ui": "^2.18.1",
-		"hast-util-select": "6.0.2",
+		"hast-util-select": "6.0.4",
 		"prettier": "^3.8.3",
 		"svelte": "^5.55.8",
 		"tailwind-variants": "^3.2.2",

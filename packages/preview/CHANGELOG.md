@@ -1,5 +1,13 @@
 # @better-svelte-email/preview
 
+## 2.1.1
+
+### Patch Changes
+
+- 66be550: Updated packages, enabled npm trusted publisher and provenance
+- Updated dependencies [66be550]
+  - @better-svelte-email/server@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes

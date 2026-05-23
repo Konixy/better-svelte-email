@@ -72,12 +72,9 @@ jobs:
         uses: changesets/action@v1
         with:
           version: bun run ci:version
-          # changesets/action splits publish on whitespace (first token = executable); use a script.
           publish: bun run ci:publish
           commit: "chore: version packages"
           title: "chore: version packages"
           createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

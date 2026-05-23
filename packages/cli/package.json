@@ -37,14 +37,14 @@
 	"dependencies": {
 		"@better-svelte-email/preview-server": "workspace:*",
 		"@better-svelte-email/server": "workspace:*",
-		"@sveltejs/kit": "^2.60.1",
+		"@sveltejs/kit": "^2.61.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"chokidar": "^5.0.0",
 		"commander": "^14.0.3",
 		"prettier": "^3.8.3",
 		"resend": "^6.12.3",
-		"svelte": "^5.55.8",
-		"vite": "^8.0.13"
+		"svelte": "^5.55.9",
+		"vite": "^8.0.14"
 	},
 	"types": "./dist/index.d.cts"
 }

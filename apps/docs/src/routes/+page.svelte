@@ -3,7 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import Github from '$lib/components/github.svelte';
-	import { MoonIcon, SunIcon } from '@lucide/svelte';
+	import { ArrowRightIcon, MoonIcon, SunIcon } from '@lucide/svelte';
 
 	let { data } = $props();
 </script>
@@ -49,6 +49,15 @@
 	<!-- Hero -->
 	<div class="flex flex-1 items-center justify-center overflow-hidden">
 		<div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
+			<a
+				href="/docs/email-dev-server"
+				class="mb-8 px-2 py-1 border w-fit mx-auto border-amber-500/35 hover:bg-amber-500/15 transition-colors duration-100 bg-amber-500/8 flex items-center justify-center gap-1 text-sm text-foreground group"
+			>
+				<strong>New in v2:</strong> cli email preview <ArrowRightIcon
+					class="size-3.5 text-foreground/70 group-hover:text-foreground transition-colors duration-100"
+				/>
+			</a>
+
 			<img
 				src="/favicon.svg"
 				alt="Better Svelte Email"

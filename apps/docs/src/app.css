@@ -78,6 +78,14 @@
 	--ring: oklch(0.985 0 0);
 }
 
+.dark {
+	.shiki,
+	.shiki span {
+		color: var(--shiki-dark) !important;
+		background-color: var(--shiki-dark-bg) !important;
+	}
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;

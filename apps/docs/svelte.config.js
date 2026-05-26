@@ -6,9 +6,8 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeEnhancedTables from '@benjc/rehype-enhanced-tables';
 
-const theme = 'vesper';
 const highlighter = await createHighlighter({
-	themes: [theme],
+	themes: ['vesper', 'github-light'],
 	langs: ['javascript', 'typescript', 'svelte', 'bash']
 });
 
@@ -26,7 +25,12 @@ const mdsvexOptions = {
 	],
 	highlight: {
 		highlighter: async (code, lang = 'text') => {
-			const html = escapeSvelte(highlighter.codeToHtml(code, { lang, theme }));
+			const html = escapeSvelte(
+				highlighter.codeToHtml(code, {
+					lang,
+					themes: { dark: 'vesper', light: 'github-light' }
+				})
+			);
 			return `{@html \`${html}\` }`;
 		}
 	}

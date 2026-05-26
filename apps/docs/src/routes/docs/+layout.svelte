@@ -267,15 +267,19 @@
 	}
 
 	:global(.md pre) {
-		@apply overflow-x-auto border border-border bg-[oklch(0.145_0_0)] p-4 font-mono text-[13px];
+		@apply overflow-x-auto border border-border bg-background p-4 font-mono text-[13px];
 	}
 
 	:global(.md pre code) {
-		@apply border-none bg-transparent p-0 text-[oklch(0.65_0.01_264)];
+		@apply border-none bg-transparent p-0 text-muted-foreground;
 	}
 
 	:global(.md strong) {
 		@apply font-semibold text-foreground;
+	}
+
+	:global(.md a strong) {
+		@apply font-semibold text-svelte;
 	}
 
 	:global(.md ul) {

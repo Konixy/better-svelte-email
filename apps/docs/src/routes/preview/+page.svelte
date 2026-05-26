@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { toggleMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button';
-	import { Separator } from '$lib/components/ui/separator';
-	import Github from '$lib/components/github.svelte';
-	import { MoonIcon, SunIcon, Construction } from '@lucide/svelte';
+	import { Construction } from '@lucide/svelte';
 </script>
 
 <div class="relative mr-2 flex min-h-dvh flex-col">

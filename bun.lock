@@ -34,6 +34,14 @@
         "vitest": "^4.1.7",
       },
     },
+    "apps/demo": {
+      "name": "demo",
+      "dependencies": {
+        "@better-svelte-email/cli": "workspace:*",
+        "@better-svelte-email/components": "workspace:*",
+        "@better-svelte-email/server": "workspace:*",
+      },
+    },
     "apps/docs": {
       "name": "docs",
       "dependencies": {
@@ -707,6 +715,8 @@
     "deepmerge-ts": ["deepmerge-ts@7.1.5", "", {}, "sha512-HOJkrhaYsweh+W+e74Yn7YStZOilkoPb6fycpwNLKzSPtruFs48nYis0zy5yJz1+ktUhHxoRDJ27RQAWLIJVJw=="],
 
     "defu": ["defu@6.1.7", "", {}, "sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ=="],
+
+    "demo": ["demo@workspace:apps/demo"],
 
     "dequal": ["dequal@2.0.3", "", {}, "sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA=="],
 

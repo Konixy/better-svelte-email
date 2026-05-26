@@ -1,0 +1,13 @@
+{
+	"name": "demo",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "bse dev -d src/emails --resend-api-key ${RESEND_API_KEY} --resend-from better-svelte-email@djpilot.app"
+	},
+	"dependencies": {
+		"@better-svelte-email/cli": "workspace:*",
+		"@better-svelte-email/components": "workspace:*",
+		"@better-svelte-email/server": "workspace:*"
+	}
+}

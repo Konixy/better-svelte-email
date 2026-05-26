@@ -14,8 +14,7 @@
 		Text
 	} from '@better-svelte-email/components';
 
-	const baseUrl =
-		process.env.VERCEL === '1' ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/` : '/';
+	const baseUrl = 'https://better-svelte-email.konixy.dev/';
 </script>
 
 <Html>

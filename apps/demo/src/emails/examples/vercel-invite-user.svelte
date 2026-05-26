@@ -40,10 +40,7 @@
 		inviteFromLocation = 'São Paulo, Brazil'
 	}: Props = $props();
 
-	const baseUrl =
-		process.env.VERCEL === '1'
-			? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-			: 'http://localhost:5173';
+	const baseUrl = 'https://better-svelte-email.konixy.dev/';
 
 	// svelte-ignore state_referenced_locally
 	const previewText = `Join ${invitedByUsername} on Vercel`;

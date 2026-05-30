@@ -266,11 +266,15 @@
 		@apply leading-relaxed;
 	}
 
-	:global(.md pre) {
+	:global(.md .code-block) {
+		@apply relative;
+	}
+
+	:global(.md .code-block pre) {
 		@apply overflow-x-auto border border-border bg-background p-4 font-mono text-[13px];
 	}
 
-	:global(.md pre code) {
+	:global(.md .code-block pre code) {
 		@apply border-none bg-transparent p-0 text-muted-foreground;
 	}
 

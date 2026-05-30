@@ -5,6 +5,11 @@ import { createHighlighter } from 'shiki';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeEnhancedTables from '@benjc/rehype-enhanced-tables';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const markdownLayout = path.join(__dirname, 'src/lib/markdown-layout.svelte');
 
 const highlighter = await createHighlighter({
 	themes: ['vesper', 'github-light'],
@@ -13,6 +18,7 @@ const highlighter = await createHighlighter({
 
 /** @type {import('mdsvex').MdsvexOptions} */
 const mdsvexOptions = {
+	layout: markdownLayout,
 	rehypePlugins: [
 		rehypeSlug,
 		[
@@ -31,7 +37,7 @@ const mdsvexOptions = {
 					themes: { dark: 'vesper', light: 'github-light' }
 				})
 			);
-			return `{@html \`${html}\` }`;
+			return `<Components.CodeBlock code={${JSON.stringify(code)}}>{@html \`${html}\`}</Components.CodeBlock>`;
 		}
 	}
 };

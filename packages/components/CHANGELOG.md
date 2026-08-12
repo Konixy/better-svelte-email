@@ -1,5 +1,11 @@
 # @better-svelte-email/components
 
+## 2.1.3
+
+### Patch Changes
+
+- 11428cb: Fixed cli dev not working because the sveltekit version update required additionnal env vars which were not added to the runtime injected vars.
+
 ## 2.1.2
 
 ### Patch Changes

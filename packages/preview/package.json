@@ -1,6 +1,6 @@
 {
 	"name": "@better-svelte-email/preview",
-	"version": "2.1.2",
+	"version": "2.1.3",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git",

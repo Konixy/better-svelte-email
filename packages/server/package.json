@@ -6,9 +6,9 @@
 	"dependencies": {
 		"html-to-text": "^10.0.0",
 		"parse5": "^8.0.1",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.26",
 		"postcss-value-parser": "^4.2.0",
-		"tailwindcss": "^4.3.0"
+		"tailwindcss": "^4.3.3"
 	},
 	"peerDependencies": {
 		"svelte": ">=5.14.3"

@@ -30,4 +30,4 @@ while IFS= read -r dir; do
 	(cd "$dir" && publish_package)
 done <<< "$PACKAGE_DIRS"
 
-bunx changeset tag
+bunx changeset git-tag

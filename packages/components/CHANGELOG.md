@@ -1,5 +1,11 @@
 # @better-svelte-email/components
 
+## 2.1.2
+
+### Patch Changes
+
+- 109dfa9: Updated and migrated all dependencies to latest.
+
 ## 2.1.1
 
 ### Patch Changes

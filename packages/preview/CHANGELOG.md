@@ -1,5 +1,13 @@
 # @better-svelte-email/preview
 
+## 2.1.2
+
+### Patch Changes
+
+- 109dfa9: Updated and migrated all dependencies to latest.
+- Updated dependencies [109dfa9]
+  - @better-svelte-email/server@2.1.2
+
 ## 2.1.1
 
 ### Patch Changes

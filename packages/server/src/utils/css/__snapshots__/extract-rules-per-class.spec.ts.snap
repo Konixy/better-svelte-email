@@ -17,10 +17,8 @@ exports[`extractRulesPerClass() > handles a mix of inlinable and non-inlinable u
 exports[`extractRulesPerClass() > handles a mix of inlinable and non-inlinable utilities 2`] = `
 {
   "lg:w-1/2": ".lg\\:w-1\\/2 {
-    @media (width >= 64rem) {
       width: calc(1 / 2 * 100%);
-    }
-  }",
+    }",
 }
 `;
 
@@ -29,10 +27,8 @@ exports[`extractRulesPerClass() > handles non-inlinable utilities 1`] = `{}`;
 exports[`extractRulesPerClass() > handles non-inlinable utilities 2`] = `
 {
   "lg:w-1/2": ".lg\\:w-1\\/2 {
-    @media (width >= 64rem) {
       width: calc(1 / 2 * 100%);
-    }
-  }",
+    }",
 }
 `;
 

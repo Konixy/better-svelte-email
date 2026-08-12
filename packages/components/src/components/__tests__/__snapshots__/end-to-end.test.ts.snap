@@ -9,21 +9,19 @@ exports[`End-to-End Email Rendering > customCSS option > should combine tailwind
     }
     background-image: linear-gradient(var(--tw-gradient-stops)) !important;
   }
-  .hover_bg-red-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: rgb(231, 0, 11) !important;
-      }
+  @media (hover: hover) {
+    .hover_bg-red-600:hover {
+      background-color: rgb(231, 0, 11) !important;
     }
   }
-  .md_text-3xl {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_text-3xl {
       font-size: 30px !important;
       line-height: 1.2 !important;
     }
   }
-  .lg_text-4xl {
-    @media (width >= 64rem) {
+  @media (width >= 64rem) {
+    .lg_text-4xl {
       font-size: 36px !important;
       line-height: 1.1111111111111112 !important;
     }
@@ -39,21 +37,19 @@ exports[`End-to-End Email Rendering > customCSS option > should convert oklch co
     }
     background-image: linear-gradient(var(--tw-gradient-stops)) !important;
   }
-  .hover_bg-red-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: rgb(231, 0, 11) !important;
-      }
+  @media (hover: hover) {
+    .hover_bg-red-600:hover {
+      background-color: rgb(231, 0, 11) !important;
     }
   }
-  .md_text-3xl {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_text-3xl {
       font-size: 30px !important;
       line-height: 1.2 !important;
     }
   }
-  .lg_text-4xl {
-    @media (width >= 64rem) {
+  @media (width >= 64rem) {
+    .lg_text-4xl {
       font-size: 36px !important;
       line-height: 1.1111111111111112 !important;
     }
@@ -69,21 +65,19 @@ exports[`End-to-End Email Rendering > customCSS option > should inject custom CS
     }
     background-image: linear-gradient(var(--tw-gradient-stops)) !important;
   }
-  .hover_bg-red-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: rgb(231, 0, 11) !important;
-      }
+  @media (hover: hover) {
+    .hover_bg-red-600:hover {
+      background-color: rgb(231, 0, 11) !important;
     }
   }
-  .md_text-3xl {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_text-3xl {
       font-size: 30px !important;
       line-height: 1.2 !important;
     }
   }
-  .lg_text-4xl {
-    @media (width >= 64rem) {
+  @media (width >= 64rem) {
+    .lg_text-4xl {
       font-size: 36px !important;
       line-height: 1.1111111111111112 !important;
     }
@@ -99,21 +93,19 @@ exports[`End-to-End Email Rendering > should handle custom Tailwind config (bg-b
     }
     background-image: linear-gradient(var(--tw-gradient-stops)) !important;
   }
-  .hover_bg-red-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: rgb(231, 0, 11) !important;
-      }
+  @media (hover: hover) {
+    .hover_bg-red-600:hover {
+      background-color: rgb(231, 0, 11) !important;
     }
   }
-  .md_text-3xl {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_text-3xl {
       font-size: 30px !important;
       line-height: 1.2 !important;
     }
   }
-  .lg_text-4xl {
-    @media (width >= 64rem) {
+  @media (width >= 64rem) {
+    .lg_text-4xl {
       font-size: 36px !important;
       line-height: 1.1111111111111112 !important;
     }
@@ -129,21 +121,19 @@ exports[`End-to-End Email Rendering > should render a complete email with all Ta
     }
     background-image: linear-gradient(var(--tw-gradient-stops)) !important;
   }
-  .hover_bg-red-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: rgb(231, 0, 11) !important;
-      }
+  @media (hover: hover) {
+    .hover_bg-red-600:hover {
+      background-color: rgb(231, 0, 11) !important;
     }
   }
-  .md_text-3xl {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_text-3xl {
       font-size: 30px !important;
       line-height: 1.2 !important;
     }
   }
-  .lg_text-4xl {
-    @media (width >= 64rem) {
+  @media (width >= 64rem) {
+    .lg_text-4xl {
       font-size: 36px !important;
       line-height: 1.1111111111111112 !important;
     }

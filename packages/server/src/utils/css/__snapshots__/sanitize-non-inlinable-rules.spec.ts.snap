@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`sanitizeNonInlinableRules() > handles CSS nesting in hover pseudo styles 1`] = `
-"/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -10,35 +10,27 @@ exports[`sanitizeNonInlinableRules() > handles CSS nesting in hover pseudo style
   }
 }
 @layer utilities {
-  .hover_text-sky-600 {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-sky-600) !important;
+  @media (hover: hover) {
+    .hover_text-sky-600:hover {
+      color: var(--color-sky-600) !important;
+    }
+  }
+  @media (width >= 40rem) {
+    .sm_focus_outline-none:focus {
+      --tw-outline-style: none !important;
+      outline-style: none !important;
+    }
+  }
+  @media (width >= 48rem) {
+    @media (hover: hover) {
+      .md_hover_bg-gray-100:hover {
+        background-color: var(--color-gray-100) !important;
       }
     }
   }
-  .sm_focus_outline-none {
-    @media (width >= 40rem) {
-      &:focus {
-        --tw-outline-style: none !important;
-        outline-style: none !important;
-      }
-    }
-  }
-  .md_hover_bg-gray-100 {
-    @media (width >= 48rem) {
-      &:hover {
-        @media (hover: hover) {
-          background-color: var(--color-gray-100) !important;
-        }
-      }
-    }
-  }
-  .lg_focus_underline {
-    @media (width >= 64rem) {
-      &:focus {
-        text-decoration-line: underline !important;
-      }
+  @media (width >= 64rem) {
+    .lg_focus_underline:focus {
+      text-decoration-line: underline !important;
     }
   }
 }
@@ -46,7 +38,7 @@ exports[`sanitizeNonInlinableRules() > handles CSS nesting in hover pseudo style
 `;
 
 exports[`sanitizeNonInlinableRules() > inlines rules that can be inlined 1`] = `
-"/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -72,7 +64,7 @@ exports[`sanitizeNonInlinableRules() > inlines rules that can be inlined 1`] = `
 `;
 
 exports[`sanitizeNonInlinableRules() > supports basic media query rules 1`] = `
-"/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -82,28 +74,22 @@ exports[`sanitizeNonInlinableRules() > supports basic media query rules 1`] = `
   }
 }
 @layer utilities {
-  .sm_mx-auto {
-    @media (width >= 40rem) {
+  @media (width >= 40rem) {
+    .sm_mx-auto {
       margin-inline: auto !important;
     }
-  }
-  .sm_max-w-lg {
-    @media (width >= 40rem) {
+    .sm_max-w-lg {
       max-width: var(--container-lg) !important;
     }
-  }
-  .sm_rounded-lg {
-    @media (width >= 40rem) {
+    .sm_rounded-lg {
       border-radius: var(--radius-lg) !important;
     }
   }
-  .md_px-10 {
-    @media (width >= 48rem) {
+  @media (width >= 48rem) {
+    .md_px-10 {
       padding-inline: calc(var(--spacing) * 10) !important;
     }
-  }
-  .md_py-12 {
-    @media (width >= 48rem) {
+    .md_py-12 {
       padding-block: calc(var(--spacing) * 12) !important;
     }
   }

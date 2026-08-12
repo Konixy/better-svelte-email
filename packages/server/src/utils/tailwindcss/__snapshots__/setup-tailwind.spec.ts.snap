@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`setupTailwind() and addUtilities() 1`] = `
-"/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -17,8 +17,8 @@ exports[`setupTailwind() and addUtilities() 1`] = `
   .text-red-500 {
     color: var(--color-red-500);
   }
-  .sm\\:bg-blue-300 {
-    @media (width >= 40rem) {
+  @media (width >= 40rem) {
+    .sm\\:bg-blue-300 {
       background-color: var(--color-blue-300);
     }
   }
@@ -27,7 +27,7 @@ exports[`setupTailwind() and addUtilities() 1`] = `
 `;
 
 exports[`setupTailwind() and addUtilities() 2`] = `
-"/*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+"/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
@@ -47,8 +47,8 @@ exports[`setupTailwind() and addUtilities() 2`] = `
   .text-red-500 {
     color: var(--color-red-500);
   }
-  .sm\\:bg-blue-300 {
-    @media (width >= 40rem) {
+  @media (width >= 40rem) {
+    .sm\\:bg-blue-300 {
       background-color: var(--color-blue-300);
     }
   }

@@ -9,6 +9,7 @@ import { extractRulesPerClass } from './utils/css/extract-rules-per-class';
 import { extractGlobalRules } from './utils/css/extract-global-rules';
 import { getCustomProperties } from './utils/css/get-custom-properties';
 import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules';
+import { cloneRuleWithAtRuleAncestors } from './utils/css/clone-rule-with-at-rule-ancestors';
 import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element';
 import { isValidNode } from './utils/html/is-valid-node';
 import { removeAttributesFunctions } from './utils/html/remove-attributes-functions';
@@ -177,10 +178,12 @@ export class Renderer {
 
 		const customProperties = getCustomProperties(styleSheet);
 
-		// Create a new Root for non-inline styles
+		// Create a new Root for non-inline styles.
+		// Clone with ancestor @media/@supports wrappers — Tailwind v4.3.3+ flattens
+		// nesting so those at-rules wrap the selector instead of nesting inside it.
 		const nonInlineStyles = postcss.root();
 		for (const rule of nonInlinableRules.values()) {
-			nonInlineStyles.append(rule.clone());
+			nonInlineStyles.append(cloneRuleWithAtRuleAncestors(rule));
 		}
 		sanitizeNonInlinableRules(nonInlineStyles);
 

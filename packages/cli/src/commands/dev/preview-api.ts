@@ -21,9 +21,11 @@ function svelteKitRuntimeDefine(): Record<string, string> {
 	return {
 		__SVELTEKIT_ADAPTER_NAME__: s('preview'),
 		__SVELTEKIT_APP_DIR__: s('_app'),
+		__SVELTEKIT_APP_VERSION__: s('preview'),
 		__SVELTEKIT_APP_VERSION_FILE__: s('_app/version.json'),
 		__SVELTEKIT_APP_VERSION_POLL_INTERVAL__: '0',
 		__SVELTEKIT_CLIENT_ROUTING__: s(true),
+		__SVELTEKIT_DEV__: s(true),
 		__SVELTEKIT_EMBEDDED__: s(false),
 		__SVELTEKIT_EXPERIMENTAL__REMOTE_FUNCTIONS__: s(false),
 		__SVELTEKIT_FORK_PRELOADS__: s(false),

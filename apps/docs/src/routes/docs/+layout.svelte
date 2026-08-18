@@ -11,7 +11,8 @@
 	} from '$lib/components/ui/select';
 	import { Separator } from '$lib/components/ui/separator';
 	import Github from '$lib/components/github.svelte';
-	import { MoonIcon, SunIcon } from '@lucide/svelte';
+	import MoonIcon from 'phosphor-svelte/lib/MoonIcon';
+	import SunIcon from 'phosphor-svelte/lib/SunIcon';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
@@ -134,7 +135,7 @@
 		class="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-12 px-6 pt-12 pb-32 lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-16 lg:px-12"
 	>
 		<aside
-			class="flex flex-col gap-6 scroll-smooth lg:sticky lg:top-[calc(6.5rem+1px)] lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
+			class="flex flex-col gap-6 scroll-smooth lg:sticky lg:top-26.25 lg:max-h-[calc(100dvh-6.5rem-1px)] lg:self-start lg:overflow-y-auto lg:py-2"
 		>
 			<div class="flex flex-col gap-2 px-0">
 				<div class="font-mono text-[10px] font-semibold text-muted-foreground">Version</div>

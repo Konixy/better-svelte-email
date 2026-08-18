@@ -3,7 +3,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import Github from '$lib/components/github.svelte';
-	import { ArrowRightIcon, MoonIcon, SunIcon } from '@lucide/svelte';
+	import ArrowRightIcon from 'phosphor-svelte/lib/ArrowRightIcon';
+	import MoonIcon from 'phosphor-svelte/lib/MoonIcon';
+	import SunIcon from 'phosphor-svelte/lib/SunIcon';
 
 	let { data } = $props();
 </script>
@@ -51,18 +53,18 @@
 		<div class="relative z-10 mx-auto max-w-3xl px-6 text-center">
 			<a
 				href="/docs/email-dev-server"
-				class="mb-8 px-2 py-1 border w-fit mx-auto border-amber-500/35 hover:bg-amber-500/15 transition-colors duration-100 bg-amber-500/8 flex items-center justify-center gap-1 text-sm text-foreground group"
+				class="group mx-auto mb-8 flex w-fit items-center justify-center gap-1 border border-amber-500/35 bg-amber-500/8 px-2 py-1 text-sm text-foreground transition-colors duration-100 hover:bg-amber-500/15"
 			>
-				<strong>New in v2:</strong> cli email preview <ArrowRightIcon
-					class="size-3.5 text-foreground/70 group-hover:text-foreground transition-colors duration-100"
+				<strong>New in v2:</strong> email preview via CLI <ArrowRightIcon
+					class="size-3.5 text-foreground/70 transition-all duration-100 group-hover:translate-x-0.5 group-hover:text-foreground"
 				/>
 			</a>
 
-			<img
+			<!-- <img
 				src="/favicon.svg"
 				alt="Better Svelte Email"
 				class="mx-auto mb-8 size-24 motion-preset-fade drop-shadow-lg motion-delay-150"
-			/>
+			/> -->
 
 			<h1
 				class="mb-6 motion-preset-slide-up-md text-5xl leading-[1.08] font-bold tracking-tight text-foreground sm:text-7xl"
@@ -111,21 +113,20 @@
 					href="https://github.com/Konixy/better-svelte-email"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="github-link group inline-flex items-center gap-1.5 border border-border px-3 py-1.5 font-mono text-xs text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+					class="github-link group inline-flex items-center gap-1.5 border border-border px-3 py-1.5 font-mono text-xs leading-none text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
 				>
 					<Github class="size-3.5" />
 					<svg
-						class="github-star size-3 fill-transparent stroke-current transition-[fill,stroke] group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
+						class="github-star block size-3 fill-transparent stroke-current transition-[fill,stroke] group-hover:fill-yellow-500 group-hover:stroke-yellow-500"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 24 24"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+						stroke-width="1.5"
 					>
 						<path
 							d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"
 						/>
 					</svg>
+
 					{data.githubStars}
 				</a>
 			</div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Construction } from '@lucide/svelte';
+	import BarricadeIcon from 'phosphor-svelte/lib/BarricadeIcon';
 </script>
 
 <div class="relative mr-2 flex min-h-dvh flex-col">
@@ -8,7 +8,7 @@
 		<div class="relative z-10 mx-auto max-w-md px-6 text-center">
 			<div class="mb-6 flex justify-center">
 				<div class="rounded-full bg-muted p-4">
-					<Construction class="size-8 text-muted-foreground" />
+					<BarricadeIcon class="size-8 text-muted-foreground" />
 				</div>
 			</div>
 

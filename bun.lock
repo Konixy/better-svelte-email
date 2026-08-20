@@ -79,7 +79,7 @@
     },
     "packages/better-svelte-email": {
       "name": "better-svelte-email",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "dependencies": {
         "@better-svelte-email/components": "workspace:*",
         "@better-svelte-email/preview": "workspace:*",
@@ -88,7 +88,7 @@
     },
     "packages/cli": {
       "name": "@better-svelte-email/cli",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "bin": {
         "bse": "./dist/index.cjs",
       },
@@ -107,7 +107,7 @@
     },
     "packages/components": {
       "name": "@better-svelte-email/components",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "devDependencies": {
         "@better-svelte-email/server": "workspace:*",
       },
@@ -121,7 +121,7 @@
     },
     "packages/preview": {
       "name": "@better-svelte-email/preview",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "dependencies": {
         "@better-svelte-email/server": "workspace:*",
         "prettier": "^3.9.6",
@@ -137,7 +137,7 @@
     },
     "packages/preview-server": {
       "name": "@better-svelte-email/preview-server",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "dependencies": {
         "@lucide/svelte": "^1.31.0",
         "@sveltejs/adapter-node": "^5.5.7",
@@ -160,9 +160,9 @@
     },
     "packages/server": {
       "name": "@better-svelte-email/server",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "dependencies": {
-        "html-to-text": "^10.0.0",
+        "html-to-text": "^10.0.1",
         "parse5": "^8.0.1",
         "postcss": "^8.5.26",
         "postcss-value-parser": "^4.2.0",
@@ -705,7 +705,7 @@
 
     "deepmerge": ["deepmerge@4.3.1", "", {}, "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="],
 
-    "deepmerge-ts": ["deepmerge-ts@7.1.5", "", {}, "sha512-HOJkrhaYsweh+W+e74Yn7YStZOilkoPb6fycpwNLKzSPtruFs48nYis0zy5yJz1+ktUhHxoRDJ27RQAWLIJVJw=="],
+    "deepmerge-ts": ["deepmerge-ts@8.0.1", "", {}, "sha512-szCXE7YLCvLKR9bFPJcvsezOShdalctSvrgN/LM/QGUEPZQajwjmsMObZ6/DuANT5lxzM/wtO8Feubwdkz8myA=="],
 
     "defu": ["defu@6.1.7", "", {}, "sha512-7z22QmUWiQ/2d0KkdYmANbRUVABpZ9SNYyH5vx6PZ+nE5bcC0l7uFvEfHlyld/HcGBFTL536ClDt3DEcSlEJAQ=="],
 
@@ -843,7 +843,7 @@
 
     "hookable": ["hookable@6.1.1", "", {}, "sha512-U9LYDy1CwhMCnprUfeAZWZGByVbhd54hwepegYTK7Pi5NvqEj63ifz5z+xukznehT7i6NIZRu89Ay1AZmRsLEQ=="],
 
-    "html-to-text": ["html-to-text@10.0.0", "", { "dependencies": { "@selderee/plugin-htmlparser2": "~0.12.0", "deepmerge-ts": "^7.1.5", "dom-serializer": "^2.0.0", "htmlparser2": "^10.1.0", "selderee": "~0.12.0" } }, "sha512-2OH59Gtprdczel+7Rxgpz9hGVJREaf8Lt1H4kZwWHpEn70VQKRuMNGsb2eDbwaTzrYzb0hheiOG1P7Dim0B4dQ=="],
+    "html-to-text": ["html-to-text@10.0.1", "", { "dependencies": { "@selderee/plugin-htmlparser2": "~0.12.0", "deepmerge-ts": "^8.0.1", "dom-serializer": "^2.0.0", "htmlparser2": "^10.1.0", "selderee": "~0.12.0" } }, "sha512-GiVhRI1BatGARSCmlXWNCjDT0cWrwBWoeduLoV0WSKAgaV/wa+hUWy5LiQLUs4UwiUrE52ZCMfBGiKD87TDPrg=="],
 
     "html-void-elements": ["html-void-elements@3.0.0", "", {}, "sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg=="],
 

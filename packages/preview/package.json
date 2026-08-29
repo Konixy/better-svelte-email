@@ -11,7 +11,7 @@
 	"dependencies": {
 		"@better-svelte-email/server": "workspace:*",
 		"prettier": "^3.9.6",
-		"resend": "^6.19.0"
+		"resend": "^6.25.0"
 	},
 	"peerDependencies": {
 		"svelte": ">=5.14.3",

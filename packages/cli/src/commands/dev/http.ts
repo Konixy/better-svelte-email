@@ -1,7 +1,6 @@
 import http from 'node:http';
 
-const LOCAL_PREVIEW_ORIGIN =
-	/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i;
+const LOCAL_PREVIEW_ORIGIN = /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i;
 
 export function isLocalPreviewOrigin(origin: string | undefined) {
 	return typeof origin === 'string' && LOCAL_PREVIEW_ORIGIN.test(origin.trim());

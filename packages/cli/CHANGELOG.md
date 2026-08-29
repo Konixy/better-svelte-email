@@ -1,5 +1,17 @@
 # @better-svelte-email/cli
 
+## 2.3.0
+
+### Minor Changes
+
+- a48126a: Added an option to disable tailwind and skip tailwind-related compilation when rendering.
+
+### Patch Changes
+
+- Updated dependencies [a48126a]
+  - @better-svelte-email/preview-server@2.3.0
+  - @better-svelte-email/server@2.3.0
+
 ## 2.2.0
 
 ### Minor Changes

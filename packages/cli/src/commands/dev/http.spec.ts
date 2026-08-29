@@ -1,17 +1,9 @@
 import { PassThrough } from 'node:stream';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { describe, expect, it } from 'vitest';
-import {
-	allowPreviewCors,
-	isLocalPreviewOrigin,
-	tryHandlePreviewApiCors
-} from './http';
+import { allowPreviewCors, isLocalPreviewOrigin, tryHandlePreviewApiCors } from './http';
 
-function makeRequest(options: {
-	method: string;
-	url: string;
-	origin?: string;
-}): IncomingMessage {
+function makeRequest(options: { method: string; url: string; origin?: string }): IncomingMessage {
 	const stream = new PassThrough();
 	const req = stream as unknown as IncomingMessage;
 	req.method = options.method;
@@ -20,7 +12,10 @@ function makeRequest(options: {
 	return req;
 }
 
-function collectHeaders(): { res: ServerResponse; headers: () => Record<string, string | string[] | undefined> } {
+function collectHeaders(): {
+	res: ServerResponse;
+	headers: () => Record<string, string | string[] | undefined>;
+} {
 	const headerBag: Record<string, string | string[] | undefined> = {};
 	const res = {
 		setHeader(name: string, value: string | string[]) {

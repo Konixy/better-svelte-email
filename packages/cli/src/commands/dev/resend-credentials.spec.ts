@@ -22,10 +22,7 @@ describe('resend-credentials', () => {
 	});
 
 	it('persists and loads credentials from .bse/resend.json', async () => {
-		await savePersistedResendCredentials(
-			{ apiKey: 're_test', from: 'onboarding@resend.dev' },
-			cwd
-		);
+		await savePersistedResendCredentials({ apiKey: 're_test', from: 'onboarding@resend.dev' }, cwd);
 		const loaded = await loadPersistedResendCredentials(cwd);
 		expect(loaded).toEqual({ apiKey: 're_test', from: 'onboarding@resend.dev' });
 		expect(getResendCredentialsPath(cwd)).toBe(path.join(cwd, '.bse', 'resend.json'));
@@ -35,10 +32,7 @@ describe('resend-credentials', () => {
 
 	it('appends .bse/ to .gitignore when saving credentials', async () => {
 		await writeFile(path.join(cwd, '.gitignore'), 'node_modules\n', 'utf8');
-		await savePersistedResendCredentials(
-			{ apiKey: 're_test', from: 'onboarding@resend.dev' },
-			cwd
-		);
+		await savePersistedResendCredentials({ apiKey: 're_test', from: 'onboarding@resend.dev' }, cwd);
 		const gitignore = await readFile(path.join(cwd, '.gitignore'), 'utf8');
 		expect(gitignore).toContain('.bse/');
 	});

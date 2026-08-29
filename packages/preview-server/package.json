@@ -1,6 +1,6 @@
 {
 	"name": "@better-svelte-email/preview-server",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"description": "Internal preview runtime for @better-svelte-email/cli",
 	"type": "module",
 	"main": "./build/index.js",

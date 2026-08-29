@@ -1,5 +1,11 @@
 # @better-svelte-email/components
 
+## 2.3.0
+
+### Minor Changes
+
+- a48126a: Added an option to disable tailwind and skip tailwind-related compilation when rendering.
+
 ## 2.2.0
 
 ### Minor Changes

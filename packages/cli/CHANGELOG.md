@@ -1,5 +1,17 @@
 # @better-svelte-email/cli
 
+## 2.2.0
+
+### Minor Changes
+
+- 35ac9f6: Added support for the new Tailwind v4.3 colors (mauve, olive, mist and taupe).
+
+### Patch Changes
+
+- Updated dependencies [35ac9f6]
+  - @better-svelte-email/preview-server@2.2.0
+  - @better-svelte-email/server@2.2.0
+
 ## 2.1.4
 
 ### Patch Changes

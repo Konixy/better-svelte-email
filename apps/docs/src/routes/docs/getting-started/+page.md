@@ -7,7 +7,9 @@
 ## Requirements
 
 - `svelte >= v5.14.3`
-- `tailwindcss >= v4`
+- `tailwindcss >= v4` (if you are using Tailwind)
+
+Using version older than these will cause issues with the rendering process.
 
 ## Installation
 

@@ -27,6 +27,7 @@ See the [documentation](https://better-svelte-email.konixy.dev/docs) for a compl
 ## Features
 
 - **Tailwind v4 Support** - Transforms Tailwind classes to inline styles for email clients
+- **Plain CSS Support** - You can use plain CSS for your email styles, tailwind is optional
 - **Email Preview via CLI** - Visual email preview and test sending, just run `npx @better-svelte-email/cli dev`
 - **TypeScript First** - Fully typed with comprehensive type definitions
 - **Well Tested** - >90% test coverage with unit and integration tests

@@ -1,5 +1,15 @@
 # better-svelte-email
 
+## 2.1.4
+
+### Patch Changes
+
+- 827a794: Update dependencies version (fixed cve for html-to-text)
+- Updated dependencies [827a794]
+  - @better-svelte-email/components@2.1.4
+  - @better-svelte-email/preview@2.1.4
+  - @better-svelte-email/server@2.1.4
+
 ## 2.1.3
 
 ### Patch Changes

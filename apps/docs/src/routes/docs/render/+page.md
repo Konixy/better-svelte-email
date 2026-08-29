@@ -17,6 +17,7 @@ import { Renderer, toPlainText, type RenderOptions } from '@better-svelte-email/
 - `options?`:
   - `tailwindConfig?` — Partial Tailwind config. Use it to extend the default theme, using Tailwind CSS v3 syntax.
   - `customCSS?` — Custom CSS string to inject into email rendering.
+  - `disableTailwind?` — Skip Tailwind compilation and utility inlining. Class attributes are left as-is. `customCSS` is still parsed and inlined when provided.
 
 ### renderer.render
 

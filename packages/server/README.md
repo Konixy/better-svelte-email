@@ -21,7 +21,7 @@ Please refer to the [documentation](https://better-svelte-email.konixy.dev/docs)
 
 The main entry exposes:
 
-- **`Renderer`** — configure Tailwind (`tailwindConfig`), optional injected **`customCSS`** (e.g. theme variables), then **`render(component, options)`** to produce HTML
+- **`Renderer`** — configure Tailwind (`tailwindConfig`), optional injected **`customCSS`** (e.g. theme variables), or **`disableTailwind`** for plain CSS only, then **`render(component, options)`** to produce HTML
 - **`toPlainText`** — derive a plain-text version from rendered HTML
 - **Types** — `TailwindConfig`, `RendererOptions`, `RenderOptions`, `AST`, etc.
 - **`pixelBasedPreset`** — Tailwind-related helper for pixel-oriented email styling

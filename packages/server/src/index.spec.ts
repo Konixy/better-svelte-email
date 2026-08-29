@@ -230,6 +230,155 @@ describe('Renderer', () => {
 	});
 });
 
+describe('disableTailwind option', () => {
+	it('leaves Tailwind classes on the element instead of inlining them', async () => {
+		const renderer = new Renderer({ disableTailwind: true });
+		const html = await renderer.render(BasicComponent);
+
+		expect(html).toContain('Hello World');
+		expect(html).toContain('class="bg-red-500 text-center"');
+		expect(html).not.toMatch(/text-align:\s*center/);
+		expect(html).not.toContain('background-color');
+	});
+
+	it('still replaces DOCTYPE when Tailwind is disabled', async () => {
+		const renderer = new Renderer({ disableTailwind: true });
+		const html = await renderer.render(BasicComponent);
+
+		expect(html).toContain('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"');
+	});
+
+	it('does not inject media-query styles for responsive classes', async () => {
+		const renderer = new Renderer({ disableTailwind: true });
+		const html = await renderer.render(ResponsiveComponent);
+
+		expect(html).toContain('Responsive Text');
+		expect(html).toContain('class="text-center md:text-left"');
+		expect(html).not.toContain('@media');
+		expect(html).not.toMatch(/text-align:\s*center/);
+	});
+
+	it('preserves existing inline styles', async () => {
+		const { default: Component } = await import('./__fixtures__/CombinedStylesComponent.svelte');
+		const renderer = new Renderer({ disableTailwind: true });
+		const html = await renderer.render(Component);
+
+		expect(html).toMatch(/font-weight:\s*bold/);
+		expect(html).toContain('class="text-center"');
+		expect(html).not.toMatch(/text-align:\s*center/);
+	});
+
+	it('does not warn about unrecognized classes', async () => {
+		const { default: Component } = await import('./__fixtures__/UnknownClassComponent.svelte');
+
+		const originalWarn = console.warn;
+		let warnMessage = '';
+		console.warn = (msg: string) => {
+			warnMessage = msg;
+		};
+
+		const renderer = new Renderer({ disableTailwind: true });
+		const html = await renderer.render(Component);
+
+		console.warn = originalWarn;
+
+		expect(warnMessage).toBe('');
+		expect(html).toContain('unknown-class');
+		expect(html).toContain('text-center');
+		expect(html).toContain('Content');
+	});
+
+	it('ignores tailwindConfig when Tailwind is disabled', async () => {
+		const { default: Component } = await import('./__fixtures__/CustomColorComponent.svelte');
+		const renderer = new Renderer({
+			disableTailwind: true,
+			tailwindConfig: {
+				theme: {
+					extend: {
+						colors: {
+							'custom-color': '#123456'
+						}
+					}
+				}
+			}
+		});
+		const html = await renderer.render(Component);
+
+		expect(html).toContain('Custom Color');
+		expect(html).toContain('text-custom-color');
+		expect(html).not.toMatch(/#123456|rgb\(18,\s*52,\s*86\)/);
+	});
+
+	it('still inlines customCSS class rules', async () => {
+		const { default: Component } = await import('./__fixtures__/UnknownClassComponent.svelte');
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: '.unknown-class { color: rgb(255, 0, 0); }'
+		});
+		const html = await renderer.render(Component);
+
+		expect(html).toMatch(/color:\s*rgb\(255,\s*0,\s*0\)/);
+		// Matched class is inlined and removed; leftover Tailwind class stays
+		expect(html).not.toContain('unknown-class');
+		expect(html).toContain('text-center');
+		expect(html).not.toMatch(/text-align:\s*center/);
+	});
+
+	it('still applies element selector styles from customCSS', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `
+				div {
+					outline: 2px solid blue;
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		expect(html).toContain('outline');
+		expect(html).toContain('class="border"');
+		expect(html).not.toContain('border-width');
+	});
+
+	it('still applies universal selector styles from customCSS', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `
+				* {
+					border-color: red;
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/GlobalSelectorComponent.svelte');
+		const html = await renderer.render(Component);
+
+		expect(html).toMatch(/border-color:\s*red/);
+		expect(html).toContain('class="border"');
+	});
+
+	it('injects non-inlinable customCSS rules into head', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `
+				@media (min-width: 768px) {
+					.unknown-class {
+						color: green;
+					}
+				}
+			`
+		});
+		const { default: Component } = await import('./__fixtures__/UnknownClassComponent.svelte');
+		const html = await renderer.render(Component);
+
+		expect(html).toContain('<style>');
+		expect(html).toContain('@media');
+		expect(html).toMatch(/<style>[\s\S]*color:\s*green/);
+		expect(html).toContain('class="unknown-class text-center"');
+		expect(html).not.toMatch(/<div[^>]*style="[^"]*color:\s*green/);
+	});
+});
+
 describe('Global CSS selectors (issue #46)', () => {
 	it('should apply universal selector (*) styles from customCSS', async () => {
 		const renderer = new Renderer({

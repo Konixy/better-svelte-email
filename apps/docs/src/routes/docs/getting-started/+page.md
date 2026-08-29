@@ -157,6 +157,12 @@ const tailwindConfig = {
 const { render } = new Renderer({ tailwindConfig });
 ```
 
+To style emails with plain CSS only (no Tailwind utilities):
+
+```js
+const { render } = new Renderer({ disableTailwind: true, customCSS: layoutStyles });
+```
+
 ## Preview your emails
 
 Use **`@better-svelte-email/cli`** — see [Email dev server](./email-dev-server).

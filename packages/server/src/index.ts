@@ -11,6 +11,7 @@ import { getCustomProperties } from './utils/css/get-custom-properties';
 import { sanitizeNonInlinableRules } from './utils/css/sanitize-non-inlinable-rules';
 import { cloneRuleWithAtRuleAncestors } from './utils/css/clone-rule-with-at-rule-ancestors';
 import { addInlinedStylesToElement } from './utils/tailwindcss/add-inlined-styles-to-element';
+import { sanitizeCustomCss } from './utils/tailwindcss/sanitize-custom-css';
 import { isValidNode } from './utils/html/is-valid-node';
 import { removeAttributesFunctions } from './utils/html/remove-attributes-functions';
 import { convert } from 'html-to-text';
@@ -50,6 +51,21 @@ export type RendererOptions = {
 	 * @default 16
 	 */
 	baseFontSize?: number;
+	/**
+	 * Disable Tailwind CSS compilation and utility inlining.
+	 *
+	 * Class attributes are left as-is (not converted to inline styles). `customCSS`
+	 * is still parsed and inlined when provided, so you can style emails with
+	 * plain CSS only.
+	 *
+	 * @default false
+	 *
+	 * @example
+	 * ```ts
+	 * const renderer = new Renderer({ disableTailwind: true, customCSS: emailStyles });
+	 * ```
+	 */
+	disableTailwind?: boolean;
 };
 
 /**
@@ -94,7 +110,10 @@ function isRendererOptions(obj: unknown): obj is RendererOptions {
 	return (
 		typeof obj === 'object' &&
 		obj !== null &&
-		('tailwindConfig' in obj || 'customCSS' in obj || 'baseFontSize' in obj)
+		('tailwindConfig' in obj ||
+			'customCSS' in obj ||
+			'baseFontSize' in obj ||
+			'disableTailwind' in obj)
 	);
 }
 
@@ -102,10 +121,11 @@ export class Renderer {
 	private tailwindConfig: TailwindConfig;
 	private customCSS?: string;
 	private baseFontSize: number;
+	private disableTailwind: boolean;
 
 	// Backward-compatible overloads:
 	// - new Renderer(tailwindConfig)
-	// - new Renderer({ tailwindConfig, customCSS, baseFontSize })
+	// - new Renderer({ tailwindConfig, customCSS, baseFontSize, disableTailwind })
 	constructor(tailwindConfig?: TailwindConfig);
 	constructor(options?: RendererOptions);
 	constructor(optionsOrConfig: TailwindConfig | RendererOptions = {}) {
@@ -115,10 +135,12 @@ export class Renderer {
 			this.tailwindConfig = optionsOrConfig.tailwindConfig || {};
 			this.customCSS = optionsOrConfig.customCSS;
 			this.baseFontSize = optionsOrConfig.baseFontSize ?? 16;
+			this.disableTailwind = optionsOrConfig.disableTailwind ?? false;
 		} else {
 			this.tailwindConfig = optionsOrConfig || {};
 			this.customCSS = undefined;
 			this.baseFontSize = 16;
+			this.disableTailwind = false;
 		}
 	}
 
@@ -148,90 +170,98 @@ export class Renderer {
 		let ast = parse(body);
 		ast = removeAttributesFunctions(ast);
 
-		let classesUsed: string[] = [];
-		const tailwindSetup = await setupTailwind(this.tailwindConfig, this.customCSS);
+		const processStyles = !this.disableTailwind || Boolean(this.customCSS);
+		let serialized: string;
 
-		walk(ast, (node) => {
-			if (isValidNode(node)) {
-				const classAttr = node.attrs?.find((attr) => attr.name === 'class');
+		if (processStyles) {
+			let classesUsed: string[] = [];
+			const tailwindSetup = this.disableTailwind
+				? null
+				: await setupTailwind(this.tailwindConfig, this.customCSS);
 
-				if (classAttr && classAttr.value) {
-					const classes = classAttr.value.split(/\s+/).filter(Boolean);
-					classesUsed = [...classesUsed, ...classes];
-					tailwindSetup.addUtilities(classes);
+			walk(ast, (node) => {
+				if (isValidNode(node)) {
+					const classAttr = node.attrs?.find((attr) => attr.name === 'class');
+
+					if (classAttr && classAttr.value) {
+						const classes = classAttr.value.split(/\s+/).filter(Boolean);
+						classesUsed = [...classesUsed, ...classes];
+						tailwindSetup?.addUtilities(classes);
+					}
 				}
+
+				return node;
+			});
+
+			const styleSheet = tailwindSetup
+				? tailwindSetup.getStyleSheet()
+				: postcss.parse(sanitizeCustomCss(this.customCSS!));
+			sanitizeStyleSheet(styleSheet, { baseFontSize: this.baseFontSize });
+
+			// Extract global rules (*, element selectors, :root) for application to all elements
+			const globalRules = extractGlobalRules(styleSheet);
+
+			const { inlinable: inlinableRules, nonInlinable: nonInlinableRules } = extractRulesPerClass(
+				styleSheet,
+				classesUsed
+			);
+
+			const customProperties = getCustomProperties(styleSheet);
+
+			// Create a new Root for non-inline styles.
+			// Clone with ancestor @media/@supports wrappers — Tailwind v4.3.3+ flattens
+			// nesting so those at-rules wrap the selector instead of nesting inside it.
+			const nonInlineStyles = postcss.root();
+			for (const rule of nonInlinableRules.values()) {
+				nonInlineStyles.append(cloneRuleWithAtRuleAncestors(rule));
 			}
+			sanitizeNonInlinableRules(nonInlineStyles);
 
-			return node;
-		});
+			const hasNonInlineStylesToApply = nonInlinableRules.size > 0;
+			let appliedNonInlineStyles = false;
+			let hasHead = false;
+			const unknownClasses: string[] = [];
 
-		const styleSheet = tailwindSetup.getStyleSheet();
-		sanitizeStyleSheet(styleSheet, { baseFontSize: this.baseFontSize });
+			ast = walk(ast, (node) => {
+				if (isValidNode(node)) {
+					const elementWithInlinedStyles = addInlinedStylesToElement(
+						node,
+						inlinableRules,
+						nonInlinableRules,
+						customProperties,
+						unknownClasses,
+						globalRules
+					);
+					if (node.nodeName === 'head') {
+						hasHead = true;
+					}
+					return elementWithInlinedStyles;
+				}
+				return node;
+			});
 
-		// Extract global rules (*, element selectors, :root) for application to all elements
-		const globalRules = extractGlobalRules(styleSheet);
+			serialized = serialize(ast);
 
-		const { inlinable: inlinableRules, nonInlinable: nonInlinableRules } = extractRulesPerClass(
-			styleSheet,
-			classesUsed
-		);
-
-		const customProperties = getCustomProperties(styleSheet);
-
-		// Create a new Root for non-inline styles.
-		// Clone with ancestor @media/@supports wrappers — Tailwind v4.3.3+ flattens
-		// nesting so those at-rules wrap the selector instead of nesting inside it.
-		const nonInlineStyles = postcss.root();
-		for (const rule of nonInlinableRules.values()) {
-			nonInlineStyles.append(cloneRuleWithAtRuleAncestors(rule));
-		}
-		sanitizeNonInlinableRules(nonInlineStyles);
-
-		const hasNonInlineStylesToApply = nonInlinableRules.size > 0;
-		let appliedNonInlineStyles = false;
-		let hasHead = false;
-		const unknownClasses: string[] = [];
-
-		ast = walk(ast, (node) => {
-			if (isValidNode(node)) {
-				const elementWithInlinedStyles = addInlinedStylesToElement(
-					node,
-					inlinableRules,
-					nonInlinableRules,
-					customProperties,
-					unknownClasses,
-					globalRules
+			if (unknownClasses.length > 0 && !this.disableTailwind) {
+				console.warn(
+					`[better-svelte-email] You are using the following classes that were not recognized: ${unknownClasses.join(' ')}.`
 				);
-				if (node.nodeName === 'head') {
-					hasHead = true;
-				}
-				return elementWithInlinedStyles;
 			}
-			return node;
-		});
 
-		let serialized = serialize(ast);
+			if (hasHead && hasNonInlineStylesToApply) {
+				appliedNonInlineStyles = true;
+				// Use regex to handle <head> with or without attributes (e.g., style from preflight)
+				serialized = serialized.replace(
+					/<head([^>]*)>/,
+					'<head$1>' + '<style>' + nonInlineStyles.toString() + '</style>'
+				);
+			}
 
-		if (unknownClasses.length > 0) {
-			console.warn(
-				`[better-svelte-email] You are using the following classes that were not recognized: ${unknownClasses.join(' ')}.`
-			);
-		}
-
-		if (hasHead && hasNonInlineStylesToApply) {
-			appliedNonInlineStyles = true;
-			// Use regex to handle <head> with or without attributes (e.g., style from preflight)
-			serialized = serialized.replace(
-				/<head([^>]*)>/,
-				'<head$1>' + '<style>' + nonInlineStyles.toString() + '</style>'
-			);
-		}
-
-		if (hasNonInlineStylesToApply && !appliedNonInlineStyles) {
-			throw new Error(
-				`You are trying to use the following Tailwind classes that cannot be inlined: ${Array.from(
-					nonInlinableRules.keys()
-				).join(' ')}.
+			if (hasNonInlineStylesToApply && !appliedNonInlineStyles) {
+				throw new Error(
+					`You are trying to use the following Tailwind classes that cannot be inlined: ${Array.from(
+						nonInlinableRules.keys()
+					).join(' ')}.
 For the media queries to work properly on rendering, they need to be added into a <style> tag inside of a <head> tag,
 the render function tried finding a <head> element but just wasn't able to find it.
 
@@ -240,7 +270,10 @@ This can also be our <Head> component.
 
 If you do already have a <head> element at some depth, 
 please file a bug https://github.com/Konixy/better-svelte-email/issues/new?assignees=&labels=bug&projects=.`
-			);
+				);
+			}
+		} else {
+			serialized = serialize(ast);
 		}
 
 		// Replace various DOCTYPE formats with XHTML 1.0 Transitional

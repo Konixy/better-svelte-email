@@ -1,5 +1,11 @@
 # @better-svelte-email/components
 
+## 2.1.4
+
+### Patch Changes
+
+- 827a794: Update dependencies version (fixed cve for html-to-text)
+
 ## 2.1.3
 
 ### Patch Changes

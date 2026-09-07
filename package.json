@@ -38,7 +38,7 @@
 		"svelte": "^5.57.0",
 		"svelte-check": "^4.7.6",
 		"svelte-themes": "^2.0.10",
-		"tsdown": "^0.22.14",
+		"tsdown": "^0.23.0",
 		"turbo": "^2.10.12",
 		"typescript": "6",
 		"typescript-eslint": "^8.68.0",

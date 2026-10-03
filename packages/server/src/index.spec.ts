@@ -4,6 +4,7 @@ import BasicComponent from './__fixtures__/BasicComponent.svelte';
 import ResponsiveComponent from './__fixtures__/ResponsiveComponent.svelte';
 import NoHeadComponent from './__fixtures__/NoHeadComponent.svelte';
 import PropsComponent from './__fixtures__/PropsComponent.svelte';
+import BrandColorComponent from './__fixtures__/BrandColorComponent.svelte';
 
 describe('Renderer', () => {
 	it('renders a basic component with Tailwind classes', async () => {
@@ -376,6 +377,134 @@ describe('disableTailwind option', () => {
 		expect(html).toMatch(/<style>[\s\S]*color:\s*green/);
 		expect(html).toContain('class="unknown-class text-center"');
 		expect(html).not.toMatch(/<div[^>]*style="[^"]*color:\s*green/);
+	});
+});
+
+describe('CSS variable cascade', () => {
+	const brandColor = (html: string) => html.match(/<p style="color:\s*([^;"]+)/)?.[1];
+
+	it('uses the later of two :root declarations behind a Tailwind theme color', async () => {
+		const renderer = new Renderer({
+			customCSS: `:root { --brand: red; }
+:root { --brand: blue; }
+@theme inline { --color-brand: var(--brand); }`
+		});
+		const html = await renderer.render(BrandColorComponent);
+
+		expect(brandColor(html)).toBe('blue');
+	});
+
+	it('applies a qualified :root block only when the rendered html element matches it', async () => {
+		const renderer = new Renderer({
+			customCSS: `:root { --brand: red; }
+:root:not([data-theme='dark']) { --brand: blue; }
+@theme inline { --color-brand: var(--brand); }`
+		});
+
+		const unthemed = await renderer.render(BrandColorComponent);
+		const light = await renderer.render(BrandColorComponent, { props: { theme: 'light' } });
+		const dark = await renderer.render(BrandColorComponent, { props: { theme: 'dark' } });
+
+		expect(brandColor(unthemed)).toBe('blue');
+		expect(brandColor(light)).toBe('blue');
+		expect(brandColor(dark)).toBe('red');
+	});
+
+	it('uses the later :root declaration in plain CSS without Tailwind', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `:root { --brand: red; }
+:root { --brand: blue; }
+.text-brand { color: var(--brand); }`
+		});
+		const html = await renderer.render(BrandColorComponent);
+
+		expect(brandColor(html)).toBe('blue');
+	});
+
+	it('lets a :root override replace a Tailwind default theme variable', async () => {
+		const renderer = new Renderer({ customCSS: ':root { --color-red-500: #ff0000; }' });
+		const html = await renderer.render(BrandColorComponent, { props: { textClass: 'bg-red-500' } });
+
+		expect(html).toMatch(/background-color:\s*rgb\(255,\s*0,\s*0\)/);
+	});
+
+	it('applies a .dark theme block through a Tailwind theme color when html has the class', async () => {
+		const renderer = new Renderer({
+			customCSS: `:root { --brand: red; }
+.dark { --brand: green; }
+@theme inline { --color-brand: var(--brand); }`
+		});
+
+		const light = await renderer.render(BrandColorComponent);
+		const dark = await renderer.render(BrandColorComponent, { props: { htmlClass: 'dark' } });
+
+		expect(brandColor(light)).toBe('red');
+		expect(brandColor(dark)).toBe('green');
+	});
+
+	it('keeps the first root declaration across cascade layers behind a Tailwind theme color', async () => {
+		const renderer = new Renderer({
+			customCSS: `@layer a, b;
+@layer b { :root { --brand: blue; } }
+@layer a { :root { --brand: red; } }
+@theme inline { --color-brand: var(--brand); }`
+		});
+		const html = await renderer.render(BrandColorComponent);
+
+		expect(brandColor(html)).toBe('blue');
+	});
+
+	it('keeps the first root declaration when the document declares or scopes the variable', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `:root { --brand: blue; }
+.dark { --brand: blue; }
+:root { --brand: red; }
+.text-brand { color: var(--brand); }`
+		});
+
+		const htmlStyle = await renderer.render(BrandColorComponent, {
+			props: { htmlStyle: '--brand: blue' }
+		});
+		const bodyClass = await renderer.render(BrandColorComponent, { props: { bodyClass: 'dark' } });
+
+		expect(brandColor(htmlStyle)).toBe('blue');
+		expect(brandColor(bodyClass)).toBe('blue');
+	});
+
+	it('leaves a non-inheriting registered variable to its initial value', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `@property --brand { syntax: "<color>"; inherits: false; initial-value: blue; }
+html { --brand: red; }
+.text-brand { color: var(--brand); }`
+		});
+		const html = await renderer.render(BrandColorComponent);
+
+		expect(brandColor(html)).toBe('blue');
+	});
+
+	// The rendered doctype decides the mode: the `Html` component's XHTML Transitional doctype
+	// gives limited-quirks mode, which matches classes case-sensitively like standards mode
+	it('keeps the first root declaration in quirks mode, where classes match in any case', async () => {
+		const renderer = new Renderer({
+			disableTailwind: true,
+			customCSS: `:root { --brand: blue; }
+.DARK { --brand: blue !important; }
+:root { --brand: red; }
+.text-brand { color: var(--brand); }`
+		});
+
+		const quirks = await renderer.render(BrandColorComponent, {
+			props: { doctype: '', htmlClass: 'dark' }
+		});
+		const withDoctype = await renderer.render(BrandColorComponent, {
+			props: { htmlClass: 'dark' }
+		});
+
+		expect(brandColor(quirks)).toBe('blue');
+		expect(brandColor(withDoctype)).toBe('red');
 	});
 });
 

@@ -167,7 +167,9 @@ export class Renderer {
 	render = async (component: any, options?: RenderOptions | undefined) => {
 		const { body } = svelteRender(component, options);
 
-		let ast = parse(body);
+		// Svelte compiles a literal `<!DOCTYPE html>` to `<!doctype html=""/>`, which parses in
+		// quirks mode, so the doctype is replaced before parsing as well
+		let ast = parse(replaceLeadingDoctype(body));
 		ast = removeAttributesFunctions(ast);
 
 		const processStyles = !this.disableTailwind || Boolean(this.customCSS);
@@ -276,15 +278,27 @@ please file a bug https://github.com/Konixy/better-svelte-email/issues/new?assig
 			serialized = serialize(ast);
 		}
 
-		// Replace various DOCTYPE formats with XHTML 1.0 Transitional
-		serialized = serialized.replace(
-			/<!DOCTYPE\s+html[^>]*>/i,
-			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-		);
-
-		return serialized;
+		// parse5 serializes the doctype by name only, dropping the public and system ids
+		return replaceDoctype(serialized);
 	};
 }
+
+const XHTML_DOCTYPE =
+	'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
+
+/** Replaces various DOCTYPE formats with XHTML 1.0 Transitional */
+const replaceDoctype = (html: string) => html.replace(/<!DOCTYPE\s+html[^>]*>/i, XHTML_DOCTYPE);
+
+/**
+ * Replaces only a doctype that opens the document, after Svelte's hydration comments, so
+ * doctype-like text inside `<textarea>` or `<title>` is left alone
+ */
+const replaceLeadingDoctype = (html: string) =>
+	html.replace(
+		// A comment body may not contain `-->`, so each comment matches one way only
+		/^((?:\s|<!--(?:(?!-->)[\s\S])*-->)*)<!DOCTYPE\s+html[^>]*>/i,
+		`$1${XHTML_DOCTYPE}`
+	);
 
 /**
  * Render HTML as plain text

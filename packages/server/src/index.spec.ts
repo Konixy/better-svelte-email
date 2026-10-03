@@ -116,6 +116,28 @@ describe('Renderer', () => {
 		expect(html).toContain('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"');
 	});
 
+	it('parses a literal doctype outside quirks mode', async () => {
+		const { default: Component } = await import('./__fixtures__/LiteralDoctypeComponent.svelte');
+		const html = await new Renderer({ disableTailwind: true }).render(Component);
+
+		// Outside quirks mode a table closes the open paragraph, as in the sent email
+		expect(html).toContain('<p>Intro</p><table>');
+	});
+
+	it('keeps doctype-like text inside a textarea', async () => {
+		const { default: Component } = await import('./__fixtures__/DoctypeTextComponent.svelte');
+		const html = await new Renderer({ disableTailwind: true }).render(Component);
+
+		expect(html).toContain('<textarea>&lt;!DOCTYPE html&gt;</textarea>');
+	});
+
+	it('renders a body that opens with many comments and no doctype', async () => {
+		const { default: Component } = await import('./__fixtures__/LeadingCommentsComponent.svelte');
+		const html = await new Renderer({ disableTailwind: true }).render(Component);
+
+		expect(html).toContain('<p>Hi</p>');
+	});
+
 	it('handles empty components', async () => {
 		const { default: Component } = await import('./__fixtures__/EmptyComponent.svelte');
 		const renderer = new Renderer();

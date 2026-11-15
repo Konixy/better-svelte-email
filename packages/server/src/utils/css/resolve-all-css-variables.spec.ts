@@ -1,5 +1,6 @@
 import postcss from 'postcss';
 import { resolveAllCssVariables } from './resolve-all-css-variables';
+import type { ElementAttribute, RenderedDocument } from './match-selector';
 import { expect, describe, it } from 'vitest';
 
 describe('resolveAllCSSVariables', () => {
@@ -386,5 +387,502 @@ div:nth-child(2*n+1) {
 		const result = root.toString();
 		expect(result).toContain('color: green');
 		expect(result).not.toContain('var(--');
+	});
+});
+
+describe('resolveAllCssVariables cascade order', () => {
+	function resolve(css: string, document: Partial<RenderedDocument> = {}) {
+		const root = postcss.parse(css);
+		resolveAllCssVariables(root, { root: [], descendants: [], styleSheets: [], ...document });
+		return (selector: string, prop = 'color') => {
+			const values: string[] = [];
+			root.walkRules((rule) => {
+				if (rule.selector !== selector) return;
+				rule.each((node) => {
+					if (node.type === 'decl' && node.prop === prop) values.push(node.value);
+				});
+			});
+			return values.join(', ');
+		};
+	}
+
+	const element = (attributes: Record<string, string>): ElementAttribute[] =>
+		Object.entries(attributes).map(([name, value]) => ({ name, value }));
+	const brandUse = '.text-brand { color: var(--brand); }';
+	const brandElement = element({ class: 'text-brand' });
+
+	describe('variables declared only for the root follow the cascade', () => {
+		it('uses the later of two :root blocks declaring the same variable', () => {
+			const valueOf = resolve(`:root { --brand: red; }
+:root { --brand: blue; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('uses the later declaration when one rule declares a variable twice', () => {
+			const valueOf = resolve(`:root { --brand: red; --brand: blue; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('prefers a more specific matching root selector in either source order', () => {
+			const qualifiedFirst = resolve(`:root:not([data-theme='dark']) { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`);
+			const qualifiedLast = resolve(`:root { --brand: red; }
+:root:not([data-theme='dark']) { --brand: blue; }
+${brandUse}`);
+
+			expect(qualifiedFirst('.text-brand')).toBe('blue');
+			expect(qualifiedLast('.text-brand')).toBe('blue');
+		});
+
+		it('ignores a qualified root selector the rendered html element does not match', () => {
+			const css = `:root { --brand: red; }
+:root:not([data-theme='dark']) { --brand: blue; }
+${brandUse}`;
+
+			expect(resolve(css)('.text-brand')).toBe('blue');
+			expect(resolve(css, { root: element({ 'data-theme': 'dark' }) })('.text-brand')).toBe('red');
+		});
+
+		it('applies a later .dark block only when html has the class', () => {
+			const css = `:root { --brand: red; }
+.dark { --brand: green; }
+${brandUse}`;
+			const descendants = [brandElement];
+
+			expect(resolve(css, { descendants })('.text-brand')).toBe('red');
+			expect(
+				resolve(css, { root: element({ class: 'app dark' }), descendants })('.text-brand')
+			).toBe('green');
+		});
+
+		it('prefers !important and then specificity over source order', () => {
+			const important = resolve(`:root { --brand: blue !important; }
+:root { --brand: red; }
+${brandUse}`);
+			const importantHtml = resolve(`:root { --brand: green; }
+html { --brand: blue !important; }
+:root { --brand: red; }
+${brandUse}`);
+			const specificHtml = resolve(
+				`:root { --brand: green; }
+html.dark { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`,
+				{ root: element({ class: 'dark' }) }
+			);
+
+			expect(important('.text-brand')).toBe('blue');
+			expect(importantHtml('.text-brand')).toBe('blue');
+			expect(specificHtml('.text-brand')).toBe('blue');
+		});
+
+		it('lets an unlayered root declaration beat a more specific layered one', () => {
+			const valueOf = resolve(`@layer theme { :root:not(.print), :host { --brand: red; } }
+:root { --brand: blue; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('uses the later declaration inside one layer with a valid name', () => {
+			for (const name of ['theme', '_a.b-c', 'é', 'custom-properties']) {
+				const valueOf = resolve(`@layer ${name} { :root { --brand: blue; } :root { --brand: red; } }
+${brandUse}`);
+
+				expect(valueOf('.text-brand'), name).toBe('red');
+			}
+		});
+
+		it('never matches :host branches against the document root', () => {
+			const htmlOrHost = resolve(`:root { --brand: blue; }
+html, :host { --brand: red; }
+${brandUse}`);
+			const hostOnly = resolve(`:root { --brand: blue; }
+:root.print, :host { --brand: red; }
+${brandUse}`);
+
+			expect(htmlOrHost('.text-brand')).toBe('blue');
+			expect(hostOnly('.text-brand')).toBe('blue');
+		});
+
+		it('ignores a same-name variable from @layer properties', () => {
+			const valueOf = resolve(`* { --tw-leading: 2; }
+.leading { line-height: var(--tw-leading); }
+@layer properties {
+  *, ::before, ::after { --tw-leading: initial; }
+  .inside { line-height: var(--tw-leading); }
+}`);
+
+			expect(valueOf('.leading', 'line-height')).toBe('2');
+			expect(valueOf('.inside', 'line-height')).toBe('var(--tw-leading)');
+		});
+	});
+
+	// Each case keeps the first intersecting definition, as before cascade ordering
+	describe('keeps the first intersecting definition', () => {
+		it('without a rendered document', () => {
+			const root = postcss.parse(`:root { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`);
+			resolveAllCssVariables(root);
+
+			expect(root.toString()).toContain('color: blue');
+		});
+
+		it('for root declarations in different cascade layers', () => {
+			const valueOf = resolve(`@layer a, b;
+@layer b { :root { --brand: blue; } }
+@layer a { :root { --brand: red; } }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for !important declarations in different cascade layers', () => {
+			const valueOf = resolve(`@layer a, b;
+@layer a { :root { --brand: blue !important; } }
+@layer b { :root { --brand: red !important; } }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for !important declarations mixing layered and unlayered roots', () => {
+			const valueOf = resolve(`@layer theme { :root { --brand: blue !important; } }
+:root { --brand: red !important; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for a class selector matching an element below html', () => {
+			const bodyClass = resolve(
+				`:root { --brand: blue; }
+.dark { --brand: green; }
+:root { --brand: red; }
+${brandUse}`,
+				{ descendants: [element({ class: 'dark' }), brandElement] }
+			);
+			const ancestor = resolve(
+				`:root { --brand: blue; }
+.promo { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`,
+				{ descendants: [element({ class: 'promo' }), brandElement] }
+			);
+
+			expect(bodyClass('.text-brand')).toBe('blue');
+			expect(ancestor('.text-brand')).toBe('blue');
+		});
+
+		it('for a variable declared in a style attribute or <style> element', () => {
+			const css = `:root { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`;
+			const onRoot = resolve(css, { root: element({ style: 'color: black; --brand: blue' }) });
+			const onElement = resolve(css, {
+				descendants: [element({ class: 'text-brand', style: '--brand: blue' })]
+			});
+			const inStyleElement = resolve(css, { styleSheets: [':root { --brand: blue !important; }'] });
+			const unparseable = resolve(css, { descendants: [element({ style: 'color: red }' })] });
+
+			expect(onRoot('.text-brand')).toBe('blue');
+			expect(onElement('.text-brand')).toBe('blue');
+			expect(inStyleElement('.text-brand')).toBe('blue');
+			expect(unparseable('.text-brand')).toBe('blue');
+		});
+
+		it('for a later declaration holding a CSS-wide keyword', () => {
+			for (const keyword of ['initial', 'INHERIT', 'unset', 'revert', 'revert-layer']) {
+				const valueOf = resolve(`:root { --brand: blue; }
+:root { --brand: ${keyword}; }
+.text-brand { color: var(--brand, blue); }`);
+
+				expect(valueOf('.text-brand'), keyword).toBe('blue');
+			}
+		});
+
+		it('for a later declaration holding var()', () => {
+			const valueOf = resolve(`:root { --brand: blue; }
+:root { --brand: var(--missing); }
+.text-brand { color: var(--brand, blue); }`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for a variable registered with @property, in any case', () => {
+			const typed =
+				resolve(`@property --brand { syntax: "<color>"; inherits: true; initial-value: blue; }
+:root { --brand: blue; }
+:root { --brand: 10px; }
+${brandUse}`);
+			const nonInheriting =
+				resolve(`@PROPERTY --brand { syntax: "<color>"; INHERITS: FALSE; initial-value: green; }
+:root { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`);
+
+			expect(typed('.text-brand')).toBe('blue');
+			expect(nonInheriting('.text-brand')).toBe('blue');
+		});
+
+		it('for an alias declared in a root rule html does not match, in either order', () => {
+			const alias = ':root.light { --alias: var(--brand); }';
+			const use = '.text-brand { color: var(--alias, blue); }';
+			const root = element({ class: 'dark' });
+			for (const theme of ['.dark', ':root.dark']) {
+				const themes = `:root { --brand: blue; }\n${theme} { --brand: red; }`;
+				const aliasFirst = resolve(`${themes}\n${alias}\n${use}`, { root });
+				const useFirst = resolve(`${themes}\n${use}\n${alias}`, { root });
+
+				expect(aliasFirst('.text-brand'), theme).toBe('blue');
+				expect(useFirst('.text-brand'), theme).toBe('blue');
+			}
+		});
+
+		it('for a use inside another variable declaration', () => {
+			const themes = ':root { --brand: green; }\n:root { --brand: red; }';
+			const use = '.text-brand { color: var(--alias); }';
+			const overridden = resolve(`${themes}
+:root { --alias: var(--brand); }
+:root { --alias: green; }
+${use}`);
+			const conditional = resolve(`${themes}
+@media print { :root { --alias: var(--brand); } }
+:root { --alias: green; }
+${use}`);
+
+			expect(overridden('.text-brand')).toBe('green');
+			expect(conditional('.text-brand')).toBe('green');
+		});
+
+		it('for a use in a root-only rule html does not match', () => {
+			const valueOf = resolve(`:root { --brand: blue; }
+:root { --brand: red; }
+:root.light { color: var(--brand); }`);
+
+			expect(valueOf(':root.light')).toBe('blue');
+		});
+
+		it('for an alias whose use declares the aliased variable itself', () => {
+			const valueOf = resolve(
+				`:root { --brand: blue; }
+.text-brand { --brand: red; color: var(--alias); }
+:root { --alias: var(--brand); }`,
+				{ descendants: [brandElement] }
+			);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for declarations in nested rules', () => {
+			const root = element({ class: 'foo' });
+			const nestedUse = resolve(
+				`.foo { .text-brand { --brand: blue; } }
+.bar { .text-brand { --brand: red; } }
+${brandUse}`,
+				{ root }
+			);
+			const nestedRoot = resolve(
+				`:root { --brand: blue; }
+.foo { :root { --brand: red; } }
+${brandUse}`,
+				{ root }
+			);
+
+			expect(nestedUse('.text-brand')).toBe('blue');
+			expect(nestedRoot('.text-brand')).toBe('blue');
+		});
+
+		it('for a use on * declaring the variable itself', () => {
+			const valueOf = resolve(`* { --space: 20px; margin: var(--space); }
+:root { --space: 30px !important; }`);
+
+			expect(valueOf('*', 'margin')).toBe('20px');
+		});
+
+		it('for a root declaration inside @media, also around nested conditional uses', () => {
+			const laterMedia = resolve(`:root { --brand: red; }
+@media (prefers-color-scheme: dark) { :root { --brand: green; } }
+${brandUse}`);
+			const nestedUse =
+				resolve(`@media (prefers-color-scheme: light) { :root { --brand: blue !important; } }
+:root { --brand: red; }
+@media (prefers-color-scheme: light) {
+  @media (min-width: 100px) { .text-brand { color: var(--brand); } }
+}`);
+
+			expect(laterMedia('.text-brand')).toBe('red');
+			expect(nestedUse('.text-brand')).toBe('blue');
+		});
+
+		it('for a root declaration inside @container', () => {
+			const valueOf = resolve(`:root { --brand: red; }
+@container card (min-width: 1px) { :root { --brand: blue; } }
+@container Card (min-width: 1px) { .text-brand { color: var(--brand); } }`);
+
+			expect(valueOf('.text-brand')).toBe('red');
+		});
+
+		it('for selectors outside the supported grammar', () => {
+			const selectors = [
+				':root:has(.text-brand)',
+				':where(:root)',
+				':is(:root, .dark)',
+				':root**',
+				':root.light\\,mode',
+				'html:root',
+				':root[dir=rtl]',
+				':root[data-x="a" i]',
+				':root[data-x~="a"]',
+				':root:not(:root)',
+				':root:not(.a .b)'
+			];
+			const root = element({ class: 'light,mode a', dir: 'rtl', 'data-x': 'a' });
+			for (const selector of selectors) {
+				const valueOf = resolve(
+					`${selector} { --brand: blue; }
+:root { --brand: red; }
+${brandUse}`,
+					{ root }
+				);
+
+				expect(valueOf('.text-brand'), selector).toBe('blue');
+			}
+		});
+
+		it('for an unescaped line break inside an attribute string', () => {
+			for (const lineBreak of ['\n', '\r', '\f']) {
+				const valueOf = resolve(
+					`:root { --brand: blue; }
+:root[data-x="a${lineBreak}b"] { --brand: red; }
+${brandUse}`,
+					{ root: element({ 'data-x': `a${lineBreak}b` }) }
+				);
+
+				expect(valueOf('.text-brand'), JSON.stringify(lineBreak)).toBe('blue');
+			}
+		});
+
+		it('for deeply nested selectors, without overflowing the stack', () => {
+			const depth = 20_000;
+			const deep = `:root${':is('.repeat(depth)}:root${')'.repeat(depth)}`;
+			const valueOf = resolve(`:root { --brand: blue; }
+${deep} { --brand: red; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for a use whose own selector declares the variable', () => {
+			const valueOf = resolve(
+				`:root { --brand: red; }
+.after { --brand: blue; color: var(--brand); }
+.dark { --brand: green; }
+.dark { color: var(--brand); }`,
+				{ descendants: [element({ class: 'after dark' })] }
+			);
+
+			expect(valueOf('.after')).toBe('red');
+			expect(valueOf('.dark')).toBe('red');
+		});
+
+		it('for a use below the root competing with a class selector', () => {
+			const valueOf = resolve(
+				`.promo { --brand: blue; }
+:root { --brand: red; }
+:root .promo { color: var(--brand); }`,
+				{ descendants: [element({ class: 'promo' })] }
+			);
+
+			expect(valueOf(':root .promo')).toBe('blue');
+		});
+
+		it('for a variable also declared in a layer named properties', () => {
+			const important = resolve(`:root { --brand: blue; }
+:root { --brand: red; }
+@layer properties { :root { --brand: blue !important; } }
+${brandUse}`);
+			// Only an exact name segment is skipped, so this class still reaches below html
+			const similarName = resolve(
+				`:root { --brand: blue; }
+:root { --brand: red; }
+@layer custom-properties { .promo { --brand: blue; } }
+${brandUse}`,
+				{ descendants: [element({ class: 'promo' }), brandElement] }
+			);
+
+			expect(important('.text-brand')).toBe('blue');
+			expect(similarName('.text-brand')).toBe('blue');
+		});
+
+		it('for a declaration written with escapes', () => {
+			const use = '.text-brand { color: var(--brand, blue); }';
+			const keyword = resolve(`:root { --brand: blue; }
+:root { --brand: \\69 nitial; }
+${use}`);
+			const fn = resolve(`:root { --brand: blue; }
+:root { --brand: v\\61 r(--missing); }
+${use}`);
+			const important = resolve(`:root { --brand: blue !im\\70 ortant; }
+:root { --brand: red; }
+${use}`);
+
+			expect(keyword('.text-brand')).toBe('blue');
+			expect(fn('.text-brand')).toBe('blue');
+			expect(important('.text-brand')).toBe('blue !im\\70 ortant');
+		});
+
+		it('for selectors holding spaces that are not CSS whitespace', () => {
+			const root = element({ 'data-x': 'a' });
+			for (const space of [' ', '\u000b', ' ', '﻿']) {
+				const selectors = [
+					`:root${space}`,
+					`${space}:root`,
+					`:root[data-x${space}=a]`,
+					`:root:not(${space}.print)`
+				];
+				for (const selector of selectors) {
+					const valueOf = resolve(
+						`:root { --brand: blue; }
+${selector} { --brand: red; }
+${brandUse}`,
+						{ root }
+					);
+
+					expect(valueOf('.text-brand'), JSON.stringify(selector)).toBe('blue');
+				}
+			}
+		});
+
+		it('for a stylesheet with @namespace', () => {
+			const valueOf = resolve(`@namespace url(http://www.w3.org/2000/svg);
+:root { --brand: blue; }
+html { --brand: red !important; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
+
+		it('for a cascade layer name that is not an identifier', () => {
+			for (const name of ['123', '-', '-1x', 'theme.2x', 'a..b']) {
+				const valueOf = resolve(`@layer ${name} { :root { --brand: blue; } :root { --brand: red; } }
+${brandUse}`);
+
+				expect(valueOf('.text-brand'), name).toBe('blue');
+			}
+		});
+
+		it('when no root selector matches the rendered html element', () => {
+			const valueOf = resolve(`:root.dark { --brand: blue; }
+${brandUse}`);
+
+			expect(valueOf('.text-brand')).toBe('blue');
+		});
 	});
 });

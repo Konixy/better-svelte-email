@@ -5,6 +5,7 @@ import { walk } from './utils/html/walk';
 import { setupTailwind } from './utils/tailwindcss/setup-tailwind';
 import type { Config } from 'tailwindcss';
 import { sanitizeStyleSheet } from './utils/css/sanitize-stylesheet';
+import type { RenderedDocument } from './utils/css/match-selector';
 import { extractRulesPerClass } from './utils/css/extract-rules-per-class';
 import { extractGlobalRules } from './utils/css/extract-global-rules';
 import { getCustomProperties } from './utils/css/get-custom-properties';
@@ -179,8 +180,17 @@ export class Renderer {
 				? null
 				: await setupTailwind(this.tailwindConfig, this.customCSS);
 
+			const renderedDocument: RenderedDocument = { root: [], descendants: [], styleSheets: [] };
 			walk(ast, (node) => {
 				if (isValidNode(node)) {
+					if (node.nodeName === 'html') renderedDocument.root = node.attrs;
+					else renderedDocument.descendants.push(node.attrs);
+					if (node.nodeName === 'style') {
+						renderedDocument.styleSheets.push(
+							node.childNodes.map((child) => ('value' in child ? child.value : '')).join('')
+						);
+					}
+
 					const classAttr = node.attrs?.find((attr) => attr.name === 'class');
 
 					if (classAttr && classAttr.value) {
@@ -196,7 +206,11 @@ export class Renderer {
 			const styleSheet = tailwindSetup
 				? tailwindSetup.getStyleSheet()
 				: postcss.parse(sanitizeCustomCss(this.customCSS!));
-			sanitizeStyleSheet(styleSheet, { baseFontSize: this.baseFontSize });
+			sanitizeStyleSheet(styleSheet, {
+				baseFontSize: this.baseFontSize,
+				// Quirks mode matches classes and ids case-insensitively, which is not modelled
+				document: ast.mode === 'quirks' ? undefined : renderedDocument
+			});
 
 			// Extract global rules (*, element selectors, :root) for application to all elements
 			const globalRules = extractGlobalRules(styleSheet);

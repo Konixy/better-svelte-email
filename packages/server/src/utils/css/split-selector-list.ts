@@ -2,8 +2,13 @@
  * Splits a CSS selector list by commas, respecting parentheses and brackets.
  * e.g., "*, ::before, ::after" → ["*", "::before", "::after"]
  * e.g., ":is(div, p), span" → [":is(div, p)", "span"]
+ *
+ * @param trim - Removes the whitespace around each selector
  */
-export function splitSelectorList(selector: string): string[] {
+export function splitSelectorList(
+	selector: string,
+	trim = (part: string) => part.trim()
+): string[] {
 	const result: string[] = [];
 	let current = '';
 	let parenDepth = 0;
@@ -28,7 +33,7 @@ export function splitSelectorList(selector: string): string[] {
 
 			// Split on comma only at top level
 			if (char === ',' && parenDepth === 0 && bracketDepth === 0) {
-				result.push(current.trim());
+				result.push(trim(current));
 				current = '';
 				continue;
 			}
@@ -37,6 +42,6 @@ export function splitSelectorList(selector: string): string[] {
 		current += char;
 	}
 
-	result.push(current.trim());
+	result.push(trim(current));
 	return result;
 }

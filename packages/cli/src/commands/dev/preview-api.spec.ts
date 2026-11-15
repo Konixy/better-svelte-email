@@ -73,8 +73,11 @@ describe('tryResolveSvelteKitRuntimeApp()', () => {
 });
 
 describe('previewSvelteKitShimPlugin()', () => {
-	it('stubs generated __SERVER__/internal imports with or without the js suffix', async () => {
+	it('stubs generated SvelteKit server modules', async () => {
 		const plugin = previewSvelteKitShimPlugin(process.cwd());
+		expect(await plugin.resolveId?.('<sveltekit:generated>/server.js')).toBe(
+			'\0preview-sk:server-internal'
+		);
 		expect(await plugin.resolveId?.('__SERVER__/internal')).toBe('\0preview-sk:server-internal');
 		expect(await plugin.resolveId?.('__SERVER__/internal.js')).toBe('\0preview-sk:server-internal');
 	});

@@ -10,7 +10,7 @@ export default defineConfig({
 	},
 	unbundle: true,
 	treeshake: false,
-	dts: { oxc: true },
+	dts: { generator: 'oxc' },
 	outputOptions: { exports: 'named' },
 	format: ['cjs', 'esm'],
 	publint: true

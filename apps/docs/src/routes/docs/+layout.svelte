@@ -2,15 +2,15 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { toggleMode } from 'mode-watcher';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import {
 		Select as SelectRoot,
 		SelectContent,
 		SelectItem,
 		SelectTrigger
-	} from '$lib/components/ui/select';
-	import { Separator } from '$lib/components/ui/separator';
-	import Github from '$lib/components/github.svelte';
+	} from '#lib/components/ui/select/index.js';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import Github from '#lib/components/github.svelte';
 	import MoonIcon from 'phosphor-svelte/lib/MoonIcon';
 	import SunIcon from 'phosphor-svelte/lib/SunIcon';
 	import { onMount } from 'svelte';
@@ -208,7 +208,7 @@
 </div>
 
 <style>
-	@reference '$lib/../app.css';
+	@reference '../../app.css';
 
 	:global(html) {
 		@apply overscroll-none;

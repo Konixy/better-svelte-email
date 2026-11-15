@@ -4,9 +4,9 @@
 	import Folder from '@lucide/svelte/icons/folder';
 	import FolderOpen from '@lucide/svelte/icons/folder-open';
 	import EmailTreeNode from './email-tree-node.svelte';
-	import { cn } from '$lib/utils';
-	import type { DirectoryEntry, EmailTreeEntry } from '$lib/email-tree';
-	import SvelteIcon from '$lib/svelte-icon.svelte';
+	import { cn } from '#lib/utils.js';
+	import type { DirectoryEntry, EmailTreeEntry } from '#lib/email-tree.js';
+	import SvelteIcon from '#lib/svelte-icon.svelte';
 
 	type Props = {
 		node: EmailTreeEntry;

@@ -1,16 +1,20 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import { invalidateAll } from '$app/navigation';
+	import { browser } from '$app/env';
+	import { refreshAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Mail from '@lucide/svelte/icons/mail';
-	import { Button } from '$lib/components/ui/button';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import * as Popover from '$lib/components/ui/popover';
-	import { getSendEmailConfig, saveSendEmailConfig, sendTestEmail } from '$lib/preview-api-client';
-	import type { SendEmailConfig } from '$lib/send-email-config';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Checkbox } from '#lib/components/ui/checkbox/index.js';
+	import * as Dialog from '#lib/components/ui/dialog/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import * as Popover from '#lib/components/ui/popover/index.js';
+	import {
+		getSendEmailConfig,
+		saveSendEmailConfig,
+		sendTestEmail
+	} from '#lib/preview-api-client.js';
+	import type { SendEmailConfig } from '#lib/send-email-config.js';
 
 	const DEFAULT_FROM = 'onboarding@resend.dev';
 	const RECIPIENT_STORAGE_KEY = 'bse_send_email_to';
@@ -125,7 +129,7 @@
 			apiKey = '';
 			setupDialogOpen = false;
 			sendPopoverOpen = true;
-			await invalidateAll();
+			await refreshAll();
 		} catch (error) {
 			setupError = error instanceof Error ? error.message : 'Failed to save Resend settings.';
 		} finally {
@@ -256,12 +260,13 @@
 		</div>
 
 		<Dialog.Footer>
-			<Button variant="outline" onclick={() => (setupDialogOpen = false)} disabled={setupLoading}>
-				Cancel
-			</Button>
-			<Button onclick={handleSaveSetup} disabled={setupLoading || !apiKey.trim()}>
-				{setupLoading ? 'Saving…' : 'Save & continue'}
-			</Button>
+			<Button variant="outline" onclick={() => (setupDialogOpen = false)} disabled={setupLoading}
+				>Cancel</Button
+			>
+
+			<Button onclick={handleSaveSetup} disabled={setupLoading || !apiKey.trim()}
+				>{setupLoading ? 'Saving…' : 'Save & continue'}</Button
+			>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

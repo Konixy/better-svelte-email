@@ -22,22 +22,30 @@ function svelteKitRuntimeDefine(): Record<string, string> {
 		__SVELTEKIT_ADAPTER_NAME__: s('preview'),
 		__SVELTEKIT_APP_DIR__: s('_app'),
 		__SVELTEKIT_APP_VERSION__: s('preview'),
+		__SVELTEKIT_APP_VERSION_CHECKS_ENABLED__: s(true),
 		__SVELTEKIT_APP_VERSION_FILE__: s('_app/version.json'),
 		__SVELTEKIT_APP_VERSION_POLL_INTERVAL__: '0',
 		__SVELTEKIT_CLIENT_ROUTING__: s(true),
+		__SVELTEKIT_CSRF_CHECK_ORIGIN__: s(true),
 		__SVELTEKIT_DEV__: s(true),
 		__SVELTEKIT_EMBEDDED__: s(false),
+		// Kit 2 runtime modules still read this flag.
 		__SVELTEKIT_EXPERIMENTAL__REMOTE_FUNCTIONS__: s(false),
 		__SVELTEKIT_FORK_PRELOADS__: s(false),
+		__SVELTEKIT_GLOBAL_NAME__: s('__sveltekit_dev'),
 		__SVELTEKIT_HASH_ROUTING__: s(false),
 		__SVELTEKIT_HAS_SERVER_LOAD__: 'true',
 		__SVELTEKIT_HAS_UNIVERSAL_LOAD__: 'true',
+		__SVELTEKIT_LINK_HEADER_PRELOAD__: s(false),
 		__SVELTEKIT_PATHS_ASSETS__: s(''),
 		__SVELTEKIT_PATHS_BASE__: s(''),
+		__SVELTEKIT_PATHS_ORIGIN__: 'undefined',
 		__SVELTEKIT_PATHS_RELATIVE__: s(false),
 		__SVELTEKIT_PAYLOAD__: 'globalThis.__sveltekit_dev',
 		__SVELTEKIT_SERVER_TRACING_ENABLED__: s(false),
-		// esbuild `define` only allows JSON literals or simple identifiers — not `(() => {})`.
+		__SVELTEKIT_SERVICE_WORKER__: s(false),
+		__SVELTEKIT_SUPPORTS_ASYNC__: s(false),
+		// Vite `define` only allows JSON literals or simple identifiers — not `(() => {})`.
 		__SVELTEKIT_TRACK__: 'Boolean'
 	};
 }
@@ -95,11 +103,29 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 			};
 		},
 		resolveId(id) {
-			// Newer Kit: `$app/paths` server entry imports `get_hooks` from generated `__SERVER__/internal.js`
-			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output, and Vite can
-			// surface the import with or without the `.js` suffix depending on the resolver path.
-			if (id === '__SERVER__/internal' || id === '__SERVER__/internal.js') {
+			// Kit 3: `$app/paths` imports `get_hooks` from `<sveltekit:generated>/server.js`.
+			// Kit 2 used `__SERVER__/internal`. Email preview has no generated `.svelte-kit` output.
+			if (
+				id === '<sveltekit:generated>/server.js' ||
+				id === '__SERVER__/internal' ||
+				id === '__SERVER__/internal.js'
+			) {
 				return `${PREVIEW_SK_VIRTUAL}server-internal`;
+			}
+			if (
+				id === '<sveltekit:generated>/env/public/server.js' ||
+				id === '<sveltekit:generated>/env/public/client.js'
+			) {
+				return `${PREVIEW_SK_VIRTUAL}env-static-public`;
+			}
+			if (id === '<sveltekit:generated>/env/private/server.js') {
+				return `${PREVIEW_SK_VIRTUAL}env-static-private`;
+			}
+			if (id === '<sveltekit:generated>/env/config.js') {
+				return `${PREVIEW_SK_VIRTUAL}env-config`;
+			}
+			if (id === '<sveltekit:generated>/app-manifest.js') {
+				return `${PREVIEW_SK_VIRTUAL}app-manifest`;
 			}
 			if (id === '__sveltekit/environment') {
 				return `${PREVIEW_SK_VIRTUAL}environment`;
@@ -139,6 +165,15 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 						'export let manifest = { _: { matchers: async () => ({}), routes: [] } };',
 						'export function set_read_implementation(fn) { read_implementation = fn; }',
 						'export function set_manifest(m) { manifest = m; }'
+					].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}env-config`:
+					return ['export const rendered_env = {};', 'export function set_env() {}'].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}app-manifest`:
+					return [
+						'export const immutable = [];',
+						'export const assets = [];',
+						'export const prerendered = [];',
+						'export const routes = [];'
 					].join('\n');
 				case `${PREVIEW_SK_VIRTUAL}server-internal`:
 					return [

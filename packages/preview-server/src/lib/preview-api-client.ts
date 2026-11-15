@@ -1,4 +1,4 @@
-import type { SendEmailConfig } from '$lib/send-email-config';
+import type { SendEmailConfig } from '#lib/send-email-config.js';
 
 export type { SendEmailConfig };
 

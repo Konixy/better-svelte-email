@@ -77,7 +77,7 @@ export function filterEmailTree(
 		return [...nodes];
 	}
 
-	return nodes.flatMap((node) => {
+	return nodes.flatMap((node): EmailTreeEntry[] => {
 		if (node.type === 'file') {
 			return node.path.toLowerCase().includes(normalizedQuery) ? [node] : [];
 		}

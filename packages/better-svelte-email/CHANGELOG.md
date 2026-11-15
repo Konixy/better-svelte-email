@@ -1,5 +1,17 @@
 # better-svelte-email
 
+## 2.3.1
+
+### Patch Changes
+
+- 49e572b: Fixed components with a literal `<!DOCTYPE html>` being parsed in quirks mode. The doctype is now replaced before the rendered HTML is parsed.
+- 9017b4f: Fixed CSS variables resolving to their first declaration when a later or more specific one applies. A variable whose declarations all sit in top-level rules matching the rendered `<html>` or no element now takes its cascaded value. Variables registered with `@property`, declared in a document `<style>` or inline style, inside conditional or nested rules, competing layers or a `properties` layer, or using escapes, `var()`, `attr()`, `if()` or CSS-wide keywords keep the previous behaviour, as do documents in quirks mode and stylesheets with `@namespace`.
+- Updated dependencies [49e572b]
+- Updated dependencies [9017b4f]
+  - @better-svelte-email/components@2.3.1
+  - @better-svelte-email/preview@2.3.1
+  - @better-svelte-email/server@2.3.1
+
 ## 2.3.0
 
 ### Minor Changes

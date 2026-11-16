@@ -1,15 +1,12 @@
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
+import { resolveStyleExport } from '../../scripts/resolve-style-export.ts';
 
-const twAnimateCss = path.join(
-	path.dirname(fileURLToPath(import.meta.url)),
-	'node_modules/tw-animate-css/dist/tw-animate.css'
-);
+const twAnimateCss = resolveStyleExport('tw-animate-css', fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit({ preprocess: [vitePreprocess()], adapter: adapter() })],

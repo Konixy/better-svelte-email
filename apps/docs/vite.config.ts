@@ -1,16 +1,13 @@
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
+import { resolveStyleExport } from '../../scripts/resolve-style-export.ts';
 import { extensions, preprocess } from './markdown.js';
 
-const twAnimateCss = path.join(
-	path.dirname(fileURLToPath(import.meta.url)),
-	'node_modules/tw-animate-css/dist/tw-animate.css'
-);
+const twAnimateCss = resolveStyleExport('tw-animate-css', fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	plugins: [

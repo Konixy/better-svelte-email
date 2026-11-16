@@ -2,31 +2,33 @@
 	"name": "@better-svelte-email/preview-server",
 	"version": "2.4.0",
 	"description": "Internal preview runtime for @better-svelte-email/cli",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/preview-server"
+	},
+	"license": "MIT",
+	"author": "Konixy",
 	"type": "module",
-	"main": "./build/index.js",
-	"files": [
-		"build"
-	],
-	"publishConfig": {
-		"access": "public"
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
 	},
 	"exports": {
 		".": "./build/index.js",
 		"./package.json": "./package.json"
 	},
+	"main": "./build/index.js",
+	"files": [
+		"build"
+	],
 	"scripts": {
-		"dev": "vite dev",
 		"build": "bunx --bun vite build",
 		"build:watch": "vite build --watch",
+		"dev": "vite dev",
+		"lint": "bun fmt --check --ignore-path ../../.prettierignore && eslint src --max-warnings 0",
 		"start": "node build",
 		"test": "vitest run"
-	},
-	"author": "Konixy",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Konixy/better-svelte-email.git",
-		"directory": "packages/preview-server"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^1.61.0",
@@ -47,8 +49,7 @@
 		"@internationalized/date": "^3.12.4",
 		"bits-ui": "^2.20.0"
 	},
-	"imports": {
-		"#lib": "./src/lib/index.js",
-		"#lib/*": "./src/lib/*"
+	"publishConfig": {
+		"access": "public"
 	}
 }

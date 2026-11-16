@@ -1,17 +1,29 @@
 {
 	"name": "better-svelte-email",
 	"version": "2.4.0",
-	"author": "Konixy",
+	"description": "Svelte email renderer with Tailwind support",
+	"keywords": [
+		"svelte",
+		"svelte5",
+		"email",
+		"tailwind",
+		"tailwindcss",
+		"inline-styles",
+		"responsive-email",
+		"email-templates"
+	],
+	"homepage": "https://better-svelte-email.konixy.dev",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git",
 		"directory": "packages/better-svelte-email"
 	},
-	"dependencies": {
-		"@better-svelte-email/components": "workspace:*",
-		"@better-svelte-email/preview": "workspace:*",
-		"@better-svelte-email/server": "workspace:*"
-	},
+	"license": "MIT",
+	"author": "Konixy",
+	"sideEffects": [
+		"**/*.css"
+	],
+	"type": "module",
 	"exports": {
 		".": {
 			"import": "./dist/index.mjs",
@@ -35,7 +47,9 @@
 		},
 		"./*": "./*"
 	},
-	"description": "Svelte email renderer with Tailwind support",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
@@ -43,28 +57,14 @@
 		"!dist/**/__fixtures__",
 		"!dist/emails"
 	],
-	"homepage": "https://better-svelte-email.konixy.dev",
-	"keywords": [
-		"svelte",
-		"svelte5",
-		"email",
-		"tailwind",
-		"tailwindcss",
-		"inline-styles",
-		"responsive-email",
-		"email-templates"
-	],
-	"license": "MIT",
 	"scripts": {
 		"build": "tsdown --config tsdown.config.ts",
-		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
+		"lint": "bun fmt --check --ignore-path ../../.prettierignore && eslint src --max-warnings 0",
 		"test": "vitest run"
 	},
-	"sideEffects": [
-		"**/*.css"
-	],
-	"type": "module",
-	"types": "./dist/index.d.cts",
-	"main": "./dist/index.cjs",
-	"module": "./dist/index.mjs"
+	"dependencies": {
+		"@better-svelte-email/components": "workspace:*",
+		"@better-svelte-email/preview": "workspace:*",
+		"@better-svelte-email/server": "workspace:*"
+	}
 }

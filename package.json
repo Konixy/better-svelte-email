@@ -2,21 +2,20 @@
 	"name": "better-svelte-email-monorepo",
 	"private": true,
 	"type": "module",
-	"packageManager": "bun@1.4.4",
 	"workspaces": [
 		"apps/*",
 		"packages/*"
 	],
 	"scripts": {
-		"dev": "bun run --cwd apps/docs dev",
 		"build": "turbo run build",
-		"test": "turbo run test",
-		"lint": "turbo run lint",
 		"check": "turbo run check",
-		"package": "turbo run package",
-		"format": "prettier --write .",
+		"ci:publish": "bash ./scripts/ci-publish.sh",
 		"ci:version": "changeset version",
-		"ci:publish": "bash ./scripts/ci-publish.sh"
+		"dev": "bun run --cwd apps/docs dev",
+		"format": "bun fmt",
+		"lint": "turbo run lint",
+		"package": "turbo run package",
+		"test": "turbo run test"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^3.0.3",
@@ -32,6 +31,7 @@
 		"eslint-plugin-svelte": "^3.24.1",
 		"globals": "^17.14.0",
 		"prettier": "^3.10.1",
+		"prettier-plugin-packagejson": "^3.1.0",
 		"prettier-plugin-svelte": "^4.1.1",
 		"prettier-plugin-tailwindcss": "^0.8.1",
 		"publint": "^0.3.25",
@@ -46,5 +46,6 @@
 		"unrun": "^0.3.1",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
-	}
+	},
+	"packageManager": "bun@1.4.4"
 }

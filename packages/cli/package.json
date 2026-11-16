@@ -1,38 +1,36 @@
 {
 	"name": "@better-svelte-email/cli",
-	"description": "CLI for better-svelte-email",
 	"version": "2.4.0",
-	"scripts": {
-		"dev": "bun --watch src/index.ts dev --preview-dev --preview-port 3001 -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
-		"build:cli": "tsdown",
-		"build": "bun run build:cli",
-		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
-		"test": "vitest run"
-	},
-	"license": "MIT",
+	"description": "CLI for better-svelte-email",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Konixy/better-svelte-email.git",
 		"directory": "packages/cli"
 	},
-	"module": "./dist/index.mjs",
+	"license": "MIT",
 	"type": "module",
-	"main": "./dist/index.cjs",
-	"bin": {
-		"bse": "./dist/index.cjs"
-	},
-	"files": [
-		"dist"
-	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"exports": {
 		".": {
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs"
 		},
 		"./package.json": "./package.json"
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.cts",
+	"bin": {
+		"bse": "./dist/index.cjs"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "bun run build:cli",
+		"build:cli": "tsdown",
+		"dev": "bun --watch src/index.ts dev --preview-dev --preview-port 3001 -d ../../apps/docs/src/lib/emails -c ../../apps/docs/src/app.css",
+		"lint": "bun fmt --check --ignore-path ../../.prettierignore && eslint src --max-warnings 0",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@better-svelte-email/preview-server": "workspace:*",
@@ -46,5 +44,7 @@
 		"svelte": "^5.57.2",
 		"vite": "^8.3.5"
 	},
-	"types": "./dist/index.d.cts"
+	"publishConfig": {
+		"access": "public"
+	}
 }

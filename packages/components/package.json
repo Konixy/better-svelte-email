@@ -1,20 +1,14 @@
 {
 	"name": "@better-svelte-email/components",
-	"description": "Email components for better-svelte-email",
 	"version": "2.4.0",
+	"description": "Email components for better-svelte-email",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Konixy/better-svelte-email.git",
+		"directory": "packages/components"
+	},
+	"license": "MIT",
 	"type": "module",
-	"peerDependencies": {
-		"svelte": ">=5.14.3",
-		"@sveltejs/kit": ">=2"
-	},
-	"peerDependenciesMeta": {
-		"@sveltejs/kit": {
-			"optional": true
-		}
-	},
-	"devDependencies": {
-		"@better-svelte-email/server": "workspace:*"
-	},
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -33,6 +27,8 @@
 		},
 		"./package.json": "./package.json"
 	},
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"files": [
 		"dist",
 		"!dist/**/*.test.*",
@@ -42,15 +38,19 @@
 	],
 	"scripts": {
 		"build": "svelte-package -i src && publint",
-		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
+		"lint": "bun fmt --check --ignore-path ../../.prettierignore && eslint src --max-warnings 0",
 		"test": "vitest run"
 	},
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Konixy/better-svelte-email.git",
-		"directory": "packages/components"
+	"devDependencies": {
+		"@better-svelte-email/server": "workspace:*"
+	},
+	"peerDependencies": {
+		"@sveltejs/kit": ">=2",
+		"svelte": ">=5.14.3"
+	},
+	"peerDependenciesMeta": {
+		"@sveltejs/kit": {
+			"optional": true
+		}
 	}
 }

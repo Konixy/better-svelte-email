@@ -2,14 +2,18 @@
 	"name": "docs",
 	"private": true,
 	"type": "module",
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	},
 	"scripts": {
-		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . --ignore-path ../../.prettierignore && eslint src",
+		"dev": "vite dev",
+		"lint": "bun fmt --check --ignore-path ../../.prettierignore && eslint src --max-warnings 0",
+		"prepare": "svelte-kit sync || echo ''",
+		"preview": "vite preview",
 		"test": "vitest run --passWithNoTests",
 		"test:watch": "vitest"
 	},
@@ -45,9 +49,5 @@
 		"vite": "^8.3.5",
 		"vite-plugin-devtools-json": "^1.1.2",
 		"vitest": "^5.0.5"
-	},
-	"imports": {
-		"#lib": "./src/lib/index.js",
-		"#lib/*": "./src/lib/*"
 	}
 }

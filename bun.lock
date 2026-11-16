@@ -80,7 +80,7 @@
     },
     "packages/better-svelte-email": {
       "name": "better-svelte-email",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "dependencies": {
         "@better-svelte-email/components": "workspace:*",
         "@better-svelte-email/preview": "workspace:*",
@@ -89,7 +89,7 @@
     },
     "packages/cli": {
       "name": "@better-svelte-email/cli",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "bin": {
         "bse": "./dist/index.cjs",
       },
@@ -108,7 +108,7 @@
     },
     "packages/components": {
       "name": "@better-svelte-email/components",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "devDependencies": {
         "@better-svelte-email/server": "workspace:*",
       },
@@ -122,7 +122,7 @@
     },
     "packages/preview": {
       "name": "@better-svelte-email/preview",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "dependencies": {
         "@better-svelte-email/server": "workspace:*",
         "prettier": "^3.9.10",
@@ -138,7 +138,7 @@
     },
     "packages/preview-server": {
       "name": "@better-svelte-email/preview-server",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "dependencies": {
         "@lucide/svelte": "^1.61.0",
         "@sveltejs/adapter-node": "^6.0.0",
@@ -161,7 +161,7 @@
     },
     "packages/server": {
       "name": "@better-svelte-email/server",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "dependencies": {
         "html-to-text": "^10.0.1",
         "parse5": "^8.0.1",

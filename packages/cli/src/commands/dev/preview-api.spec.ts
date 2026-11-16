@@ -80,6 +80,14 @@ describe('previewSvelteKitShimPlugin()', () => {
 		);
 		expect(await plugin.resolveId?.('__SERVER__/internal')).toBe('\0preview-sk:server-internal');
 		expect(await plugin.resolveId?.('__SERVER__/internal.js')).toBe('\0preview-sk:server-internal');
+		expect(await plugin.resolveId?.('__sveltekit/paths')).toBe('\0preview-sk:paths');
+	});
+
+	it('resolves svelte from the CLI so preview does not load the app compiler runtime', async () => {
+		const plugin = previewSvelteKitShimPlugin(process.cwd());
+		const resolved = await plugin.resolveId?.('svelte/attachments');
+		expect(typeof resolved).toBe('string');
+		expect(resolved).toMatch(/[/\\]svelte[/\\].*attachments/);
 	});
 });
 

@@ -1,5 +1,18 @@
 # @better-svelte-email/preview
 
+## 2.4.0
+
+### Minor Changes
+
+- 39063e2: Support SvelteKit 3.
+
+  Rendering in a SvelteKit 2 app is unchanged for Svelte 5.14.3 and newer. `bse dev` still previews those apps, including templates that import `$app/paths` on Kit 2.0 through 2.42.
+
+### Patch Changes
+
+- Updated dependencies [39063e2]
+  - @better-svelte-email/server@2.4.0
+
 ## 2.3.1
 
 ### Patch Changes

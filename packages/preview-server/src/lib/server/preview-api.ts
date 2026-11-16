@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private';
+import { PREVIEW_API_ORIGIN } from '$app/env/private';
 
 type EmailsResponse = {
 	files?: string[];
@@ -32,7 +32,7 @@ export async function loadEmails() {
 	};
 }
 
-import { emptySendEmailConfig, type SendEmailConfig } from '$lib/send-email-config';
+import { emptySendEmailConfig, type SendEmailConfig } from '#lib/send-email-config.js';
 
 export async function loadSendEmailConfig(): Promise<SendEmailConfig> {
 	try {
@@ -82,7 +82,7 @@ export async function renderEmail(file: string) {
 }
 
 function getPreviewApiOrigin() {
-	const origin = env.PREVIEW_API_ORIGIN?.trim();
+	const origin = PREVIEW_API_ORIGIN?.trim();
 	if (!origin) {
 		throw new Error('PREVIEW_API_ORIGIN is not configured for the preview server.');
 	}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CheckIcon from 'phosphor-svelte/lib/CheckIcon';
 	import CopyIcon from 'phosphor-svelte/lib/CopyIcon';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import type { Snippet } from 'svelte';
 
 	interface Props {

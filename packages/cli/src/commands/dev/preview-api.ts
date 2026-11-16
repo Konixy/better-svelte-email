@@ -11,6 +11,26 @@ import { defaultPreviewSubject, isValidEmailAddress, sendEmailViaResend } from '
 
 const PREVIEW_SK_VIRTUAL = '\0preview-sk:';
 
+const requireFromCli = createRequire(import.meta.url);
+
+/**
+ * The preview compiler is the CLI's Svelte (`vite-plugin-svelte` imports `svelte/compiler`
+ * from here). Vite would otherwise resolve `svelte` from the app, and a 5.14–5.39 runtime
+ * cannot run output from this compiler (`svelte/attachments`, `attributes()`).
+ */
+function resolveCliSvelteModule(id: string): string | null {
+	const specifier = id.split('?')[0];
+	if (specifier !== 'svelte' && !specifier.startsWith('svelte/')) {
+		return null;
+	}
+
+	try {
+		return requireFromCli.resolve(specifier);
+	} catch {
+		return null;
+	}
+}
+
 /**
  * Vite `define` map expected by `@sveltejs/kit` runtime modules (see `kit` `exports/vite/index.js`).
  * Without these, imports like `$app/paths` pull in `paths/internal/server.js`, which reads
@@ -22,22 +42,30 @@ function svelteKitRuntimeDefine(): Record<string, string> {
 		__SVELTEKIT_ADAPTER_NAME__: s('preview'),
 		__SVELTEKIT_APP_DIR__: s('_app'),
 		__SVELTEKIT_APP_VERSION__: s('preview'),
+		__SVELTEKIT_APP_VERSION_CHECKS_ENABLED__: s(true),
 		__SVELTEKIT_APP_VERSION_FILE__: s('_app/version.json'),
 		__SVELTEKIT_APP_VERSION_POLL_INTERVAL__: '0',
 		__SVELTEKIT_CLIENT_ROUTING__: s(true),
+		__SVELTEKIT_CSRF_CHECK_ORIGIN__: s(true),
 		__SVELTEKIT_DEV__: s(true),
 		__SVELTEKIT_EMBEDDED__: s(false),
+		// Kit 2 runtime modules still read this flag.
 		__SVELTEKIT_EXPERIMENTAL__REMOTE_FUNCTIONS__: s(false),
 		__SVELTEKIT_FORK_PRELOADS__: s(false),
+		__SVELTEKIT_GLOBAL_NAME__: s('__sveltekit_dev'),
 		__SVELTEKIT_HASH_ROUTING__: s(false),
 		__SVELTEKIT_HAS_SERVER_LOAD__: 'true',
 		__SVELTEKIT_HAS_UNIVERSAL_LOAD__: 'true',
+		__SVELTEKIT_LINK_HEADER_PRELOAD__: s(false),
 		__SVELTEKIT_PATHS_ASSETS__: s(''),
 		__SVELTEKIT_PATHS_BASE__: s(''),
+		__SVELTEKIT_PATHS_ORIGIN__: 'undefined',
 		__SVELTEKIT_PATHS_RELATIVE__: s(false),
 		__SVELTEKIT_PAYLOAD__: 'globalThis.__sveltekit_dev',
 		__SVELTEKIT_SERVER_TRACING_ENABLED__: s(false),
-		// esbuild `define` only allows JSON literals or simple identifiers — not `(() => {})`.
+		__SVELTEKIT_SERVICE_WORKER__: s(false),
+		__SVELTEKIT_SUPPORTS_ASYNC__: s(false),
+		// Vite `define` only allows JSON literals or simple identifiers — not `(() => {})`.
 		__SVELTEKIT_TRACK__: 'Boolean'
 	};
 }
@@ -76,30 +104,89 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 	return {
 		name: 'better-svelte-email-preview-sveltekit',
 		enforce: 'pre',
-		config() {
-			const alias: { find: string; replacement: string }[] = [
-				{ find: '$lib', replacement: path.join(projectRoot, 'src/lib') }
-			];
-			if (kitRuntimeApp) {
-				alias.push({ find: '$app', replacement: kitRuntimeApp });
+		// `order: 'pre'` so this runs before `vite-plugin-svelte`'s config hook, which also
+		// uses `order: 'pre'` and would otherwise prebundle `svelte/attachments` from the app.
+		config: {
+			order: 'pre',
+			handler() {
+				const alias: { find: string; replacement: string }[] = [
+					{ find: '$lib', replacement: path.join(projectRoot, 'src/lib') }
+				];
+				if (kitRuntimeApp) {
+					alias.push({ find: '$app', replacement: kitRuntimeApp });
+				}
+				return {
+					resolve: { alias },
+					optimizeDeps: {
+						exclude: ['svelte']
+					},
+					ssr: {
+						noExternal: [
+							'svelte',
+							...(kitRuntimeApp ? ['@sveltejs/kit', '@sveltejs/kit/src/runtime'] : [])
+						]
+					}
+				};
 			}
+		},
+		configEnvironment() {
 			return {
-				resolve: { alias },
-				...(kitRuntimeApp
-					? {
-							ssr: {
-								noExternal: ['@sveltejs/kit', '@sveltejs/kit/src/runtime']
-							}
-						}
-					: {})
+				optimizeDeps: {
+					exclude: ['svelte']
+				}
 			};
 		},
+		// The Svelte plugin adds `svelte/*` to `optimizeDeps.include` from its own export map.
+		// Strip those so Vite does not resolve them through the app's older `package.json` exports.
+		configResolved(resolved) {
+			const keep = (id: string) => {
+				const name = id.split('>')[0]?.trim() ?? id;
+				return name !== 'svelte' && !name.startsWith('svelte/');
+			};
+			const strip = (optimizeDeps: { include?: string[] } | undefined) => {
+				if (!optimizeDeps?.include) {
+					return;
+				}
+				optimizeDeps.include = optimizeDeps.include.filter(keep);
+			};
+			strip(resolved.optimizeDeps);
+			for (const environment of Object.values(resolved.environments)) {
+				strip(environment.optimizeDeps);
+			}
+		},
 		resolveId(id) {
-			// Newer Kit: `$app/paths` server entry imports `get_hooks` from generated `__SERVER__/internal.js`
-			// (see SvelteKit `write_server.js`). Email preview has no `.svelte-kit` output, and Vite can
-			// surface the import with or without the `.js` suffix depending on the resolver path.
-			if (id === '__SERVER__/internal' || id === '__SERVER__/internal.js') {
+			const svelteModule = resolveCliSvelteModule(id);
+			if (svelteModule) {
+				return svelteModule;
+			}
+
+			// Kit 3: `$app/paths` imports `get_hooks` from `<sveltekit:generated>/server.js`.
+			// Kit 2.43–2.x used `__SERVER__/internal`. Kit ≤2.42 imported `__sveltekit/paths`.
+			// Email preview has no generated `.svelte-kit` output.
+			if (id === '__sveltekit/paths') {
+				return `${PREVIEW_SK_VIRTUAL}paths`;
+			}
+			if (
+				id === '<sveltekit:generated>/server.js' ||
+				id === '__SERVER__/internal' ||
+				id === '__SERVER__/internal.js'
+			) {
 				return `${PREVIEW_SK_VIRTUAL}server-internal`;
+			}
+			if (
+				id === '<sveltekit:generated>/env/public/server.js' ||
+				id === '<sveltekit:generated>/env/public/client.js'
+			) {
+				return `${PREVIEW_SK_VIRTUAL}env-static-public`;
+			}
+			if (id === '<sveltekit:generated>/env/private/server.js') {
+				return `${PREVIEW_SK_VIRTUAL}env-static-private`;
+			}
+			if (id === '<sveltekit:generated>/env/config.js') {
+				return `${PREVIEW_SK_VIRTUAL}env-config`;
+			}
+			if (id === '<sveltekit:generated>/app-manifest.js') {
+				return `${PREVIEW_SK_VIRTUAL}app-manifest`;
 			}
 			if (id === '__sveltekit/environment') {
 				return `${PREVIEW_SK_VIRTUAL}environment`;
@@ -124,6 +211,26 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 			const browser = options?.ssr === false;
 
 			switch (id) {
+				case `${PREVIEW_SK_VIRTUAL}paths`:
+					// Same server shape as Kit 2's `\0virtual:__sveltekit/paths` (base falls back to "").
+					return [
+						'export let base = "";',
+						'export let assets = base;',
+						'export const app_dir = "_app";',
+						'export const relative = false;',
+						'const initial = { base, assets };',
+						'export function override(paths) {',
+						'	base = paths.base;',
+						'	assets = paths.assets;',
+						'}',
+						'export function reset() {',
+						'	base = initial.base;',
+						'	assets = initial.assets;',
+						'}',
+						'export function set_assets(path) {',
+						'	assets = initial.assets = path;',
+						'}'
+					].join('\n');
 				case `${PREVIEW_SK_VIRTUAL}environment`:
 					return [
 						'export const version = "preview";',
@@ -139,6 +246,15 @@ export function previewSvelteKitShimPlugin(projectRoot: string): Plugin {
 						'export let manifest = { _: { matchers: async () => ({}), routes: [] } };',
 						'export function set_read_implementation(fn) { read_implementation = fn; }',
 						'export function set_manifest(m) { manifest = m; }'
+					].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}env-config`:
+					return ['export const rendered_env = {};', 'export function set_env() {}'].join('\n');
+				case `${PREVIEW_SK_VIRTUAL}app-manifest`:
+					return [
+						'export const immutable = [];',
+						'export const assets = [];',
+						'export const prerendered = [];',
+						'export const routes = [];'
 					].join('\n');
 				case `${PREVIEW_SK_VIRTUAL}server-internal`:
 					return [

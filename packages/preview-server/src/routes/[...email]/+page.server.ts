@@ -1,4 +1,4 @@
-import { loadEmails, renderEmail } from '$lib/server/preview-api';
+import { loadEmails, renderEmail } from '#lib/server/preview-api.js';
 
 export async function load({ params }: { params: { email?: string } }) {
 	const selectedFile = params.email ?? '';

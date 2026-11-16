@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import { browser } from '$app/environment';
-	import { invalidateAll } from '$app/navigation';
+	import { browser } from '$app/env';
+	import { refreshAll } from '$app/navigation';
 	import { SvelteTheme } from 'svelte-themes';
 	import type { LayoutProps } from './$types';
 
@@ -14,7 +14,7 @@
 
 		const source = new EventSource(data.previewEventsUrl);
 		source.addEventListener('reload', () => {
-			void invalidateAll();
+			void refreshAll();
 		});
 		return () => source.close();
 	});

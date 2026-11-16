@@ -1,7 +1,9 @@
+import { spawnSync } from 'node:child_process';
 import { PassThrough } from 'node:stream';
-import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, writeFile, mkdir, rm, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -73,11 +75,87 @@ describe('tryResolveSvelteKitRuntimeApp()', () => {
 });
 
 describe('previewSvelteKitShimPlugin()', () => {
-	it('stubs generated __SERVER__/internal imports with or without the js suffix', async () => {
+	it('stubs generated SvelteKit server modules', async () => {
 		const plugin = previewSvelteKitShimPlugin(process.cwd());
+		expect(await plugin.resolveId?.('<sveltekit:generated>/server.js')).toBe(
+			'\0preview-sk:server-internal'
+		);
 		expect(await plugin.resolveId?.('__SERVER__/internal')).toBe('\0preview-sk:server-internal');
 		expect(await plugin.resolveId?.('__SERVER__/internal.js')).toBe('\0preview-sk:server-internal');
+		expect(await plugin.resolveId?.('__sveltekit/paths')).toBe('\0preview-sk:paths');
 	});
+
+	it('renders an email with the CLI Svelte when the app depends on Svelte 5.14.3', async () => {
+		const appDir = await mkdtemp(path.join(tmpdir(), 'bse-cli-old-svelte-'));
+		const prevCwd = process.cwd();
+		const serverPkg = fileURLToPath(new URL('../../../../server/package.json', import.meta.url));
+
+		await mkdir(path.join(appDir, 'emails'), { recursive: true });
+		await writeFile(
+			path.join(appDir, 'package.json'),
+			JSON.stringify(
+				{
+					name: 'bse-old-svelte-app',
+					private: true,
+					type: 'module',
+					dependencies: {
+						svelte: '5.14.3',
+						'@better-svelte-email/server': `file:${path.dirname(serverPkg)}`
+					}
+				},
+				null,
+				2
+			)
+		);
+		await writeFile(
+			path.join(appDir, 'emails', 'hello.svelte'),
+			`<script>
+	let { name = 'there' } = $props();
+</script>
+
+<p class="text-lg">Hello {name}</p>
+`
+		);
+
+		const installed = spawnSync('bun', ['install'], {
+			cwd: appDir,
+			encoding: 'utf8'
+		});
+		expect(installed.status, installed.stderr || installed.stdout).toBe(0);
+
+		const appSvelte = JSON.parse(
+			await readFile(path.join(appDir, 'node_modules/svelte/package.json'), 'utf8')
+		) as { version: string };
+		expect(appSvelte.version).toBe('5.14.3');
+
+		process.chdir(appDir);
+		const { handlePreviewApi, invalidateCaches } = createPreviewApiHandler({
+			emailsDir: 'emails',
+			resendCredentials: createResendCredentialsStore()
+		});
+
+		try {
+			const req = makeRequest({
+				method: 'POST',
+				url: '/api/render',
+				body: JSON.stringify({ file: 'hello', props: { name: 'Ada' } })
+			});
+			const { res, status, json } = collectResponse();
+			await handlePreviewApi(new URL('http://127.0.0.1/api/render'), req, res);
+			const payload = json() as { html?: string; error?: { message: string } };
+			expect(status(), payload.error?.message).toBe(200);
+			expect(payload.html).toContain('Hello Ada');
+			expect(payload.html).toMatch(/font-size\s*:/);
+
+			const resolved = await previewSvelteKitShimPlugin(appDir).resolveId?.('svelte/attachments');
+			expect(typeof resolved).toBe('string');
+			expect(String(resolved).startsWith(appDir)).toBe(false);
+		} finally {
+			await invalidateCaches();
+			process.chdir(prevCwd);
+			await rm(appDir, { recursive: true, force: true });
+		}
+	}, 120_000);
 });
 
 describe('resolveEmailsRoot()', () => {

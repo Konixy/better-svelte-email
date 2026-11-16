@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { toggleMode } from 'mode-watcher';
-	import { Button } from '$lib/components/ui/button';
-	import { Separator } from '$lib/components/ui/separator';
-	import Github from '$lib/components/github.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import Github from '#lib/components/github.svelte';
 	import ArrowRightIcon from 'phosphor-svelte/lib/ArrowRightIcon';
 	import MoonIcon from 'phosphor-svelte/lib/MoonIcon';
 	import SunIcon from 'phosphor-svelte/lib/SunIcon';

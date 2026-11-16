@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import BarricadeIcon from 'phosphor-svelte/lib/BarricadeIcon';
 </script>
 

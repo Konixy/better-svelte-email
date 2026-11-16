@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 	import { page } from '$app/state';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
@@ -14,14 +14,14 @@
 	import Monitor from '@lucide/svelte/icons/monitor';
 	import { createSearchParamsSchema, useSearchParams } from 'runed/kit';
 	import { useTheme } from 'svelte-themes';
-	import EmailTreeNode from '$lib/components/email-tree-node.svelte';
-	import SendEmailControls from '$lib/components/send-email-controls.svelte';
-	import ShikiCode from '$lib/components/shiki-code.svelte';
-	import { buildEmailTree, filterEmailTree, type EmailTreeEntry } from '$lib/email-tree';
-	import { emptySendEmailConfig, type SendEmailConfig } from '$lib/send-email-config';
-	import { cn } from '$lib/utils';
+	import EmailTreeNode from '#lib/components/email-tree-node.svelte';
+	import SendEmailControls from '#lib/components/send-email-controls.svelte';
+	import ShikiCode from '#lib/components/shiki-code.svelte';
+	import { buildEmailTree, filterEmailTree, type EmailTreeEntry } from '#lib/email-tree.js';
+	import { emptySendEmailConfig, type SendEmailConfig } from '#lib/send-email-config.js';
+	import { cn } from '#lib/utils.js';
 	import { Check, CodeIcon, MailWarningIcon, PanelLeftClose } from '@lucide/svelte';
-	import SvelteIcon from '$lib/svelte-icon.svelte';
+	import SvelteIcon from '#lib/svelte-icon.svelte';
 	import * as Tooltip from './ui/tooltip';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import Button from './ui/button/button.svelte';
@@ -654,10 +654,9 @@
 									? 'bg-foreground text-background'
 									: 'text-muted-foreground hover:text-foreground'
 							)}
-							onclick={() => (params.view = 'render')}
+							onclick={() => (params.view = 'render')}>Render</button
 						>
-							Render
-						</button>
+
 						<button
 							class={cn(
 								'px-3 py-1 text-xs transition-colors',
@@ -665,10 +664,9 @@
 									? 'bg-foreground text-background'
 									: 'text-muted-foreground hover:text-foreground'
 							)}
-							onclick={() => (params.view = 'html')}
+							onclick={() => (params.view = 'html')}>HTML</button
 						>
-							HTML
-						</button>
+
 						<button
 							class={cn(
 								'px-3 py-1 text-xs transition-colors',
@@ -676,10 +674,8 @@
 									? 'bg-foreground text-background'
 									: 'text-muted-foreground hover:text-foreground'
 							)}
-							onclick={() => (params.view = 'source')}
+							onclick={() => (params.view = 'source')}>Source</button
 						>
-							Source
-						</button>
 					</div>
 
 					<Button variant="outline" size="sm" onclick={copyHtml} disabled={!html}>
@@ -1005,9 +1001,9 @@
 												fill="currentColor"
 												aria-hidden="true"
 											>
-												<circle cx="10" cy="10" r="1" />
-												<circle cx="10" cy="6" r="1" />
-												<circle cx="6" cy="10" r="1" />
+												<circle cx="10" cy="10" r="1"></circle>
+												<circle cx="10" cy="6" r="1"></circle>
+												<circle cx="6" cy="10" r="1"></circle>
 											</svg>
 										</button>
 									</div>

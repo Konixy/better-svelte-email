@@ -1,4 +1,4 @@
-import { loadEmails } from '$lib/server/preview-api';
+import { loadEmails } from '#lib/server/preview-api.js';
 
 export async function load() {
 	const emails = await loadEmails();

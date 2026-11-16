@@ -36,7 +36,7 @@
 		"@sveltejs/adapter-vercel": "^7.0.1",
 		"@sveltejs/kit": "^3.1.0",
 		"@tailwindcss/vite": "^4.3.3",
-		"@types/node": "26.6.5",
+		"@types/node": "26.6.6",
 		"bits-ui": "^2.20.0",
 		"hast-util-select": "6.0.4",
 		"prettier": "^3.9.10",

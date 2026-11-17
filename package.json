@@ -41,7 +41,7 @@
 		"svelte-themes": "^2.0.10",
 		"tsdown": "^0.23.7",
 		"turbo": "^2.11.11",
-		"typescript": "6",
+		"typescript": "7",
 		"typescript-eslint": "^8.73.0",
 		"unrun": "^0.3.1",
 		"vite": "^8.3.8",

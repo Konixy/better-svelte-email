@@ -7,9 +7,20 @@
 	interface Props {
 		code: string;
 		children?: Snippet;
+		lang?: string;
+		meta?: string;
+		title?: string;
+		caption?: string;
 	}
 
-	let { code, children }: Props = $props();
+	let {
+		code,
+		children,
+		lang: _lang,
+		meta: _meta,
+		title: _title,
+		caption: _caption
+	}: Props = $props();
 
 	let copied = $state(false);
 	let resetTimer: ReturnType<typeof setTimeout> | undefined;

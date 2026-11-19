@@ -185,7 +185,7 @@
 			</div>
 
 			<nav class="flex flex-col gap-1">
-				{#each navItems as section}
+				{#each navItems as section (section.slug)}
 					{@const isActive = page.url.pathname === `/docs/${section.slug}`}
 					<a
 						href={`/docs/${section.slug}`}
@@ -319,29 +319,29 @@
 		@apply w-full min-w-lg border-collapse border border-border text-sm;
 	}
 
-	:global(.md .ret-table-thead) {
+	:global(.md .ret-table thead) {
 		@apply bg-muted/50;
 	}
 
-	:global(.md .ret-table-th) {
+	:global(.md .ret-table th) {
 		@apply border-b border-border px-4 py-2.5 text-left font-semibold text-foreground;
 	}
 
-	:global(.md .ret-table-cell) {
+	:global(.md .ret-table td) {
 		@apply border-t border-border px-4 py-2.5 align-top leading-relaxed;
 	}
 
-	:global(.md .ret-table-body .ret-table-row:hover) {
+	:global(.md .ret-table tbody tr:hover) {
 		@apply bg-muted/25;
 	}
 
-	:global(.md .ret-table-th:first-child),
-	:global(.md .ret-table-cell:first-child) {
+	:global(.md .ret-table th:first-child),
+	:global(.md .ret-table td:first-child) {
 		@apply font-mono text-[13px] text-foreground/90;
 	}
 
-	:global(.md .ret-table-th code),
-	:global(.md .ret-table-cell code) {
+	:global(.md .ret-table th code),
+	:global(.md .ret-table td code) {
 		@apply text-[12px];
 	}
 </style>

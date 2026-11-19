@@ -2,22 +2,24 @@ import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vitest/config';
 import { resolveStyleExport } from '../../scripts/resolve-style-export.ts';
-import { extensions, preprocess } from './markdown.js';
+import { extensions, markdown } from './markdown.js';
 
 const twAnimateCss = resolveStyleExport('tw-animate-css', fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	plugins: [
 		tailwindcss(),
+		...markdown,
 		sveltekit({
 			adapter: adapter({
 				runtime: 'nodejs24.x'
 			}),
 			extensions,
-			preprocess
+			preprocess: [vitePreprocess()]
 		}),
 		devtoolsJson()
 	],

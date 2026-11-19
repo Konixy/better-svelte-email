@@ -1,0 +1,9 @@
+export { default as h1 } from './markdown/heading.svelte';
+export { default as h2 } from './markdown/heading.svelte';
+export { default as h3 } from './markdown/heading.svelte';
+export { default as h4 } from './markdown/heading.svelte';
+export { default as h5 } from './markdown/heading.svelte';
+export { default as h6 } from './markdown/heading.svelte';
+export { default as pre } from './components/code-block.svelte';
+export { default as table } from './markdown/table.svelte';
+export { default as th } from './markdown/th.svelte';

@@ -3,10 +3,11 @@ import { fileURLToPath } from 'node:url';
 import { includeIgnoreFile } from '@eslint/config-helpers';
 import js from '@eslint/js';
 import svelte from 'eslint-plugin-svelte';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 import ts from 'typescript-eslint';
-import { extensions, preprocess } from './apps/docs/markdown.js';
+import { extensions } from './apps/docs/markdown.js';
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url));
 
@@ -43,7 +44,7 @@ export default defineConfig(
 				projectService: true,
 				extraFileExtensions: ['.svelte'],
 				parser: ts.parser,
-				svelteConfig: { extensions, preprocess }
+				svelteConfig: { extensions, preprocess: [vitePreprocess()] }
 			}
 		}
 	}

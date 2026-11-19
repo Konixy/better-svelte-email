@@ -7,9 +7,20 @@
 	interface Props {
 		code: string;
 		children?: Snippet;
+		lang?: string;
+		meta?: string;
+		title?: string;
+		caption?: string;
 	}
 
-	let { code, children }: Props = $props();
+	let {
+		code,
+		children,
+		lang: _lang,
+		meta: _meta,
+		title: _title,
+		caption: _caption
+	}: Props = $props();
 
 	let copied = $state(false);
 	let resetTimer: ReturnType<typeof setTimeout> | undefined;
@@ -28,7 +39,9 @@
 	}
 </script>
 
-<div class="code-block group relative">
+<div
+	class="group relative [&_pre]:overflow-x-auto [&_pre]:border [&_pre]:border-border [&_pre]:bg-background [&_pre]:p-4 [&_pre]:font-mono [&_pre]:text-[13px] [&_pre_code]:border-none [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-muted-foreground"
+>
 	<Button
 		variant="outline"
 		size="icon-sm"

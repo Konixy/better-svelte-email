@@ -1,51 +1,42 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { escapeSvelte, mdsvex } from 'mdsvex';
+import { mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeEnhancedTables from '@benjc/rehype-enhanced-tables';
-
-const markdownLayout = path.join(
-	path.dirname(fileURLToPath(import.meta.url)),
-	'src/lib/markdown-layout.svelte'
-);
 
 const highlighter = await createHighlighter({
 	themes: ['vesper', 'github-light'],
-	langs: ['javascript', 'typescript', 'svelte', 'bash']
+	langs: ['javascript', 'typescript', 'svelte', 'bash', 'text']
 });
 
-/** @type {import('mdsvex').MdsvexOptions} */
-const mdsvexOptions = {
-	layout: markdownLayout,
-	rehypePlugins: /** @type {import('mdsvex').MdsvexOptions['rehypePlugins']} */ ([
-		rehypeSlug,
-		[
-			rehypeAutolinkHeadings,
-			{
-				properties: { class: 'heading-link', title: 'Link to this heading' }
-			}
-		],
-		rehypeEnhancedTables
-	]),
-	highlight: {
-		highlighter: async (code, lang = 'text') => {
-			const html = escapeSvelte(
-				highlighter.codeToHtml(code, {
-					lang: lang || 'text',
-					themes: { dark: 'vesper', light: 'github-light' }
-				})
-			);
-			return `<Components.CodeBlock code={${JSON.stringify(code)}}>{@html \`${html}\`}</Components.CodeBlock>`;
-		}
+const themes = { dark: 'vesper', light: 'github-light' };
+
+/** @type {import('shiki').ShikiTransformer} */
+const dropTabindex = {
+	name: 'drop-tabindex',
+	pre(node) {
+		delete node.properties.tabindex;
 	}
 };
 
+/**
+ * @param {string} code
+ * @param {string} lang
+ */
+function highlight(code, lang) {
+	const language = lang || 'text';
+	try {
+		return highlighter.codeToHtml(code, { lang: language, themes, transformers: [dropTabindex] });
+	} catch {
+		return highlighter.codeToHtml(code, { lang: 'text', themes, transformers: [dropTabindex] });
+	}
+}
+
 export const extensions = ['.svelte', '.svx', '.md'];
 
-export const preprocess = [
-	mdsvex({ extensions: ['.svx', '.md'], ...mdsvexOptions }),
-	vitePreprocess()
-];
+export const markdown = mdsvex({
+	extensions: ['.svx', '.md'],
+	heading_ids: true,
+	components: new URL('./src/lib/markdown.js', import.meta.url),
+	templates: {
+		default: new URL('./src/lib/markdown/document.svelte', import.meta.url)
+	},
+	highlight: (code, { lang, inline }) => (inline ? null : highlight(code, lang))
+});

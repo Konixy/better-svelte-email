@@ -1,9 +1,17 @@
+export { default as a } from './markdown/link.svelte';
+export { default as blockquote } from './markdown/blockquote.svelte';
+export { default as code } from './markdown/inline-code.svelte';
 export { default as h1 } from './markdown/heading.svelte';
 export { default as h2 } from './markdown/heading.svelte';
 export { default as h3 } from './markdown/heading.svelte';
 export { default as h4 } from './markdown/heading.svelte';
 export { default as h5 } from './markdown/heading.svelte';
 export { default as h6 } from './markdown/heading.svelte';
+export { default as li } from './markdown/item.svelte';
+export { default as ol } from './markdown/ordered-list.svelte';
+export { default as p } from './markdown/paragraph.svelte';
 export { default as pre } from './components/code-block.svelte';
+export { default as strong } from './markdown/strong.svelte';
 export { default as table } from './markdown/table.svelte';
 export { default as th } from './markdown/th.svelte';
+export { default as ul } from './markdown/list.svelte';

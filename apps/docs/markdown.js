@@ -35,5 +35,8 @@ export const markdown = mdsvex({
 	extensions: ['.svx', '.md'],
 	heading_ids: true,
 	components: new URL('./src/lib/markdown.js', import.meta.url),
+	templates: {
+		default: new URL('./src/lib/markdown/document.svelte', import.meta.url)
+	},
 	highlight: (code, { lang, inline }) => (inline ? null : highlight(code, lang))
 });

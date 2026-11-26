@@ -12,7 +12,7 @@
         "@sveltejs/kit": "^3.2.0",
         "@sveltejs/package": "^3.0.2",
         "@sveltejs/vite-plugin-svelte": "^7.3.1",
-        "@types/node": "26.6.7",
+        "@types/node": "26.6.11",
         "eslint": "^10.15.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-svelte": "^3.24.1",
@@ -65,7 +65,7 @@
         "@sveltejs/adapter-vercel": "^7.0.1",
         "@sveltejs/kit": "^3.1.0",
         "@tailwindcss/vite": "^4.3.3",
-        "@types/node": "26.6.7",
+        "@types/node": "26.6.11",
         "bits-ui": "^2.20.0",
         "prettier": "^3.9.10",
         "svelte": "^5.57.2",
@@ -504,7 +504,7 @@
 
     "@types/mdast": ["@types/mdast@4.0.4", "", { "dependencies": { "@types/unist": "*" } }, "sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA=="],
 
-    "@types/node": ["@types/node@26.6.7", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-tovuRfrUILu6v46bMG+BgXxMvsqPBx2WO2as8Rpln+JTff1dbexMtAM4KFTejmL0axsnSWViCW7MecUQpLuBRA=="],
+    "@types/node": ["@types/node@26.6.11", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uUyQ2XLEz+EXh34lmS3GhKrkqn/8FU7KUiKRpk347At2bmnMVWss45yz8b4FG/tUtmV1tV/+TVkITItPROyeeQ=="],
 
     "@types/unist": ["@types/unist@3.0.3", "", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 
